@@ -1,0 +1,160 @@
+{
+  "questionnaire": [
+    {
+      "section": "Clinical Characteristics",
+      "questions": [
+        {
+          "id": "age",
+          "text": "How old are you (at time of prostate biopsy)?",
+          "type": "number",
+          "unit": "years",
+          "validation": { "min": 18, "max": 120, "required": true }
+        },
+        {
+          "id": "psa",
+          "text": "What was your last PSA (Prostate-Specific Antigen) prior to biopsy?",
+          "type": "number",
+          "unit": "ng/mL",
+          "validation": { "min": 0, "required": true }
+        },
+        {
+          "id": "prostate_volume",
+          "text": "What is the volume of your prostate?",
+          "type": "number",
+          "unit": "mL",
+          "validation": { "min": 0, "required": true }
+        },
+        {
+          "id": "gleason_score",
+          "text": "What was the Overall Gleason Score that was assigned to your biopsy?",
+          "type": "select",
+          "options": ["3+3", "3+4", "4+3", "4+4 / 3+5 / 5+3", "4+5 / 5+4 / 5+5"],
+          "required": true
+        },
+        {
+          "id": "cancer_stage",
+          "text": "What stage was assigned to your prostate cancer?",
+          "type": "select",
+          "options": ["T2", "T3", "T4", "Unknown"],
+          "required": true
+        },
+        {
+          "id": "mri_visibility",
+          "text": "Is your prostate cancer visible on MRI?",
+          "type": "select",
+          "options": ["Yes (PI-RADS/Likert 4-5)", "No or equivocal (PI-RADS/Likert 1-3)", "Unknown"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Treatment Options",
+      "questions": [
+        {
+          "id": "nerve_sparing",
+          "text": "If you discussed prostatectomy, what did your surgeon tell you about nerve sparing?",
+          "type": "select",
+          "options": [
+            "Both sides",
+            "One side only",
+            "Neither side",
+            "Unknown/Not discussed",
+            "Not suitable for prostatectomy"
+          ]
+        },
+        {
+          "id": "radiotherapy_hormone",
+          "text": "If you discussed radiotherapy, what did your oncologist tell you about hormone treatment?",
+          "type": "select",
+          "options": [
+            "No hormone treatment",
+            "6 months hormone therapy",
+            "2 years hormone therapy",
+            "Unknown/Not discussed",
+            "Not suitable for radiotherapy"
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Urinary Function",
+      "questions": [
+        {
+          "id": "urine_leak",
+          "text": "Over the past 4 weeks, how often have you leaked urine?",
+          "type": "select",
+          "options": [
+            "More than once a day",
+            "About once a day",
+            "More than once a week",
+            "About once a week",
+            "Rarely or never"
+          ]
+        },
+        {
+          "id": "pad_usage",
+          "text": "How many pads or adult diapers per day did you usually use in the last 4 weeks?",
+          "type": "select",
+          "options": ["None", "1 pad", "2 pads", "3 or more pads"]
+        },
+        {
+          "id": "urine_problem",
+          "text": "How big a problem has dripping or leaking urine been during the last 4 weeks?",
+          "type": "select",
+          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+        }
+      ]
+    },
+    {
+      "section": "Erectile Function",
+      "questions": [
+        {
+          "id": "erection_quality",
+          "text": "How would you describe the usual QUALITY of your erections during the last 4 weeks?",
+          "type": "select",
+          "options": [
+            "None at all",
+            "Not firm enough for any sexual activity",
+            "Firm enough for masturbation/foreplay only",
+            "Firm enough for intercourse"
+          ]
+        },
+        {
+          "id": "erection_bother",
+          "text": "Overall, how big a problem has your sexual function been during the last 4 weeks?",
+          "type": "select",
+          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+        },
+        {
+          "id": "sex_interest",
+          "text": "During the last 4 weeks, to what extent were you interested in sex?",
+          "type": "select",
+          "options": ["Not at all", "A little", "Quite a bit", "Very much"]
+        },
+        {
+          "id": "sex_medication",
+          "text": "Have you used any medication or devices to aid/improve erections?",
+          "type": "select",
+          "options": ["Yes", "No"]
+        }
+      ]
+    },
+    {
+      "section": "Bowel Function",
+      "questions": [
+        {
+          "id": "bowel_urgency",
+          "text": "How big a problem, if any, has urgency to have a bowel movement been for you?",
+          "type": "select",
+          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+        },
+        {
+          "id": "bowel_bother",
+          "text": "Overall, how big a problem have your bowel habits been for you during the last 4 weeks?",
+          "type": "select",
+          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+        }
+      ]
+    }
+  ]
+}

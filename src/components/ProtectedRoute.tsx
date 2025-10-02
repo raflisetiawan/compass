@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useStore } from '../stores/userStore';
+import { useUserStore } from '../stores/userStore';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useStore();
+  const { user } = useUserStore();
+  const token = localStorage.getItem('userToken');
 
-  if (!user) {
+  if (!user && !token) {
     return <Navigate to="/login" />;
   }
 

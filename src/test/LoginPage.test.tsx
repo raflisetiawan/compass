@@ -19,7 +19,7 @@ vi.mock('firebase/auth');
 
 const setUser = vi.fn();
 vi.mock('../stores/userStore', () => ({
-  useStore: () => ({ setUser, user: null }),
+  useUserStore: () => ({ setUser, user: null }),
 }));
 
 vi.mock('../pages/QuestionnairePage', () => ({

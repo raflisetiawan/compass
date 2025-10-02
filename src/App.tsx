@@ -8,14 +8,17 @@ import SummaryPage from './pages/SummaryPage';
 import ResultsPage from './pages/ResultsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { auth } from './services/firebase';
-import { useStore } from './stores/userStore';
+import { useUserStore } from './stores/userStore';
 
 function App() {
-  const { setUser } = useStore();
+  const { setUser } = useUserStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      if (!user) {
+        localStorage.removeItem('userToken');
+      }
     });
 
     return () => unsubscribe();

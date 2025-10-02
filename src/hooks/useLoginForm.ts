@@ -4,7 +4,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { z } from 'zod';
 import { db, auth } from '../services/firebase';
-import { useStore } from '../stores/userStore';
+import { useUserStore } from '../stores/userStore';
 
 const accessCodeSchema = z.string().min(6, { message: 'Access code must be at least 6 characters long.' });
 
@@ -13,7 +13,7 @@ export const useLoginForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useStore();
+  const { setUser } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

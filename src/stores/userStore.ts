@@ -1,14 +1,21 @@
 
 import { create } from 'zustand';
+import { type User } from 'firebase/auth';
 
-interface UserState {
-  user: any;
-  setUser: (user: any) => void;
+type State = {
+  user: User | null;
+};
+
+type Actions = {
+  setUser: (user: User | null) => void;
   clearUser: () => void;
-}
+};
 
-export const useStore = create<UserState>((set) => ({
+export const useUserStore = create<State & Actions>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
+  clearUser: () => {
+    localStorage.removeItem('userToken');
+    set({ user: null });
+  },
 }));

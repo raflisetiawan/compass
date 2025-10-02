@@ -2,10 +2,10 @@ import { Navigate } from 'react-router-dom';
 import BeSpokeLogo from '../components/BeSpokeLogo';
 import Footer from '../components/Footer';
 import LoginForm from '../features/auth/LoginForm';
-import { useStore } from '../stores/userStore';
+import { useUserStore } from '../stores/userStore';
 
 const LoginPage = () => {
-  const { user } = useStore();
+  const { user } = useUserStore();
 
   if (user) {
     return <Navigate to="/introduction" />;
