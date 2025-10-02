@@ -28,6 +28,29 @@ function App() {
     return () => unsubscribe();
   }, [setUser]);
 
+  // Set page title based on route
+  useEffect(() => {
+    let title = 'COMPASS';
+    switch (location.pathname) {
+      case '/login':
+        title = 'Login | COMPASS';
+        break;
+      case '/introduction':
+        title = 'Introduction | COMPASS';
+        break;
+      case '/questionnaire':
+        title = 'Questionnaire | COMPASS';
+        break;
+      case '/summary':
+        title = 'Summary | COMPASS';
+        break;
+      case '/results':
+        title = 'Results | COMPASS';
+        break;
+    }
+    document.title = title;
+  }, [location.pathname]);
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
