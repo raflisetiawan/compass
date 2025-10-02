@@ -72,32 +72,16 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   // Actions
   setAnswer: (questionId, value) => {
-    const { sections, answers, currentSectionIndex, errors } = get();
+    const { answers, errors } = get();
     const newAnswers = { ...answers, [questionId]: value };
 
-    // Clear error for this question when user types
+    // Clear error for this question when user provides an answer
     const newErrors = { ...errors };
     if (newErrors[questionId]) {
       delete newErrors[questionId];
     }
 
-    const currentSection = sections[currentSectionIndex];
-    const allQuestionsAnswered = currentSection.questions.every(
-      (q) => newAnswers[q.id] !== undefined
-    );
-    const isLastSection = currentSectionIndex === sections.length - 1;
-
-    let nextState: Partial<State> = { answers: newAnswers, errors: newErrors };
-
-    if (allQuestionsAnswered && !isLastSection) {
-      nextState = {
-        ...nextState,
-        currentSectionIndex: currentSectionIndex + 1,
-        currentQuestionIndex: 0,
-      };
-    }
-
-    set(nextState);
+    set({ answers: newAnswers, errors: newErrors });
 
     const userId = useUserStore.getState().user?.uid;
     if (userId) {
