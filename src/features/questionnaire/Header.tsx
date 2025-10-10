@@ -4,11 +4,10 @@ import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/stores/userStore';
 
 const Header = () => {
-  const { clearUser } = useUserStore();
+  const { logout } = useUserStore();
 
   const handleLogout = () => {
-    clearUser();
-    // In a real app, you'd also call Firebase signout and redirect.
+    logout();
   };
 
   return (

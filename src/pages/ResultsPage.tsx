@@ -1,5 +1,11 @@
-const ResultsPage = () => {
-  return <div>ResultsPage</div>
-}
+import MainLayout from '@/layouts/MainLayout';
 
-export default ResultsPage
+const ResultsPage = () => {
+  return (
+    <MainLayout>
+      <div>ResultsPage</div>
+    </MainLayout>
+  );
+};
+
+export default ResultsPage;

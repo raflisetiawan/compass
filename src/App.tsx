@@ -14,19 +14,30 @@ import { auth } from './services/firebase';
 import { useUserStore } from './stores/userStore';
 
 function App() {
-  const { setUser } = useUserStore();
+  const { setUser, logout } = useUserStore();
   const location = useLocation();
 
   useEffect(() => {
+    const sessionStartTime = localStorage.getItem('sessionStartTime');
+    if (sessionStartTime) {
+      const startTime = parseInt(sessionStartTime, 10);
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+      if (Date.now() - startTime > twentyFourHours) {
+        logout();
+        return;
+      }
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (!user) {
         localStorage.removeItem('userToken');
+        localStorage.removeItem('sessionStartTime');
       }
     });
 
     return () => unsubscribe();
-  }, [setUser]);
+  }, [setUser, logout]);
 
   // Set page title based on route
   useEffect(() => {

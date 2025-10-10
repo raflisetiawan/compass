@@ -43,7 +43,7 @@ const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisab
   </button>
 );
 
-const getIcon = (status: Status, isCurrent: boolean) => {
+const getIcon = (status: Status) => {
   switch (status) {
     case 'COMPLETED':
       return <CheckCircle2 className="h-6 w-6 text-green-600" />;
@@ -101,7 +101,7 @@ const Sidebar = () => {
                 title={section.section}
                 subtitle={subtitle}
                 status={status}
-                icon={getIcon(status, index === currentSectionIndex)}
+                icon={getIcon(status)}
                 isActive={index === currentSectionIndex}
                 isDisabled={!isUnlocked}
                 onClick={() => isUnlocked && goToSection(index)}

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import SummaryPage from '../pages/SummaryPage';
 import { useQuestionnaireStore } from '@/stores/questionnaireStore';
 

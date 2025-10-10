@@ -14,6 +14,7 @@ export interface Question {
   text: string;
   type: 'radio' | 'select' | 'number';
   options?: (string | { label: string; value: string | number })[];
+  placeholder?: string;
   unit?: string;
   validation?: { min?: number; max?: number; required?: boolean };
   required?: boolean;
@@ -51,6 +52,15 @@ type State = {
   isLoading: boolean;
 };
 
+const initialState: State = {
+  sections: (questionnaireData as QuestionnaireData).questionnaire,
+  answers: {},
+  errors: {},
+  currentSectionIndex: 0,
+  currentQuestionIndex: 0,
+  isLoading: true,
+};
+
 type Actions = {
   setAnswer: (questionId: string, value: string | number) => void;
   setErrors: (errors: Errors) => void;
@@ -59,16 +69,11 @@ type Actions = {
   nextQuestion: () => void;
   prevQuestion: () => void;
   loadInitialData: () => Promise<void>;
+  reset: () => void;
 };
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
-  // Initial State
-  sections: (questionnaireData as QuestionnaireData).questionnaire,
-  answers: {},
-  errors: {},
-  currentSectionIndex: 0,
-  currentQuestionIndex: 0,
-  isLoading: true,
+  ...initialState,
 
   // Actions
   setAnswer: (questionId, value) => {
@@ -144,4 +149,6 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
     }
     set({ isLoading: false });
   },
+
+  reset: () => set(initialState),
 }));

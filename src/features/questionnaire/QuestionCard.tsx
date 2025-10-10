@@ -64,6 +64,7 @@ const QuestionCard = () => {
               id={question.id}
               type="number"
               value={answer || ''}
+              placeholder={question.placeholder}
               onChange={(e) => setAnswer(question.id, e.target.value)}
               onKeyDown={handleEnterPress}
               className="pr-20"

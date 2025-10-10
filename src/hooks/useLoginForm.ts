@@ -41,6 +41,7 @@ export const useLoginForm = () => {
       setUser(userCredential.user);
 
       localStorage.setItem('userToken', await userCredential.user.getIdToken());
+      localStorage.setItem('sessionStartTime', Date.now().toString());
       navigate('/introduction');
     } catch (err) {
       console.error('Login failed:', err);

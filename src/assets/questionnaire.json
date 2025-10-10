@@ -8,6 +8,7 @@
           "text": "How old are you (at time of prostate biopsy)?",
           "type": "number",
           "unit": "years",
+          "placeholder": "e.g., 58",
           "validation": { "min": 18, "max": 120, "required": true }
         },
         {
@@ -15,6 +16,7 @@
           "text": "What was your last PSA (Prostate-Specific Antigen) prior to biopsy?",
           "type": "number",
           "unit": "ng/mL",
+          "placeholder": "e.g., 6.5",
           "validation": { "min": 0, "required": true }
         },
         {
@@ -22,6 +24,7 @@
           "text": "What is the volume of your prostate?",
           "type": "number",
           "unit": "mL",
+          "placeholder": "e.g., 40",
           "validation": { "min": 0, "required": true }
         },
         {
