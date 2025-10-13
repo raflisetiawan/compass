@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -37,12 +38,25 @@ export const useLoginForm = () => {
         return;
       }
 
+      const accessCodeData = querySnapshot.docs[0].data() as { code: string; role: 'staff' | 'patient' };
+
       const userCredential = await signInAnonymously(auth);
-      setUser(userCredential.user);
+      
+      const user = {
+        uid: userCredential.user.uid,
+        role: accessCodeData.role,
+        accessCode: accessCodeData.code,
+      };
+      setUser(user);
 
       localStorage.setItem('userToken', await userCredential.user.getIdToken());
       localStorage.setItem('sessionStartTime', Date.now().toString());
-      navigate('/introduction');
+
+      if (accessCodeData.role === 'staff') {
+        navigate('/select-patient');
+      } else {
+        navigate('/introduction');
+      }
     } catch (err) {
       console.error('Login failed:', err);
       setError('Failed to login. Please check your connection and try again.');
@@ -66,3 +80,4 @@ export const useLoginForm = () => {
     handleInputChange,
   };
 };
+

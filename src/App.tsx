@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -8,6 +9,7 @@ import IntroductionPage from './pages/IntroductionPage';
 import QuestionnairePage from './pages/QuestionnairePage';
 import SummaryPage from './pages/SummaryPage';
 import ResultsPage from './pages/ResultsPage';
+import SelectPatientPage from './pages/SelectPatientPage'; // Import the new page
 import ProtectedRoute from './components/ProtectedRoute';
 import AnimatedPage from './components/AnimatedPage';
 import { auth } from './services/firebase';
@@ -29,10 +31,12 @@ function App() {
     }
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      // The user object from onAuthStateChanged is the Firebase user.
+      // We should not set it directly if our store expects a custom user type.
+      // The login logic in useLoginForm now handles setting our custom user object.
       if (!user) {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('sessionStartTime');
+        // Only clear the store and local storage on logout
+        logout();
       }
     });
 
@@ -45,6 +49,9 @@ function App() {
     switch (location.pathname) {
       case '/login':
         title = 'Login | COMPASS';
+        break;
+      case '/select-patient': // Add title for the new page
+        title = 'Select Patient | COMPASS';
         break;
       case '/introduction':
         title = 'Introduction | COMPASS';
@@ -69,6 +76,10 @@ function App() {
         <Route
           path="/login"
           element={<AnimatedPage><LoginPage /></AnimatedPage>}
+        />
+        <Route
+          path="/select-patient"
+          element={<ProtectedRoute><AnimatedPage><SelectPatientPage /></AnimatedPage></ProtectedRoute>}
         />
         <Route
           path="/introduction"

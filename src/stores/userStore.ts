@@ -1,8 +1,14 @@
 
 import { create } from 'zustand';
-import { type User, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { auth } from '@/services/firebase';
 import { useQuestionnaireStore } from './questionnaireStore';
+
+export type User = {
+  uid: string;
+  role: 'staff' | 'patient';
+  accessCode: string;
+};
 
 type State = {
   user: User | null;
@@ -20,7 +26,7 @@ export const useUserStore = create<State & Actions>((set) => ({
     try {
       await signOut(auth);
     } catch (error) {
-      console.error("Error signing out from Firebase", error);
+      console.error('Error signing out from Firebase', error);
     }
     localStorage.removeItem('userToken');
     localStorage.removeItem('sessionStartTime');

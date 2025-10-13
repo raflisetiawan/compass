@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import questionnaireData from '@/assets/questionnaire.json';
 import {
@@ -37,11 +38,6 @@ export type Errors = {
   [questionId: string]: string | undefined;
 };
 
-// --- Debounced Save Function ---
-const debouncedSaveSession = debounce((userId: string, session: QuestionnaireSession) => {
-  saveQuestionnaireSession(userId, session);
-}, 1500);
-
 // --- Store Definition ---
 type State = {
   sections: Section[];
@@ -50,6 +46,7 @@ type State = {
   currentSectionIndex: number;
   currentQuestionIndex: number;
   isLoading: boolean;
+  patientId: string | null; // For staff to manage patient sessions
 };
 
 const initialState: State = {
@@ -59,6 +56,7 @@ const initialState: State = {
   currentSectionIndex: 0,
   currentQuestionIndex: 0,
   isLoading: true,
+  patientId: null,
 };
 
 type Actions = {
@@ -69,8 +67,22 @@ type Actions = {
   nextQuestion: () => void;
   prevQuestion: () => void;
   loadInitialData: () => Promise<void>;
+  setPatientId: (patientId: string) => void; // New action
   reset: () => void;
 };
+
+// --- Helper to get active user ID (patient or self) ---
+const getActiveUserId = (state: State & Actions): string | null => {
+  if (state.patientId) {
+    return state.patientId;
+  }
+  return useUserStore.getState().user?.uid || null;
+};
+
+// --- Debounced Save Function ---
+const debouncedSaveSession = debounce((userId: string, session: QuestionnaireSession) => {
+  saveQuestionnaireSession(userId, session);
+}, 1500);
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   ...initialState,
@@ -80,7 +92,6 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
     const { answers, errors } = get();
     const newAnswers = { ...answers, [questionId]: value };
 
-    // Clear error for this question when user provides an answer
     const newErrors = { ...errors };
     if (newErrors[questionId]) {
       delete newErrors[questionId];
@@ -88,10 +99,10 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
     set({ answers: newAnswers, errors: newErrors });
 
-    const userId = useUserStore.getState().user?.uid;
-    if (userId) {
+    const activeUserId = getActiveUserId(get());
+    if (activeUserId) {
       const { answers, currentSectionIndex, currentQuestionIndex } = get();
-      debouncedSaveSession(userId, {
+      debouncedSaveSession(activeUserId, {
         answers,
         currentSectionIndex,
         currentQuestionIndex,
@@ -136,9 +147,9 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   loadInitialData: async () => {
     set({ isLoading: true });
-    const userId = useUserStore.getState().user?.uid;
-    if (userId) {
-      const savedSession = await loadQuestionnaireSession(userId);
+    const activeUserId = getActiveUserId(get());
+    if (activeUserId) {
+      const savedSession = await loadQuestionnaireSession(activeUserId);
       if (savedSession) {
         set({
           answers: savedSession.answers || {},
@@ -146,9 +157,14 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
           currentQuestionIndex: savedSession.currentQuestionIndex || 0,
         });
       }
+    } else {
+      // If no user, reset to initial state but stop loading
+      set({ ...initialState, isLoading: false });
     }
     set({ isLoading: false });
   },
 
-  reset: () => set(initialState),
+  setPatientId: (patientId) => set({ patientId, answers: {}, currentSectionIndex: 0, currentQuestionIndex: 0 }),
+
+  reset: () => set({ ...initialState, answers: {}, patientId: null }),
 }));
