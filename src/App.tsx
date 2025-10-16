@@ -1,7 +1,6 @@
 
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence } from 'framer-motion';
 
 import LoginPage from './pages/LoginPage';
@@ -12,36 +11,9 @@ import ResultsPage from './pages/ResultsPage';
 import SelectPatientPage from './pages/SelectPatientPage'; // Import the new page
 import ProtectedRoute from './components/ProtectedRoute';
 import AnimatedPage from './components/AnimatedPage';
-import { auth } from './services/firebase';
-import { useUserStore } from './stores/userStore';
 
 function App() {
-  const { setUser, logout } = useUserStore();
   const location = useLocation();
-
-  useEffect(() => {
-    const sessionStartTime = localStorage.getItem('sessionStartTime');
-    if (sessionStartTime) {
-      const startTime = parseInt(sessionStartTime, 10);
-      const twentyFourHours = 24 * 60 * 60 * 1000;
-      if (Date.now() - startTime > twentyFourHours) {
-        logout();
-        return;
-      }
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // The user object from onAuthStateChanged is the Firebase user.
-      // We should not set it directly if our store expects a custom user type.
-      // The login logic in useLoginForm now handles setting our custom user object.
-      if (!user) {
-        // Only clear the store and local storage on logout
-        logout();
-      }
-    });
-
-    return () => unsubscribe();
-  }, [setUser, logout]);
 
   // Set page title based on route
   useEffect(() => {

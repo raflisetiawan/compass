@@ -11,16 +11,18 @@ const QuestionnairePage = () => {
   const { user } = useUserStore();
   const { loadInitialData, isLoading } = useQuestionnaireStore();
 
-  // Fetch initial data only when the user object is available.
   useEffect(() => {
+    // Wait for auth to finish and user to be available.
     if (user) {
       loadInitialData();
     }
   }, [user, loadInitialData]);
 
+  const showLoading = isLoading;
+
   return (
     <MainLayout>
-      {isLoading ? (
+      {showLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
           <p className="text-lg text-gray-600">Loading your progress...</p>

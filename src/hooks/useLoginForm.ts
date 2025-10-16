@@ -1,11 +1,15 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { signInAnonymously } from 'firebase/auth';
 import { z } from 'zod';
-import { db, auth } from '../services/firebase';
+import {
+  getUserDocByAccessCode,
+  updateUserUid,
+  auth,
+} from '../services/firebase';
 import { useUserStore } from '../stores/userStore';
+import {type User} from '@/types'
+import { signInAnonymously } from 'firebase/auth';
 
 const accessCodeSchema = z.string().min(6, { message: 'Access code must be at least 6 characters long.' });
 
@@ -27,32 +31,38 @@ export const useLoginForm = () => {
 
     setLoading(true);
     setError('');
+    const submittedAccessCode = validationResult.data;
 
     try {
-      const q = query(collection(db, 'accessCodes'), where('code', '==', validationResult.data));
-      const querySnapshot = await getDocs(q);
+      const userDoc = await getUserDocByAccessCode(submittedAccessCode);
 
-      if (querySnapshot.empty) {
+      if (!userDoc) {
         setError('Invalid access code. Please try again.');
         setLoading(false);
         return;
       }
 
-      const accessCodeData = querySnapshot.docs[0].data() as { code: string; role: 'staff' | 'patient' };
-
       const userCredential = await signInAnonymously(auth);
-      
-      const user = {
-        uid: userCredential.user.uid,
-        role: accessCodeData.role,
-        accessCode: accessCodeData.code,
+      const uid = userCredential.user.uid;
+
+      // If user doc doesn't have a UID, it's a first-time login for this access code.
+      if (!userDoc.uid) {
+        await updateUserUid(submittedAccessCode, uid);
+      }
+
+      const user: User = {
+        uid,
+        role: userDoc.role || 'patient',
+        accessCode: submittedAccessCode,
       };
+
       setUser(user);
 
       localStorage.setItem('userToken', await userCredential.user.getIdToken());
       localStorage.setItem('sessionStartTime', Date.now().toString());
+      localStorage.setItem('compassAccessCode', submittedAccessCode);
 
-      if (accessCodeData.role === 'staff') {
+      if (user.role === 'staff') {
         navigate('/select-patient');
       } else {
         navigate('/introduction');
@@ -80,4 +90,3 @@ export const useLoginForm = () => {
     handleInputChange,
   };
 };
-

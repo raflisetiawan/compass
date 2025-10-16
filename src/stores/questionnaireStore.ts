@@ -71,17 +71,17 @@ type Actions = {
   reset: () => void;
 };
 
-// --- Helper to get active user ID (patient or self) ---
-const getActiveUserId = (state: State & Actions): string | null => {
+// --- Helper to get active session key (patient's access code or self) ---
+const getActiveSessionKey = (state: State & Actions): string | null => {
   if (state.patientId) {
     return state.patientId;
   }
-  return useUserStore.getState().user?.uid || null;
+  return useUserStore.getState().user?.accessCode || null;
 };
 
 // --- Debounced Save Function ---
-const debouncedSaveSession = debounce((userId: string, session: QuestionnaireSession) => {
-  saveQuestionnaireSession(userId, session);
+const debouncedSaveSession = debounce((sessionKey: string, session: Partial<QuestionnaireSession>) => {
+  saveQuestionnaireSession(sessionKey, session);
 }, 1500);
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
@@ -99,10 +99,10 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
     set({ answers: newAnswers, errors: newErrors });
 
-    const activeUserId = getActiveUserId(get());
-    if (activeUserId) {
+    const activeSessionKey = getActiveSessionKey(get());
+    if (activeSessionKey) {
       const { answers, currentSectionIndex, currentQuestionIndex } = get();
-      debouncedSaveSession(activeUserId, {
+      debouncedSaveSession(activeSessionKey, {
         answers,
         currentSectionIndex,
         currentQuestionIndex,
@@ -147,9 +147,9 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   loadInitialData: async () => {
     set({ isLoading: true });
-    const activeUserId = getActiveUserId(get());
-    if (activeUserId) {
-      const savedSession = await loadQuestionnaireSession(activeUserId);
+    const activeSessionKey = getActiveSessionKey(get());
+    if (activeSessionKey) {
+      const savedSession = await loadQuestionnaireSession(activeSessionKey);
       if (savedSession) {
         set({
           answers: savedSession.answers || {},
