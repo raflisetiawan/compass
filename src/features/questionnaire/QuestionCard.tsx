@@ -42,7 +42,7 @@ const QuestionCard = () => {
     const isLastSection = currentSectionIndex === sections.length - 1;
 
     if (isLastQuestion && isLastSection) {
-      navigate('/summary');
+      navigate('/results');
     } else {
       nextQuestion();
     }
