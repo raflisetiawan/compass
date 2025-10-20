@@ -1,120 +1,193 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import {
-  getDocs,
-  type QuerySnapshot,
-  type QueryDocumentSnapshot,
-} from 'firebase/firestore';
-import { signInAnonymously, type UserCredential, type User } from 'firebase/auth';
-import LoginPage from '../pages/LoginPage';
-import IntroductionPage from '../pages/IntroductionPage';
-import QuestionnairePage from '../pages/QuestionnairePage';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "../pages/LoginPage";
+import IntroductionPage from "../pages/IntroductionPage";
+import SelectPatientPage from "../pages/SelectPatientPage";
+import { useUserStore } from "../stores/userStore";
+import type { Mock } from "vitest";
 
-// Mocks
-vi.mock('../services/firebase', () => ({ auth: {}, db: {} }));
-vi.mock('firebase/firestore');
-vi.mock('firebase/auth');
-
-const setUser = vi.fn();
-vi.mock('../stores/userStore', () => ({
-  useUserStore: () => ({ setUser, user: null }),
+// Mocking firebase services
+vi.mock("../services/firebase", () => ({
+  auth: {},
+  getUserDocByAccessCode: vi.fn(),
+  updateUserUid: vi.fn(),
 }));
 
-vi.mock('../pages/QuestionnairePage', () => ({
-  default: () => <div>Questionnaire Page</div>,
+// Mocking firebase auth
+vi.mock("firebase/auth", () => ({
+  signInAnonymously: vi.fn(),
+  onAuthStateChanged: vi.fn(() => () => {}), // Returns an unsubscribe function
 }));
 
-vi.mock('../pages/IntroductionPage', () => ({
-  default: () => <div>Introduction Page</div>,
+// Mocking the user store
+const originalState = useUserStore.getState();
+beforeEach(() => {
+  useUserStore.setState(originalState);
+});
+
+// Mock child components to isolate tests
+vi.mock("../components/BeSpokeLogo", () => ({
+  default: () => <div data-testid="bespoke-logo">BeSpoke Logo</div>,
+}));
+vi.mock("../components/Footer", () => ({
+  default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-// Type-safe mock helper
-function createMock<T>(partial: Partial<T>): T {
-  return partial as T;
-}
+// Import mocked functions to control their behavior in tests
+import { getUserDocByAccessCode, updateUserUid } from "../services/firebase";
+import { signInAnonymously } from "firebase/auth";
 
-// Test setup helpers
-const renderComponent = () => {
-  render(
-    <MemoryRouter initialEntries={['/login']}>
+const renderWithRouter = (initialEntries = ["/login"]) => {
+  return render(
+    <MemoryRouter initialEntries={initialEntries}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/introduction" element={<IntroductionPage />} />
-        <Route path="/questionnaire" element={<QuestionnairePage />} />
+        <Route path="/select-patient" element={<SelectPatientPage />} />
       </Routes>
     </MemoryRouter>
   );
 };
 
-const setup = async (accessCode: string) => {
-  const user = userEvent.setup();
-  renderComponent();
-  const input = screen.getByPlaceholderText('Input your access code here...');
-  const button = screen.getByRole('button', { name: /submit/i });
-  await user.type(input, accessCode);
-  await user.click(button);
-  return { user };
-};
-
-describe('LoginPage', () => {
+describe("LoginPage", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    // Reset mocks before each test
+    vi.resetAllMocks();
 
-  describe('UI Rendering', () => {
-    it('should render the login form correctly', () => {
-      renderComponent();
-      expect(screen.getByText('Welcome back')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Input your access code here...')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
+    // Mock signInAnonymously to return a predictable user credential
+    (signInAnonymously as Mock).mockResolvedValue({
+      user: {
+        uid: "test-uid",
+        getIdToken: async () => "test-token",
+      },
     });
   });
 
-  describe('User Interactions and Validation', () => {
-    it('should show an error for access codes shorter than 6 characters', async () => {
-      await setup('123');
-      expect(await screen.findByText('Access code must be at least 6 characters long.')).toBeInTheDocument();
+  it("renders the login form correctly", () => {
+    renderWithRouter();
+    expect(screen.getByText("Welcome back")).toBeInTheDocument();
+    expect(screen.getByLabelText("Access Code")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
+    expect(screen.getByTestId("bespoke-logo")).toBeInTheDocument();
+    expect(screen.getByTestId("footer")).toBeInTheDocument();
+  });
+
+  it("shows a validation error for access codes shorter than 6 characters", async () => {
+    renderWithRouter();
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Access Code");
+    const submitButton = screen.getByRole("button", { name: "Submit" });
+
+    await user.type(input, "12345");
+    await user.click(submitButton);
+
+    expect(
+      await screen.findByText("Access code must be at least 6 characters long.")
+    ).toBeInTheDocument();
+    expect(getUserDocByAccessCode).not.toHaveBeenCalled();
+  });
+
+  it("shows an error for an invalid access code", async () => {
+    (getUserDocByAccessCode as Mock).mockResolvedValue(null);
+    renderWithRouter();
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Access Code");
+    const submitButton = screen.getByRole("button", { name: "Submit" });
+
+    await user.type(input, "invalid-code");
+    await user.click(submitButton);
+
+    expect(
+      await screen.findByText("Invalid access code. Please try again.")
+    ).toBeInTheDocument();
+  });
+
+  it("logs in a patient successfully and navigates to the introduction page", async () => {
+    const mockUserDoc = {
+      uid: "existing-uid",
+      role: "patient",
+    };
+    (getUserDocByAccessCode as Mock).mockResolvedValue(mockUserDoc);
+
+    renderWithRouter();
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Access Code");
+    const submitButton = screen.getByRole("button", { name: "Submit" });
+
+    await user.type(input, "123456");
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      // Check if navigation to IntroductionPage was successful
+      expect(screen.getByText("Introduction")).toBeInTheDocument();
     });
 
-    it('should show an error for an invalid access code', async () => {
-      vi.mocked(getDocs).mockResolvedValue(
-        createMock<QuerySnapshot>({ empty: true })
+    // Verify that the user state is updated
+    const userState = useUserStore.getState().user;
+    expect(userState?.accessCode).toBe("123456");
+    expect(userState?.role).toBe("patient");
+  });
+
+  it("logs in a staff member successfully and navigates to the select patient page", async () => {
+    const mockUserDoc = {
+      uid: "existing-uid",
+      role: "staff",
+    };
+    (getUserDocByAccessCode as Mock).mockResolvedValue(mockUserDoc);
+
+    renderWithRouter();
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Access Code");
+    const submitButton = screen.getByRole("button", { name: "Submit" });
+
+    await user.type(input, "staff-code");
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      // Check if navigation to SelectPatientPage was successful
+      expect(screen.getByText("Clinican")).toBeInTheDocument();
+    });
+
+    // Verify that the user state is updated
+    const userState = useUserStore.getState().user;
+    expect(userState?.accessCode).toBe("staff-code");
+    expect(userState?.role).toBe("staff");
+  });
+
+  it("calls updateUserUid for a first-time login", async () => {
+    const mockUserDoc = {
+      // no uid
+      role: "patient",
+    };
+    (getUserDocByAccessCode as Mock).mockResolvedValue(mockUserDoc);
+
+    renderWithRouter();
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Access Code");
+    const submitButton = screen.getByRole("button", { name: "Submit" });
+
+    await user.type(input, "new-patient-code");
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(updateUserUid).toHaveBeenCalledWith(
+        "new-patient-code",
+        "test-uid"
       );
-      await setup('654321');
-      expect(await screen.findByText('Invalid access code. Please try again.')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Introduction")).toBeInTheDocument();
     });
   });
 
-  describe('Authentication Flow', () => {
-    it('should log in and navigate to the introduction page on successful submission', async () => {
-      vi.mocked(getDocs).mockResolvedValue(
-        createMock<QuerySnapshot>({
-          empty: false,
-          docs: [
-            createMock<QueryDocumentSnapshot>({ data: () => ({ code: '123456' }) }),
-          ],
-        })
-      );
-      vi.mocked(signInAnonymously).mockResolvedValue(
-        createMock<UserCredential>({
-          user: createMock<User>({
-            uid: 'test-uid',
-            getIdToken: vi.fn().mockResolvedValue('test-token'),
-          }),
-        })
-      );
-
-      await setup('123456');
-
-      await waitFor(() => {
-        expect(screen.getByText('Introduction Page')).toBeInTheDocument();
-      });
-
-      expect(setUser).toHaveBeenCalledWith(expect.objectContaining({ uid: 'test-uid' }));
-      expect(getDocs).toHaveBeenCalled();
-      expect(signInAnonymously).toHaveBeenCalled();
+  it("redirects to introduction page if user is already logged in", () => {
+    useUserStore.setState({
+      user: { uid: "test-uid", role: "patient", accessCode: "123456" },
     });
+    renderWithRouter();
+    expect(screen.getByText("Introduction")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
@@ -102,8 +103,10 @@ const BaselineFunctionContent = ({ baseline }: BaselineFunctionContentProps) => 
 
 const ResultsMobileHeader = ({
   onModalOpen,
+  onStartOver,
 }: {
   onModalOpen: (content: ModalContentType) => void;
+  onStartOver: () => void;
 }) => (
   <div className="md:hidden mb-4">
     <h1 className="text-2xl font-bold mb-4">Results</h1>
@@ -117,7 +120,7 @@ const ResultsMobileHeader = ({
         </Button>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={onStartOver}>
           <RefreshCw className="h-4 w-4" />
         </Button>
         <Button variant="outline" size="icon">
@@ -128,11 +131,13 @@ const ResultsMobileHeader = ({
   </div>
 );
 
-const ResultsDesktopHeader = () => (
+const ResultsDesktopHeader = ({ onStartOver }: { onStartOver: () => void }) => (
   <div className="hidden md:flex justify-between items-center mb-6">
     <h1 className="text-4xl font-bold">Results</h1>
     <div className="flex gap-4">
-      <Button variant="outline">START OVER</Button>
+      <Button variant="outline" onClick={onStartOver}>
+        START OVER
+      </Button>
       <Button variant="default">DOWNLOAD</Button>
     </div>
   </div>
@@ -286,7 +291,13 @@ const ResultsPage = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [modalContent, setModalContent] =
     useState<ModalContentType>(null);
-  const { answers } = useQuestionnaireStore();
+  const { answers, reset } = useQuestionnaireStore();
+  const navigate = useNavigate();
+
+  const handleStartOver = () => {
+    reset();
+    navigate("/introduction");
+  };
 
   const clinicalParameters: ClinicalParameters = {
     Age: `${answers.age || "65"} years`,
@@ -315,8 +326,11 @@ const ResultsPage = () => {
     <MainLayout>
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow p-4 md:p-8 bg-gray-50">
-          <ResultsMobileHeader onModalOpen={setModalContent} />
-          <ResultsDesktopHeader />
+          <ResultsMobileHeader
+            onModalOpen={setModalContent}
+            onStartOver={handleStartOver}
+          />
+          <ResultsDesktopHeader onStartOver={handleStartOver} />
 
           <div className="flex md:gap-8">
             <ResultsSidebar

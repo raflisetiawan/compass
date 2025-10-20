@@ -1,5 +1,5 @@
 export type User = {
-  uid: string;
+  uid?: string;
   role: 'staff' | 'patient';
   accessCode?: string;
 };
