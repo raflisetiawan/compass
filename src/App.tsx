@@ -9,6 +9,7 @@ import QuestionnairePage from './pages/QuestionnairePage';
 import ResultsPage from './pages/ResultsPage';
 import SelectPatientPage from './pages/SelectPatientPage'; // Import the new page
 import AboutPage from './pages/AboutPage';
+import FunctionalOutcomeDetailPage from './pages/FunctionalOutcomeDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AnimatedPage from './components/AnimatedPage';
 
@@ -18,7 +19,9 @@ function App() {
   // Set page title based on route
   useEffect(() => {
     let title = 'COMPASS';
-    switch (location.pathname) {
+    const pathParts = location.pathname.split('/').filter(Boolean);
+
+    switch (`/${pathParts[0]}`) {
       case '/login':
         title = 'Login | COMPASS';
         break;
@@ -36,6 +39,10 @@ function App() {
         break;
       case '/about':
         title = 'About | COMPASS';
+        break;
+      case '/functional-outcome':
+        const outcomeTitle = pathParts[1] ? pathParts[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Detail';
+        title = `${outcomeTitle} | COMPASS`;
         break;
     }
     document.title = title;
@@ -68,6 +75,10 @@ function App() {
         <Route
           path="/about"
           element={<AnimatedPage><AboutPage /></AnimatedPage>}
+        />
+        <Route
+          path="/functional-outcome/:outcome"
+          element={<ProtectedRoute><AnimatedPage><FunctionalOutcomeDetailPage /></AnimatedPage></ProtectedRoute>}
         />
       </Routes>
     </AnimatePresence>
