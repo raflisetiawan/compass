@@ -26,3 +26,5 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COMPASS_E5F7B }}
           channelId: live
           projectId: compass-e5f7b
+      - name: Debug .env file content
+        run: cat .env
