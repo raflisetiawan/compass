@@ -115,7 +115,6 @@ export const saveQuestionnaireSession = async (sessionKey: string, session: Part
   if (!sessionKey) return;
 
   try {
-
     const sessionDocRef = doc(db, SESSIONS_COLLECTION, sessionKey);
 
     await setDoc(sessionDocRef, { ...session, updatedAt: new Date() }, { merge: true });

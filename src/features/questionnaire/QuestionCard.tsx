@@ -1,13 +1,19 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useQuestionnaireStore } from '@/stores/questionnaireStore';
-import { useNavigate } from 'react-router-dom';
-import { createQuestionSchema } from '@/lib/validation';
-import { type KeyboardEvent } from 'react';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useQuestionnaireStore } from "@/stores/questionnaireStore";
+import { useNavigate } from "react-router-dom";
+import { createQuestionSchema } from "@/lib/validation";
+import { type KeyboardEvent } from "react";
+import { cn } from "@/lib/utils";
 
 const QuestionCard = () => {
   const {
@@ -20,6 +26,7 @@ const QuestionCard = () => {
     setErrors,
     nextQuestion,
     prevQuestion,
+    saveFinalAnswers,
   } = useQuestionnaireStore();
   const navigate = useNavigate();
 
@@ -28,28 +35,34 @@ const QuestionCard = () => {
   const answer = answers[question.id];
   const error = errors[question.id];
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const currentAnswer = useQuestionnaireStore.getState().answers[question.id];
     const schema = createQuestionSchema(question);
-    const result = schema.safeParse(answer);
+    const result = schema.safeParse(currentAnswer);
 
     if (!result.success) {
-      const newErrors = { ...errors, [question.id]: result.error.issues[0].message };
+      const newErrors = {
+        ...errors,
+        [question.id]: result.error.issues[0].message,
+      };
       setErrors(newErrors);
       return;
     }
 
-    const isLastQuestion = currentQuestionIndex === section.questions.length - 1;
+    const isLastQuestion =
+      currentQuestionIndex === section.questions.length - 1;
     const isLastSection = currentSectionIndex === sections.length - 1;
 
     if (isLastQuestion && isLastSection) {
-      navigate('/results');
+      await saveFinalAnswers();
+      navigate("/results");
     } else {
       nextQuestion();
     }
   };
 
   const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       handleNext();
     }
@@ -57,13 +70,13 @@ const QuestionCard = () => {
 
   const renderInput = () => {
     switch (question.type) {
-      case 'number':
+      case "number":
         return (
           <div className="relative">
             <Input
               id={question.id}
               type="number"
-              value={answer || ''}
+              value={answer || ""}
               placeholder={question.placeholder}
               onChange={(e) => setAnswer(question.id, e.target.value)}
               onKeyDown={handleEnterPress}
@@ -76,15 +89,15 @@ const QuestionCard = () => {
             )}
           </div>
         );
-      case 'radio':
+      case "radio":
         return (
           <RadioGroup
-            value={answer ? String(answer) : ''}
+            value={answer ? String(answer) : ""}
             onValueChange={(value) => setAnswer(question.id, value)}
             className="space-y-3"
           >
             {question.options?.map((option, index) => {
-              const isStringOption = typeof option === 'string';
+              const isStringOption = typeof option === "string";
               const value = isStringOption ? option : option.value;
               const label = isStringOption ? option : option.label;
               const id = `${question.id}-${value}`;
@@ -95,20 +108,26 @@ const QuestionCard = () => {
                   key={id}
                   htmlFor={id}
                   className={cn(
-                    'flex cursor-pointer items-center gap-4 rounded-lg border bg-white p-4 transition-all hover:bg-slate-50',
-                    isSelected && 'border-blue-600 bg-blue-50'
+                    "flex cursor-pointer items-center gap-4 rounded-lg border bg-white p-4 transition-all hover:bg-slate-50",
+                    isSelected && "border-blue-600 bg-blue-50"
                   )}
                 >
-                  <RadioGroupItem value={String(value)} id={id} className="sr-only" />
+                  <RadioGroupItem
+                    value={String(value)}
+                    id={id}
+                    className="sr-only"
+                  />
                   <span
                     className={cn(
-                      'flex h-6 w-6 items-center justify-center rounded-md border bg-slate-100 text-sm font-semibold',
-                      isSelected && 'border-blue-600 bg-blue-100 text-blue-800'
+                      "flex h-6 w-6 items-center justify-center rounded-md border bg-slate-100 text-sm font-semibold",
+                      isSelected && "border-blue-600 bg-blue-100 text-blue-800"
                     )}
                   >
                     {String.fromCharCode(65 + index)}
                   </span>
-                  <span className={cn('font-medium', isSelected && 'text-blue-800')}>
+                  <span
+                    className={cn("font-medium", isSelected && "text-blue-800")}
+                  >
                     {label}
                   </span>
                 </Label>
@@ -121,12 +140,14 @@ const QuestionCard = () => {
     }
   };
 
-  const isAnswered = answer !== undefined && String(answer).trim() !== '';
+  const isAnswered = answer !== undefined && String(answer).trim() !== "";
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <p className="text-sm font-semibold text-blue-600">PRE-TREATMENT ASSESSMENT</p>
+        <p className="text-sm font-semibold text-blue-600">
+          PRE-TREATMENT ASSESSMENT
+        </p>
         <CardTitle className="text-3xl">{section.section}</CardTitle>
       </CardHeader>
       <CardContent>
@@ -141,7 +162,10 @@ const QuestionCard = () => {
         </div>
 
         <div className="space-y-4">
-          <label htmlFor={question.id} className="block text-md font-medium text-gray-800">
+          <label
+            htmlFor={question.id}
+            className="block text-md font-medium text-gray-800"
+          >
             {question.text}
           </label>
           {renderInput()}
@@ -149,7 +173,11 @@ const QuestionCard = () => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={prevQuestion} disabled={currentSectionIndex === 0 && currentQuestionIndex === 0}>
+        <Button
+          variant="outline"
+          onClick={prevQuestion}
+          disabled={currentSectionIndex === 0 && currentQuestionIndex === 0}
+        >
           Back
         </Button>
         <Button

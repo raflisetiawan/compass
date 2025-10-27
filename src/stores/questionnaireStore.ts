@@ -68,6 +68,7 @@ type Actions = {
   prevQuestion: () => void;
   loadInitialData: () => Promise<void>;
   setPatientId: (patientId: string) => void; // New action
+  saveFinalAnswers: () => Promise<void>;
   reset: () => void;
 };
 
@@ -165,6 +166,18 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   },
 
   setPatientId: (patientId) => set({ patientId, answers: {}, currentSectionIndex: 0, currentQuestionIndex: 0 }),
+
+  saveFinalAnswers: async () => {
+    const activeSessionKey = getActiveSessionKey(get());
+    if (activeSessionKey) {
+      const { answers, currentSectionIndex, currentQuestionIndex } = get();
+       await saveQuestionnaireSession(activeSessionKey, {
+        answers,
+        currentSectionIndex,
+        currentQuestionIndex,
+      });
+    }
+  },
 
   reset: () => set({ ...initialState, answers: {}, patientId: null }),
 }));
