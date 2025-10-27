@@ -1,19 +1,21 @@
-
-import { create } from 'zustand';
-import questionnaireData from '@/assets/questionnaire.json';
+import { create } from "zustand";
+import { Timestamp } from "firebase/firestore";
+import questionnaireData from "@/assets/questionnaire.json";
 import {
-  saveQuestionnaireSession,
-  loadQuestionnaireSession,
+  loadLatestQuestionnaireSession,
+  createNewQuestionnaireSession,
+  updateQuestionnaireSession,
   type QuestionnaireSession,
-} from '@/services/firebase';
-import { useUserStore } from './userStore';
-import { debounce } from '@/lib/utils';
+} from "@/services/firebase";
+import { useUserStore } from "./userStore";
+import { debounce } from "@/lib/utils";
 
 // --- Type Definitions ---
+
 export interface Question {
   id: string;
   text: string;
-  type: 'radio' | 'select' | 'number';
+  type: "radio" | "select" | "number";
   options?: (string | { label: string; value: string | number })[];
   placeholder?: string;
   unit?: string;
@@ -39,6 +41,7 @@ export type Errors = {
 };
 
 // --- Store Definition ---
+
 type State = {
   sections: Section[];
   answers: Answers;
@@ -47,6 +50,7 @@ type State = {
   currentQuestionIndex: number;
   isLoading: boolean;
   patientId: string | null; // For staff to manage patient sessions
+  sessionId: string | null; // ID of the active session document in Firestore
 };
 
 const initialState: State = {
@@ -57,6 +61,7 @@ const initialState: State = {
   currentQuestionIndex: 0,
   isLoading: true,
   patientId: null,
+  sessionId: null,
 };
 
 type Actions = {
@@ -67,30 +72,39 @@ type Actions = {
   nextQuestion: () => void;
   prevQuestion: () => void;
   loadInitialData: () => Promise<void>;
-  setPatientId: (patientId: string) => void; // New action
+  setPatientId: (patientId: string) => void;
   saveFinalAnswers: () => Promise<void>;
   reset: () => void;
 };
 
-// --- Helper to get active session key (patient's access code or self) ---
-const getActiveSessionKey = (state: State & Actions): string | null => {
-  if (state.patientId) {
-    return state.patientId;
-  }
+// --- Helper to get active user access code ---
+
+const getActiveAccessCode = (): string | null => {
+  // This function is simplified as patientId logic seems separate.
+  // We primarily use the logged-in user's access code.
   return useUserStore.getState().user?.accessCode || null;
 };
 
 // --- Debounced Save Function ---
-const debouncedSaveSession = debounce((sessionKey: string, session: Partial<QuestionnaireSession>) => {
-  saveQuestionnaireSession(sessionKey, session);
-}, 1500);
+
+const debouncedUpdateSession = debounce(
+  (
+    accessCode: string,
+    sessionId: string,
+    session: Partial<QuestionnaireSession>
+  ) => {
+    if (!accessCode || !sessionId) return;
+    updateQuestionnaireSession(accessCode, sessionId, session);
+  },
+  1500
+);
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   ...initialState,
 
   // Actions
   setAnswer: (questionId, value) => {
-    const { answers, errors } = get();
+    const { answers, errors, sessionId } = get();
     const newAnswers = { ...answers, [questionId]: value };
 
     const newErrors = { ...errors };
@@ -100,31 +114,38 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
     set({ answers: newAnswers, errors: newErrors });
 
-    const activeSessionKey = getActiveSessionKey(get());
-    if (activeSessionKey) {
+    const accessCode = getActiveAccessCode();
+    if (accessCode && sessionId) {
       const { answers, currentSectionIndex, currentQuestionIndex } = get();
-      debouncedSaveSession(activeSessionKey, {
+      debouncedUpdateSession(accessCode, sessionId, {
         answers,
         currentSectionIndex,
         currentQuestionIndex,
+        updatedAt: Timestamp.now(),
       });
     }
   },
 
   setErrors: (errors) => set({ errors }),
 
-  setCurrentSectionIndex: (index) => set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
+  setCurrentSectionIndex: (index) =>
+    set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
 
-  goToSection: (index) => set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
+  goToSection: (index) =>
+    set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
 
   nextQuestion: () => {
     const { sections, currentSectionIndex, currentQuestionIndex } = get();
     const currentSection = sections[currentSectionIndex];
-    const isLastQuestion = currentQuestionIndex === currentSection.questions.length - 1;
+    const isLastQuestion =
+      currentQuestionIndex === currentSection.questions.length - 1;
     const isLastSection = currentSectionIndex === sections.length - 1;
 
     if (isLastQuestion && !isLastSection) {
-      set({ currentSectionIndex: currentSectionIndex + 1, currentQuestionIndex: 0 });
+      set({
+        currentSectionIndex: currentSectionIndex + 1,
+        currentQuestionIndex: 0,
+      });
     } else if (!isLastQuestion) {
       set({ currentQuestionIndex: currentQuestionIndex + 1 });
     }
@@ -148,36 +169,75 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   loadInitialData: async () => {
     set({ isLoading: true });
-    const activeSessionKey = getActiveSessionKey(get());
-    if (activeSessionKey) {
-      const savedSession = await loadQuestionnaireSession(activeSessionKey);
-      if (savedSession) {
+    const accessCode = getActiveAccessCode();
+
+    if (!accessCode) {
+      set({ ...initialState, isLoading: false });
+      return;
+    }
+
+    const latestSession = await loadLatestQuestionnaireSession(accessCode);
+
+    const startNewSession = async () => {
+      const now = Timestamp.now();
+      const newSessionData = {
+        answers: {},
+        currentSectionIndex: 0,
+        currentQuestionIndex: 0,
+        createdAt: now,
+        updatedAt: now,
+      };
+      const newSessionId = await createNewQuestionnaireSession(
+        accessCode,
+        newSessionData
+      );
+      set({ ...initialState, sessionId: newSessionId, isLoading: false });
+    };
+
+    if (latestSession && latestSession.updatedAt) {
+      const now = new Date();
+      const updatedAt = (latestSession.updatedAt as Timestamp).toDate();
+      const hoursDiff = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60);
+
+      if (hoursDiff < 24) {
+        // Continue existing session
         set({
-          answers: savedSession.answers || {},
-          currentSectionIndex: savedSession.currentSectionIndex || 0,
-          currentQuestionIndex: savedSession.currentQuestionIndex || 0,
+          answers: latestSession.answers || {},
+          currentSectionIndex: latestSession.currentSectionIndex || 0,
+          currentQuestionIndex: latestSession.currentQuestionIndex || 0,
+          sessionId: latestSession.id,
+          isLoading: false,
         });
+      } else {
+        // Session expired, start a new one
+        await startNewSession();
       }
     } else {
-      // If no user, reset to initial state but stop loading
-      set({ ...initialState, isLoading: false });
+      // No previous session found, start a new one
+      await startNewSession();
     }
-    set({ isLoading: false });
   },
 
-  setPatientId: (patientId) => set({ patientId, answers: {}, currentSectionIndex: 0, currentQuestionIndex: 0 }),
+  setPatientId: (patientId) => {
+    // This logic might need re-evaluation based on how patientId interacts with sessions
+    set({ ...initialState, patientId, sessionId: null });
+    // Potentially call loadInitialData() here if a patientId should have its own sessions
+  },
 
   saveFinalAnswers: async () => {
-    const activeSessionKey = getActiveSessionKey(get());
-    if (activeSessionKey) {
-      const { answers, currentSectionIndex, currentQuestionIndex } = get();
-       await saveQuestionnaireSession(activeSessionKey, {
+    const accessCode = getActiveAccessCode();
+    const { sessionId, answers, currentSectionIndex, currentQuestionIndex } =
+      get();
+
+    if (accessCode && sessionId) {
+      await updateQuestionnaireSession(accessCode, sessionId, {
         answers,
         currentSectionIndex,
         currentQuestionIndex,
+        updatedAt: Timestamp.now(),
       });
     }
   },
 
-  reset: () => set({ ...initialState, answers: {}, patientId: null }),
+  reset: () => set({ ...initialState }),
 }));

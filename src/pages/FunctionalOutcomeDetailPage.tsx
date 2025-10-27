@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { useQuestionnaireStore } from "@/stores/questionnaireStore";
+import { useUserStore } from "@/stores/userStore";
 import { ResultsSidebar } from "@/features/results/components/ResultsSidebar";
 import IconArray from "@/features/results/components/IconArray";
 import SurvivalDataTable from "@/features/results/components/SurvivalDataTable";
@@ -21,11 +22,19 @@ import { ResultsDesktopHeader } from "@/features/results/components/ResultsDeskt
 import { ResultsModal } from "@/features/results/components/ResultsModal";
 
 const FunctionalOutcomeDetailPage = () => {
-  const { answers, reset } = useQuestionnaireStore();
+  const { user } = useUserStore();
+  const { answers, reset, loadInitialData, isLoading } =
+    useQuestionnaireStore();
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
   const { outcome } = useParams<{ outcome: string }>();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      loadInitialData();
+    }
+  }, [user, loadInitialData]);
 
   const title = outcome
     ? outcome
@@ -59,7 +68,7 @@ const FunctionalOutcomeDetailPage = () => {
 
   const survivalOutcome = useMemo(() => {
     const age = parseInt(String(answers.age || "65"), 10);
-    const psa = parseInt(String(answers.psa || "8"), 10);
+    const psa = parseFloat(String(answers.psa || "8"));
     const tStage = String(answers.cancer_stage || "T2").replace("T", "");
     const gleasonScore = String(answers.gleason_score || "3+4");
 
@@ -109,6 +118,17 @@ const FunctionalOutcomeDetailPage = () => {
     reset();
     navigate("/introduction");
   };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+          <p className="text-lg text-gray-600">Loading details...</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
