@@ -62,7 +62,7 @@ export const useLoginForm = () => {
       localStorage.setItem('sessionStartTime', Date.now().toString());
       localStorage.setItem('compassAccessCode', submittedAccessCode);
 
-      if (user.role === 'staff') {
+      if (user.role === 'clinican') {
         navigate('/select-patient');
       } else {
         navigate('/introduction');

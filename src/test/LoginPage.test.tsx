@@ -133,7 +133,7 @@ describe("LoginPage", () => {
   it("logs in a staff member successfully and navigates to the select patient page", async () => {
     const mockUserDoc = {
       uid: "existing-uid",
-      role: "staff",
+      role: "clinican",
     };
     (getUserDocByAccessCode as Mock).mockResolvedValue(mockUserDoc);
 
@@ -153,7 +153,7 @@ describe("LoginPage", () => {
     // Verify that the user state is updated
     const userState = useUserStore.getState().user;
     expect(userState?.accessCode).toBe("staff-code");
-    expect(userState?.role).toBe("staff");
+    expect(userState?.role).toBe("clinican");
   });
 
   it("calls updateUserUid for a first-time login", async () => {
