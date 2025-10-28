@@ -49,7 +49,7 @@ type State = {
   currentSectionIndex: number;
   currentQuestionIndex: number;
   isLoading: boolean;
-  patientId: string | null; // For staff to manage patient sessions
+  patientId: string | null; // For clinican to manage patient sessions
   sessionId: string | null; // ID of the active session document in Firestore
 };
 
@@ -80,8 +80,10 @@ type Actions = {
 // --- Helper to get active user access code ---
 
 const getActiveAccessCode = (): string | null => {
-  // This function is simplified as patientId logic seems separate.
-  // We primarily use the logged-in user's access code.
+  const patientId = useQuestionnaireStore.getState().patientId;
+  if (patientId) {
+    return patientId;
+  }
   return useUserStore.getState().user?.accessCode || null;
 };
 
@@ -191,7 +193,13 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
         accessCode,
         newSessionData
       );
-      set({ ...initialState, sessionId: newSessionId, isLoading: false });
+      const currentPatientId = get().patientId;
+      set({
+        ...initialState,
+        patientId: currentPatientId,
+        sessionId: newSessionId,
+        isLoading: false,
+      });
     };
 
     if (latestSession && latestSession.updatedAt) {
@@ -219,9 +227,8 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   },
 
   setPatientId: (patientId) => {
-    // This logic might need re-evaluation based on how patientId interacts with sessions
     set({ ...initialState, patientId, sessionId: null });
-    // Potentially call loadInitialData() here if a patientId should have its own sessions
+    get().loadInitialData();
   },
 
   saveFinalAnswers: async () => {

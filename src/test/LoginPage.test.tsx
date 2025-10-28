@@ -130,7 +130,7 @@ describe("LoginPage", () => {
     expect(userState?.role).toBe("patient");
   });
 
-  it("logs in a staff member successfully and navigates to the select patient page", async () => {
+  it("logs in a clinican member successfully and navigates to the select patient page", async () => {
     const mockUserDoc = {
       uid: "existing-uid",
       role: "clinican",
@@ -142,7 +142,7 @@ describe("LoginPage", () => {
     const input = screen.getByLabelText("Access Code");
     const submitButton = screen.getByRole("button", { name: "Submit" });
 
-    await user.type(input, "staff-code");
+    await user.type(input, "clinican-code");
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -152,7 +152,7 @@ describe("LoginPage", () => {
 
     // Verify that the user state is updated
     const userState = useUserStore.getState().user;
-    expect(userState?.accessCode).toBe("staff-code");
+    expect(userState?.accessCode).toBe("clinican-code");
     expect(userState?.role).toBe("clinican");
   });
 

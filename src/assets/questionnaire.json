@@ -38,7 +38,7 @@
           "id": "cancer_stage",
           "text": "What stage was assigned to your prostate cancer?",
           "type": "radio",
-          "options": ["T2", "T3", "T4", "Unknown"],
+          "options": ["T2", "T3a", "T3b", "T4", "Unknown"],
           "required": true
         },
         {
