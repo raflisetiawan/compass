@@ -55,7 +55,7 @@ const UrinaryPadUsagePage = () => {
   const [isCategoryLegendOpen, setIsCategoryLegendOpen] = useState(false);
   const [legendModalData, setLegendModalData] = useState<{
     name: string;
-    data: any[];
+    data: { name: string; value: number; color: string; iconUrl: string }[];
   } | null>(null);
 
   useEffect(() => {
@@ -89,8 +89,8 @@ const UrinaryPadUsagePage = () => {
 
   const baselinePadStatus = useMemo(() => {
     const padUsage = answers.pad_usage || "No pads";
-    if (padUsage.includes("2 or more")) return "Using two or more pads a day";
-    if (padUsage.includes("1 pad")) return "Using one pad a day";
+    if (String(padUsage).includes("2 or more")) return "Using two or more pads a day";
+    if (String(padUsage).includes("1 pad")) return "Using one pad a day";
     return "Not using pad";
   }, [answers.pad_usage]);
 
@@ -106,8 +106,8 @@ const UrinaryPadUsagePage = () => {
     return treatments.map((treatment) => {
       const treatmentData = data[treatment]["Pad status at baseline"][baselinePadStatus];
       let notUsing = Math.round(treatmentData["Not using pad"]);
-      let onePad = Math.round(treatmentData["Using one pad a day"]);
-      let twoOrMorePads = Math.round(treatmentData["Using two or more pads a day"]);
+      const onePad = Math.round(treatmentData["Using one pad a day"]);
+      const twoOrMorePads = Math.round(treatmentData["Using two or more pads a day"]);
 
       const total = notUsing + onePad + twoOrMorePads;
       if (total !== 100) {

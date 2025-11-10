@@ -122,7 +122,7 @@ const IconArray = ({ data }: IconArrayProps) => {
                 arc.startAngle(Math.PI * 0.5).endAngle(Math.PI * 1.5);
                 group
                   .append("path")
-                  .attr("d", arc)
+                  .attr("d", arc())
                   .attr(
                     "transform",
                     `translate(${iconSize / 2}, ${iconSize / 2 + 1.5})`
@@ -133,7 +133,7 @@ const IconArray = ({ data }: IconArrayProps) => {
                 arc.startAngle(-Math.PI * 0.5).endAngle(Math.PI * 0.5);
                 group
                   .append("path")
-                  .attr("d", arc)
+                  .attr("d", arc())
                   .attr(
                     "transform",
                     `translate(${iconSize / 2}, ${iconSize / 2 + 3.5})`

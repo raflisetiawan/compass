@@ -86,8 +86,8 @@ const UrinaryLeakagePage = () => {
 
   const baselineLeakageStatus = useMemo(() => {
     const leakage = answers.urine_leak || "Rarely or never";
-    if (leakage.includes("day")) return "At least once a day";
-    if (leakage.includes("week")) return "At least once a week";
+    if (String(leakage).includes("day")) return "At least once a day";
+    if (String(leakage).includes("week")) return "At least once a week";
     return "Rarely or never";
   }, [answers.urine_leak]);
 
@@ -104,8 +104,8 @@ const UrinaryLeakagePage = () => {
       const treatmentData =
         data[treatment]["Baseline urine leakage"][baselineLeakageStatus];
       let rarely = Math.round(treatmentData["Rarely or never"]);
-      let weekly = Math.round(treatmentData["At least once a week"]);
-      let daily = Math.round(treatmentData["At least once a day"]);
+      const weekly = Math.round(treatmentData["At least once a week"]);
+      const daily = Math.round(treatmentData["At least once a day"]);
 
       const total = rarely + weekly + daily;
       if (total !== 100) {
