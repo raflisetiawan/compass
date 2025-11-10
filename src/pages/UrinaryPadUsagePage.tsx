@@ -20,6 +20,7 @@ import { ResultsDesktopHeader } from "@/features/results/components/ResultsDeskt
 import { ResultsModal } from "@/features/results/components/ResultsModal";
 import { TreatmentCategoryLegend } from "@/features/results/components/TreatmentCategoryLegend";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
+import UrinaryPadUsageTable from "@/features/results/components/UrinaryPadUsageTable";
 
 import sunUnderwear from "@/assets/img/icons/sun_underwear.png";
 import padWater from "@/assets/img/icons/pad_water.png";
@@ -182,8 +183,9 @@ const UrinaryPadUsagePage = () => {
 
             <div
               className={`w-full transition-all duration-300 ${
-                isSidebarExpanded ? "md/w-2/3" : "md/w-[calc(100%-5rem)]"
+                isSidebarExpanded ? "md:w-2/3" : "md:w-[calc(100%-5rem)]"
               }`}
+
             >
               <Button asChild variant="outline" className="mb-4">
                 <Link to="/results">
@@ -235,6 +237,37 @@ const UrinaryPadUsagePage = () => {
                             : treatment.name}
                         </h3>
                         <IconArray data={treatment.data} />
+                      </div>
+                    ))}
+                  </div>
+                  <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
+                  <UrinaryPadUsageTable data={treatmentOutcomes} />
+                  <h3 className="font-bold mt-6 mb-2 text-lg">Summary</h3>
+                  <div className="text-sm text-gray-600 space-y-4">
+                    <p>
+                      Based on the information you have entered, for men who are
+                      currently{" "}
+                      <span className="font-semibold">
+                        {baselinePadStatus.toLowerCase()}
+                      </span>
+                      , the outcomes at 1 year after treatment are:
+                    </p>
+                    {treatmentOutcomes.map((treatment) => (
+                      <div key={treatment.name}>
+                        <p className="font-semibold">
+                          For men who choose{" "}
+                          {treatment.name === "Radiotherapy"
+                            ? "Radiotherapy"
+                            : treatment.name}
+                          :
+                        </p>
+                        <ul className="list-disc list-inside pl-4">
+                          {treatment.data.map((outcome) => (
+                            <li key={outcome.name}>
+                              {outcome.value}%: {outcome.name}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     ))}
                   </div>
