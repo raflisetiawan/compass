@@ -1,0 +1,106 @@
+{
+  "Active Surveillance": {
+    "Total": 157,
+    "Not using pad": 146,
+    "Using one pad a day": 8,
+    "Using two or more pads a day": 3,
+    "Pad status at baseline": {
+      "Not using pad": {
+        "N": 148,
+        "Not using pad": 96,
+        "Using one pad a day": 4,
+        "Using two or more pads a day": 1
+      },
+      "Using one pad a day": {
+        "N": 8,
+        "Not using pad": 50,
+        "Using one pad a day": 50,
+        "Using two or more pads a day": 0
+      },
+      "Using two or more pads a day": {
+        "N": 1,
+        "Not using pad": 0,
+        "Using one pad a day": 0,
+        "Using two or more pads a day": 100
+      }
+    }
+  },
+  "Focal Therapy": {
+    "Total": 202,
+    "Not using pad": 190,
+    "Using one pad a day": 8,
+    "Using two or more pads a day": 3,
+    "Pad status at baseline": {
+      "Not using pad": {
+        "N": 198,
+        "Not using pad": 95,
+        "Using one pad a day": 4,
+        "Using two or more pads a day": 1
+      },
+      "Using one pad a day": {
+        "N": 1,
+        "Not using pad": 100,
+        "Using one pad a day": 0,
+        "Using two or more pads a day": 0
+      },
+      "Using two or more pads a day": {
+        "N": 2,
+        "Not using pad": 0,
+        "Using one pad a day": 50,
+        "Using two or more pads a day": 50
+      }
+    }
+  },
+  "Surgery": {
+    "Total": 284,
+    "Not using pad": 182,
+    "Using one pad a day": 77,
+    "Using two or more pads a day": 25,
+    "Pad status at baseline": {
+      "Not using pad": {
+        "N": 278,
+        "Not using pad": 65,
+        "Using one pad a day": 27,
+        "Using two or more pads a day": 8
+      },
+      "Using one pad a day": {
+        "N": 3,
+        "Not using pad": 33,
+        "Using one pad a day": 34,
+        "Using two or more pads a day": 33
+      },
+      "Using two or more pads a day": {
+        "N": 3,
+        "Not using pad": 0,
+        "Using one pad a day": 67,
+        "Using two or more pads a day": 33
+      }
+    }
+  },
+  "Radiotherapy": {
+    "Total": 284,
+    "Not using pad": 182,
+    "Using one pad a day": 77,
+    "Using two or more pads a day": 25,
+    "Pad status at baseline": {
+      "Not using pad": {
+        "N": 278,
+        "Not using pad": 65,
+        "Using one pad a day": 27,
+        "Using two or more pads a day": 8
+      },
+      "Using one pad a day": {
+        "N": 3,
+        "Not using pad": 33,
+        "Using one pad a day": 34,
+        "Using two or more pads a day": 33
+      },
+      "Using two or more pads a day": {
+        "N": 3,
+        "Not using pad": 0,
+        "Using one pad a day": 67,
+        "Using two or more pads a day": 33
+      }
+    }
+  }
+}

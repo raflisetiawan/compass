@@ -10,6 +10,8 @@ import ResultsPage from './pages/ResultsPage';
 import SelectPatientPage from './pages/SelectPatientPage'; // Import the new page
 import AboutPage from './pages/AboutPage';
 import FunctionalOutcomeDetailPage from './pages/FunctionalOutcomeDetailPage';
+import UrinaryLeakagePage from './pages/UrinaryLeakagePage';
+import UrinaryPadUsagePage from './pages/UrinaryPadUsagePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AnimatedPage from './components/AnimatedPage';
 
@@ -41,8 +43,14 @@ function App() {
         title = 'About | COMPASS';
         break;
       case '/functional-outcome':
-        const outcomeTitle = pathParts[1] ? pathParts[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Detail';
-        title = `${outcomeTitle} | COMPASS`;
+        if (pathParts[1] === 'leaking-urine-at-one-year') {
+          title = 'Urinary Leakage Outcome | COMPASS';
+        } else if (pathParts[1] === 'use-of-urinary-pads-at-one-year') {
+          title = 'Urinary Pad Usage | COMPASS';
+        } else {
+          const outcomeTitle = pathParts[1] ? pathParts[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Detail';
+          title = `${outcomeTitle} | COMPASS`;
+        }
         break;
     }
     document.title = title;
@@ -75,6 +83,14 @@ function App() {
         <Route
           path="/about"
           element={<AnimatedPage><AboutPage /></AnimatedPage>}
+        />
+        <Route
+          path="/functional-outcome/leaking-urine-at-one-year"
+          element={<ProtectedRoute><AnimatedPage><UrinaryLeakagePage /></AnimatedPage></ProtectedRoute>}
+        />
+        <Route
+          path="/functional-outcome/use-of-urinary-pads-at-one-year"
+          element={<ProtectedRoute><AnimatedPage><UrinaryPadUsagePage /></AnimatedPage></ProtectedRoute>}
         />
         <Route
           path="/functional-outcome/:outcome"

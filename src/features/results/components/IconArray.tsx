@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import ReactDOMServer from "react-dom/server";
 
 interface IconArrayProps {
-  data: { name: string; value: number; color: string }[];
+  data: {
+    name: string;
+    value: number;
+    color: string;
+    Icon?: React.ElementType;
+    iconUrl?: string;
+  }[];
 }
 
 const IconArray = ({ data }: IconArrayProps) => {
@@ -22,8 +29,6 @@ const IconArray = ({ data }: IconArrayProps) => {
       const svg = d3.select(ref.current);
       svg.selectAll("*").remove(); // Clear previous render
 
-      const isMobile = windowWidth < 768; // Tailwind's md breakpoint
-
       const total = 100;
       const numRows = 10;
       const numCols = 10;
@@ -33,23 +38,25 @@ const IconArray = ({ data }: IconArrayProps) => {
       const iconGridWidth = numCols * (iconSize + padding);
       const iconGridHeight = numRows * (iconSize + padding);
 
-      const legendWidth = 250; // Space for legend
-      const legendHeight = data.length * 25 + 40; // Estimated height for the legend
-
-      const width = isMobile ? iconGridWidth : iconGridWidth + legendWidth;
-      const height = isMobile
-        ? iconGridHeight + legendHeight + 30
-        : iconGridHeight;
-
       svg
-        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("viewBox", `0 0 ${iconGridWidth} ${iconGridHeight}`)
         .attr("width", "100%")
         .attr("height", "100%");
 
-      const iconsData: { color: string; category: string }[] = [];
+      const iconsData: {
+        color: string;
+        category: string;
+        Icon?: React.ElementType;
+        iconUrl?: string;
+      }[] = [];
       data.forEach((d) => {
         for (let i = 0; i < d.value; i++) {
-          iconsData.push({ color: d.color, category: d.name });
+          iconsData.push({
+            color: d.color,
+            category: d.name,
+            Icon: d.Icon,
+            iconUrl: d.iconUrl,
+          });
         }
       });
 
@@ -66,142 +73,78 @@ const IconArray = ({ data }: IconArrayProps) => {
           return `translate(${x}, ${y})`;
         });
 
-      iconGroups
-        .append("circle")
-        .attr("r", iconSize / 2)
-        .attr("cx", iconSize / 2)
-        .attr("cy", iconSize / 2)
-        .attr("fill", (_d, i) => iconsData[i]?.color || "#ccc");
-
-      iconGroups
-        .append("circle")
-        .attr("r", 1)
-        .attr("cx", iconSize / 2 - 3)
-        .attr("cy", iconSize / 2 - 1.5)
-        .attr("fill", "black");
-      iconGroups
-        .append("circle")
-        .attr("r", 1)
-        .attr("cx", iconSize / 2 + 3)
-        .attr("cy", iconSize / 2 - 1.5)
-        .attr("fill", "black");
-
-      iconGroups
-        .filter((_d, i) => iconsData[i]?.category === "Alive")
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc<void, void>()
-            .innerRadius(iconSize / 5)
-            .outerRadius(iconSize / 5)
-            .startAngle(Math.PI * 0.5)
-            .endAngle(Math.PI * 1.5)()
-        )
-        .attr("transform", `translate(${iconSize / 2}, ${iconSize / 2 + 1.5})`)
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("fill", "none");
-      iconGroups
-        .filter((_d, i) => iconsData[i]?.category !== "Alive")
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc<void, void>()
-            .innerRadius(iconSize / 5)
-            .outerRadius(iconSize / 5)
-            .startAngle(-Math.PI * 0.5)
-            .endAngle(Math.PI * 0.5)()
-        )
-        .attr("transform", `translate(${iconSize / 2}, ${iconSize / 2 + 3.5})`)
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("fill", "none");
-
-      // Legend
-      const legend = svg.append("g").attr("transform", () => {
-        if (isMobile) {
-          const legendX = (iconGridWidth - legendWidth) / 2;
-          return `translate(${legendX > 0 ? legendX : 0}, ${
-            iconGridHeight + 40
-          })`;
+      iconGroups.each(function (_d, i) {
+        const group = d3.select(this);
+        const item = iconsData[i];
+        if (item) {
+          if (item.iconUrl) {
+            group
+              .append("image")
+              .attr("href", item.iconUrl)
+              .attr("width", iconSize)
+              .attr("height", iconSize);
+          } else if (item.Icon) {
+            const IconComponent = item.Icon;
+            const iconHtml = ReactDOMServer.renderToString(
+              <IconComponent color={item.color} size={iconSize} />
+            );
+            group
+              .append("foreignObject")
+              .attr("width", iconSize)
+              .attr("height", iconSize)
+              .html(iconHtml);
+          } else {
+            // Fallback for survival icons
+            if (item.category === "Alive" || item.category.includes("Death")) {
+              group
+                .append("circle")
+                .attr("r", iconSize / 2)
+                .attr("cx", iconSize / 2)
+                .attr("cy", iconSize / 2)
+                .attr("fill", item.color);
+              group
+                .append("circle")
+                .attr("r", 1)
+                .attr("cx", iconSize / 2 - 3)
+                .attr("cy", iconSize / 2 - 1.5)
+                .attr("fill", "black");
+              group
+                .append("circle")
+                .attr("r", 1)
+                .attr("cx", iconSize / 2 + 3)
+                .attr("cy", iconSize / 2 - 1.5)
+                .attr("fill", "black");
+              const arc = d3
+                .arc<void>()
+                .innerRadius(iconSize / 5)
+                .outerRadius(iconSize / 5);
+              if (item.category === "Alive") {
+                arc.startAngle(Math.PI * 0.5).endAngle(Math.PI * 1.5);
+                group
+                  .append("path")
+                  .attr("d", arc)
+                  .attr(
+                    "transform",
+                    `translate(${iconSize / 2}, ${iconSize / 2 + 1.5})`
+                  )
+                  .attr("stroke", "black")
+                  .attr("stroke-width", 1);
+              } else {
+                arc.startAngle(-Math.PI * 0.5).endAngle(Math.PI * 0.5);
+                group
+                  .append("path")
+                  .attr("d", arc)
+                  .attr(
+                    "transform",
+                    `translate(${iconSize / 2}, ${iconSize / 2 + 3.5})`
+                  )
+                  .attr("stroke", "black")
+                  .attr("stroke-width", 1);
+              }
+            }
+          }
         }
-        return `translate(${iconGridWidth + 20}, 10)`;
       });
-
-      legend.append("text").text("Legend:").attr("font-weight", "bold");
-
-      const legendItems = legend
-        .selectAll(".legend-item")
-        .data(data)
-        .enter()
-        .append("g")
-        .attr("class", "legend-item")
-        .attr("transform", (_d, i) => `translate(0, ${i * 25 + 20})`);
-
-      const legendIconGroup = legendItems.append("g");
-
-      legendIconGroup
-        .append("circle")
-        .attr("r", iconSize / 2)
-        .attr("cx", iconSize / 2)
-        .attr("cy", iconSize / 2)
-        .attr("fill", (d) => d.color);
-
-      legendIconGroup
-        .append("circle")
-        .attr("r", 1)
-        .attr("cx", iconSize / 2 - 3)
-        .attr("cy", iconSize / 2 - 1.5)
-        .attr("fill", "black");
-      legendIconGroup
-        .append("circle")
-        .attr("r", 1)
-        .attr("cx", iconSize / 2 + 3)
-        .attr("cy", iconSize / 2 - 1.5)
-        .attr("fill", "black");
-
-      legendIconGroup
-        .filter((d) => d.name === "Alive")
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc<void, void>()
-            .innerRadius(iconSize / 5)
-            .outerRadius(iconSize / 5)
-            .startAngle(Math.PI * 0.5)
-            .endAngle(Math.PI * 1.5)()
-        )
-        .attr("transform", `translate(${iconSize / 2}, ${iconSize / 2 + 1.5})`)
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("fill", "none");
-
-      legendIconGroup
-        .filter((d) => d.name !== "Alive")
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc<void, void>()
-            .innerRadius(iconSize / 5)
-            .outerRadius(iconSize / 5)
-            .startAngle(-Math.PI * 0.5)
-            .endAngle(Math.PI * 0.5)()
-        )
-        .attr("transform", `translate(${iconSize / 2}, ${iconSize / 2 + 3.5})`)
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("fill", "none");
-
-      legendItems
-        .append("text")
-        .attr("x", iconSize + 10)
-        .attr("y", iconSize / 2 + 5)
-        .text((d) => `${d.name} (${d.value}%)`)
-        .attr("font-size", "11px");
     }
   }, [data, windowWidth]);
 

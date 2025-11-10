@@ -1,0 +1,452 @@
+[
+  {
+    "T Stage": "2",
+    "Grade Group": 1,
+    "PSA": "0-",
+    "Total": 732,
+    "No_Radiotherapy_n": 681,
+    "No_Radiotherapy_%": 93.03,
+    "Radiotherapy_n": 51,
+    "Radiotherapy_%": 6.97
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 1,
+    "PSA": "10-",
+    "Total": 184,
+    "No_Radiotherapy_n": 173,
+    "No_Radiotherapy_%": 94.02,
+    "Radiotherapy_n": 11,
+    "Radiotherapy_%": 5.98
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 1,
+    "PSA": "20-",
+    "Total": 24,
+    "No_Radiotherapy_n": 22,
+    "No_Radiotherapy_%": 91.67,
+    "Radiotherapy_n": 2,
+    "Radiotherapy_%": 8.33
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 2,
+    "PSA": "0-",
+    "Total": 3487,
+    "No_Radiotherapy_n": 3230,
+    "No_Radiotherapy_%": 92.63,
+    "Radiotherapy_n": 257,
+    "Radiotherapy_%": 7.37
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 2,
+    "PSA": "10-",
+    "Total": 871,
+    "No_Radiotherapy_n": 741,
+    "No_Radiotherapy_%": 85.07,
+    "Radiotherapy_n": 130,
+    "Radiotherapy_%": 14.93
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 2,
+    "PSA": "20-",
+    "Total": 163,
+    "No_Radiotherapy_n": 145,
+    "No_Radiotherapy_%": 88.96,
+    "Radiotherapy_n": 18,
+    "Radiotherapy_%": 11.04
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 3,
+    "PSA": "0-",
+    "Total": 1265,
+    "No_Radiotherapy_n": 1102,
+    "No_Radiotherapy_%": 87.11,
+    "Radiotherapy_n": 163,
+    "Radiotherapy_%": 12.89
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 3,
+    "PSA": "10-",
+    "Total": 442,
+    "No_Radiotherapy_n": 351,
+    "No_Radiotherapy_%": 79.41,
+    "Radiotherapy_n": 91,
+    "Radiotherapy_%": 20.59
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 3,
+    "PSA": "20-",
+    "Total": 92,
+    "No_Radiotherapy_n": 71,
+    "No_Radiotherapy_%": 77.17,
+    "Radiotherapy_n": 21,
+    "Radiotherapy_%": 22.83
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 4,
+    "PSA": "0-",
+    "Total": 473,
+    "No_Radiotherapy_n": 389,
+    "No_Radiotherapy_%": 82.24,
+    "Radiotherapy_n": 84,
+    "Radiotherapy_%": 17.76
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 4,
+    "PSA": "10-",
+    "Total": 169,
+    "No_Radiotherapy_n": 122,
+    "No_Radiotherapy_%": 72.19,
+    "Radiotherapy_n": 47,
+    "Radiotherapy_%": 27.81
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 4,
+    "PSA": "20-",
+    "Total": 24,
+    "No_Radiotherapy_n": 13,
+    "No_Radiotherapy_%": 54.17,
+    "Radiotherapy_n": 11,
+    "Radiotherapy_%": 45.83
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 5,
+    "PSA": "0-",
+    "Total": 220,
+    "No_Radiotherapy_n": 158,
+    "No_Radiotherapy_%": 71.82,
+    "Radiotherapy_n": 62,
+    "Radiotherapy_%": 28.18
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 5,
+    "PSA": "10-",
+    "Total": 99,
+    "No_Radiotherapy_n": 72,
+    "No_Radiotherapy_%": 72.73,
+    "Radiotherapy_n": 27,
+    "Radiotherapy_%": 27.27
+  },
+  {
+    "T Stage": "2",
+    "Grade Group": 5,
+    "PSA": "20-",
+    "Total": 24,
+    "No_Radiotherapy_n": 11,
+    "No_Radiotherapy_%": 45.83,
+    "Radiotherapy_n": 13,
+    "Radiotherapy_%": 54.17
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 1,
+    "PSA": "0-",
+    "Total": 158,
+    "No_Radiotherapy_n": 140,
+    "No_Radiotherapy_%": 88.61,
+    "Radiotherapy_n": 18,
+    "Radiotherapy_%": 11.39
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 1,
+    "PSA": "10-",
+    "Total": 49,
+    "No_Radiotherapy_n": 37,
+    "No_Radiotherapy_%": 75.51,
+    "Radiotherapy_n": 12,
+    "Radiotherapy_%": 24.49
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 1,
+    "PSA": "20-",
+    "Total": null,
+    "No_Radiotherapy_n": null,
+    "No_Radiotherapy_%": null,
+    "Radiotherapy_n": null,
+    "Radiotherapy_%": null
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 2,
+    "PSA": "0-",
+    "Total": 1596,
+    "No_Radiotherapy_n": 1343,
+    "No_Radiotherapy_%": 84.15,
+    "Radiotherapy_n": 253,
+    "Radiotherapy_%": 15.85
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 2,
+    "PSA": "10-",
+    "Total": 587,
+    "No_Radiotherapy_n": 429,
+    "No_Radiotherapy_%": 73.08,
+    "Radiotherapy_n": 158,
+    "Radiotherapy_%": 26.92
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 2,
+    "PSA": "20-",
+    "Total": 183,
+    "No_Radiotherapy_n": 120,
+    "No_Radiotherapy_%": 65.57,
+    "Radiotherapy_n": 63,
+    "Radiotherapy_%": 34.43
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 3,
+    "PSA": "0-",
+    "Total": 865,
+    "No_Radiotherapy_n": 616,
+    "No_Radiotherapy_%": 71.21,
+    "Radiotherapy_n": 249,
+    "Radiotherapy_%": 28.79
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 3,
+    "PSA": "10-",
+    "Total": 458,
+    "No_Radiotherapy_n": 275,
+    "No_Radiotherapy_%": 60.04,
+    "Radiotherapy_n": 183,
+    "Radiotherapy_%": 39.96
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 3,
+    "PSA": "20-",
+    "Total": 123,
+    "No_Radiotherapy_n": 71,
+    "No_Radiotherapy_%": 57.72,
+    "Radiotherapy_n": 52,
+    "Radiotherapy_%": 42.28
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 4,
+    "PSA": "0-",
+    "Total": 304,
+    "No_Radiotherapy_n": 197,
+    "No_Radiotherapy_%": 64.8,
+    "Radiotherapy_n": 107,
+    "Radiotherapy_%": 35.2
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 4,
+    "PSA": "10-",
+    "Total": 180,
+    "No_Radiotherapy_n": 98,
+    "No_Radiotherapy_%": 54.44,
+    "Radiotherapy_n": 82,
+    "Radiotherapy_%": 45.56
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 4,
+    "PSA": "20-",
+    "Total": 66,
+    "No_Radiotherapy_n": 36,
+    "No_Radiotherapy_%": 54.55,
+    "Radiotherapy_n": 30,
+    "Radiotherapy_%": 45.45
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 5,
+    "PSA": "0-",
+    "Total": 308,
+    "No_Radiotherapy_n": 173,
+    "No_Radiotherapy_%": 56.17,
+    "Radiotherapy_n": 135,
+    "Radiotherapy_%": 43.83
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 5,
+    "PSA": "10-",
+    "Total": 179,
+    "No_Radiotherapy_n": 80,
+    "No_Radiotherapy_%": 44.69,
+    "Radiotherapy_n": 99,
+    "Radiotherapy_%": 55.31
+  },
+  {
+    "T Stage": "3a",
+    "Grade Group": 5,
+    "PSA": "20-",
+    "Total": 67,
+    "No_Radiotherapy_n": 19,
+    "No_Radiotherapy_%": 28.36,
+    "Radiotherapy_n": 48,
+    "Radiotherapy_%": 71.64
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 1,
+    "PSA": "0-",
+    "Total": null,
+    "No_Radiotherapy_n": null,
+    "No_Radiotherapy_%": null,
+    "Radiotherapy_n": null,
+    "Radiotherapy_%": null
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 1,
+    "PSA": "10-",
+    "Total": null,
+    "No_Radiotherapy_n": null,
+    "No_Radiotherapy_%": null,
+    "Radiotherapy_n": null,
+    "Radiotherapy_%": null
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 1,
+    "PSA": "20-",
+    "Total": null,
+    "No_Radiotherapy_n": null,
+    "No_Radiotherapy_%": null,
+    "Radiotherapy_n": null,
+    "Radiotherapy_%": null
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 2,
+    "PSA": "0-",
+    "Total": 137,
+    "No_Radiotherapy_n": 74,
+    "No_Radiotherapy_%": 54.01,
+    "Radiotherapy_n": 63,
+    "Radiotherapy_%": 45.99
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 2,
+    "PSA": "10-",
+    "Total": 103,
+    "No_Radiotherapy_n": 55,
+    "No_Radiotherapy_%": 53.4,
+    "Radiotherapy_n": 48,
+    "Radiotherapy_%": 46.6
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 2,
+    "PSA": "20-",
+    "Total": 40,
+    "No_Radiotherapy_n": 15,
+    "No_Radiotherapy_%": 37.5,
+    "Radiotherapy_n": 25,
+    "Radiotherapy_%": 62.5
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 3,
+    "PSA": "0-",
+    "Total": 174,
+    "No_Radiotherapy_n": 80,
+    "No_Radiotherapy_%": 45.98,
+    "Radiotherapy_n": 94,
+    "Radiotherapy_%": 54.02
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 3,
+    "PSA": "10-",
+    "Total": 128,
+    "No_Radiotherapy_n": 44,
+    "No_Radiotherapy_%": 34.38,
+    "Radiotherapy_n": 84,
+    "Radiotherapy_%": 65.63
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 3,
+    "PSA": "20-",
+    "Total": 84,
+    "No_Radiotherapy_n": 24,
+    "No_Radiotherapy_%": 28.57,
+    "Radiotherapy_n": 60,
+    "Radiotherapy_%": 71.43
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 4,
+    "PSA": "0-",
+    "Total": 63,
+    "No_Radiotherapy_n": 24,
+    "No_Radiotherapy_%": 38.1,
+    "Radiotherapy_n": 39,
+    "Radiotherapy_%": 61.9
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 4,
+    "PSA": "10-",
+    "Total": 51,
+    "No_Radiotherapy_n": 17,
+    "No_Radiotherapy_%": 33.33,
+    "Radiotherapy_n": 34,
+    "Radiotherapy_%": 66.67
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 4,
+    "PSA": "20-",
+    "Total": null,
+    "No_Radiotherapy_n": null,
+    "No_Radiotherapy_%": null,
+    "Radiotherapy_n": null,
+    "Radiotherapy_%": null
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 5,
+    "PSA": "0-",
+    "Total": 135,
+    "No_Radiotherapy_n": 44,
+    "No_Radiotherapy_%": 32.59,
+    "Radiotherapy_n": 91,
+    "Radiotherapy_%": 67.41
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 5,
+    "PSA": "10-",
+    "Total": 87,
+    "No_Radiotherapy_n": 21,
+    "No_Radiotherapy_%": 24.14,
+    "Radiotherapy_n": 66,
+    "Radiotherapy_%": 75.86
+  },
+  {
+    "T Stage": "3b",
+    "Grade Group": 5,
+    "PSA": "20-",
+    "Total": 57,
+    "No_Radiotherapy_n": 12,
+    "No_Radiotherapy_%": 21.05,
+    "Radiotherapy_n": 45,
+    "Radiotherapy_%": 78.95
+  }
+]

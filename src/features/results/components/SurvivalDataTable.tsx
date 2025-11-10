@@ -7,7 +7,9 @@ interface SurvivalDataTableProps {
 const SurvivalDataTable = ({ data }: SurvivalDataTableProps) => {
   if (!data) {
     return (
-      <p className="text-sm text-gray-500">Data for the table is not available.</p>
+      <p className="text-sm text-gray-500">
+        Data for the table is not available.
+      </p>
     );
   }
 

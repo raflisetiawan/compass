@@ -20,6 +20,7 @@ import type {
 import { ResultsMobileHeader } from "@/features/results/components/ResultsMobileHeader";
 import { ResultsDesktopHeader } from "@/features/results/components/ResultsDesktopHeader";
 import { ResultsModal } from "@/features/results/components/ResultsModal";
+import LegendIcon from "@/features/results/components/LegendIcon";
 
 const FunctionalOutcomeDetailPage = () => {
   const { user } = useUserStore();
@@ -171,7 +172,19 @@ const FunctionalOutcomeDetailPage = () => {
                     what happens those men after 5 years from receiving their
                     diagnosis of prostate cancer.
                   </p>
-                  <IconArray data={iconArrayData} />
+                  <div className="flex flex-col md:flex-row md:items-start gap-4">
+                    <IconArray data={iconArrayData} />
+                    <div className="flex flex-wrap gap-4 md:mt-0">
+                      {iconArrayData.map((item) => (
+                        <div key={item.name} className="flex items-center gap-2">
+                          <LegendIcon color={item.color} name={item.name} />
+                          <span className="text-sm text-gray-700">
+                            {item.name} ({item.value}%)
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
                   <SurvivalDataTable data={survivalOutcome} />
                   <h3 className="font-bold mt-6 mb-2 text-lg">Summary</h3>

@@ -1,0 +1,106 @@
+{
+  "Active Surveillance": {
+    "Total": 155,
+    "Rarely or never": 90,
+    "At least once a week": 33,
+    "At least once a day": 32,
+    "Baseline urine leakage": {
+      "Rarely or never": {
+        "N": 104,
+        "Rarely or never": 76,
+        "At least once a week": 14,
+        "At least once a day": 10
+      },
+      "At least once a week": {
+        "N": 28,
+        "Rarely or never": 29,
+        "At least once a week": 46,
+        "At least once a day": 25
+      },
+      "At least once a day": {
+        "N": 23,
+        "Rarely or never": 13,
+        "At least once a week": 22,
+        "At least once a day": 65
+      }
+    }
+  },
+  "Focal Therapy": {
+    "Total": 202,
+    "Rarely or never": 152,
+    "At least once a week": 30,
+    "At least once a day": 20,
+    "Baseline urine leakage": {
+      "Rarely or never": {
+        "N": 166,
+        "Rarely or never": 83,
+        "At least once a week": 10,
+        "At least once a day": 7
+      },
+      "At least once a week": {
+        "N": 22,
+        "Rarely or never": 45,
+        "At least once a week": 37,
+        "At least once a day": 18
+      },
+      "At least once a day": {
+        "N": 14,
+        "Rarely or never": 29,
+        "At least once a week": 43,
+        "At least once a day": 29
+      }
+    }
+  },
+  "Surgery": {
+    "Total": 287,
+    "Rarely or never": 125,
+    "At least once a week": 64,
+    "At least once a day": 98,
+    "Baseline urine leakage": {
+      "Rarely or never": {
+        "N": 221,
+        "Rarely or never": 51,
+        "At least once a week": 21,
+        "At least once a day": 28
+      },
+      "At least once a week": {
+        "N": 34,
+        "Rarely or never": 24,
+        "At least once a week": 35,
+        "At least once a day": 41
+      },
+      "At least once a day": {
+        "N": 32,
+        "Rarely or never": 12,
+        "At least once a week": 19,
+        "At least once a day": 69
+      }
+    }
+  },
+  "RadioTherapy": {
+    "Total": 374,
+    "Rarely or never": 229,
+    "At least once a week": 86,
+    "At least once a day": 59,
+    "Baseline urine leakage": {
+      "Rarely or never": {
+        "N": 273,
+        "Rarely or never": 73,
+        "At least once a week": 17,
+        "At least once a day": 10
+      },
+      "At least once a week": {
+        "N": 61,
+        "Rarely or never": 28,
+        "At least once a week": 46,
+        "At least once a day": 26
+      },
+      "At least once a day": {
+        "N": 40,
+        "Rarely or never": 32,
+        "At least once a week": 28,
+        "At least once a day": 40
+      }
+    }
+  }
+}

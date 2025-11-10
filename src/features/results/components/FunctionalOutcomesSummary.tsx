@@ -7,42 +7,50 @@ import type { SurvivalData } from "@/types";
 const functionalOutcomes = [
   {
     title: "Survival after prostate cancer treatment",
+    slug: "survival-after-prostate-cancer-treatment",
     description: "% are alive at 5 years after diagnosis",
   },
   {
-    title: "Pad Free",
-    description: "% of Men who wear no pad",
+    title: "Leaking urine at 1 year",
+    slug: "leaking-urine-at-one-year",
+    description: "How leaking status changes at 1 year from starting treatment.",
+  },
+  {
+    title: "Use of urinary pads at 1 year",
+    slug: "use-of-urinary-pads-at-one-year",
+    description: "How pad usage status changes at 1 year from starting treatment.",
   },
   {
     title: "Urinary Bother",
+    slug: "urinary-bother",
     description:
       "% of Men or whom their urinary function is not considered to be a problem",
   },
   {
     title: "Sufficient erections for intercourse",
+    slug: "sufficient-erections-for-intercourse",
     description:
       "% of men whose erections are sufficient for intercourse with or without use of medications or sexual devices",
   },
   {
     title: "Sexual bother",
+    slug: "sexual-bother",
     description:
       "% of men for whom their sexual function is not considered to be a problem",
   },
   {
     title: "Problem with urgency",
+    slug: "problem-with-urgency",
     description:
       "% of men for whom their urgency to have a bowel movement is not considered to be a problem",
   },
   {
     title: "Bowel bother",
+    slug: "bowel-bother",
     description:
       "% of men for whom their bowel function is not considered to be a problem",
   },
 ];
-
-const titleToSlug = (title: string) => {
-  return title.toLowerCase().replace(/\s+/g, "-");
-};
 
 interface FunctionalOutcomesSummaryProps {
   survivalOutcome: SurvivalData | undefined;
@@ -80,7 +88,7 @@ export const FunctionalOutcomesSummary = ({
               </CardContent>
               <div className="p-4 pt-0">
                 <Button asChild variant="link" className="p-0 h-auto text-teal-600">
-                  <Link to={`/functional-outcome/${titleToSlug(item.title)}`}>
+                  <Link to={`/functional-outcome/${item.slug}`}>
                     Read More <ChevronRight className="h-4 w-4 ml-1" />
                   </Link>
                 </Button>
