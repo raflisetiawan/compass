@@ -1,0 +1,106 @@
+{
+  "Active Surveillance": {
+    "Total": 158,
+    "No problem": 108,
+    "Very/small problem": 44,
+    "Moderate/big problem": 6,
+    "Baseline bowel bother": {
+      "No problem": {
+        "N": 112,
+        "No problem": 80,
+        "Very/small problem": 19,
+        "Moderate/big problem": 1
+      },
+      "Very/small problem": {
+        "N": 41,
+        "No problem": 41,
+        "Very/small problem": 49,
+        "Moderate/big problem": 10
+      },
+      "Moderate/big problem": {
+        "N": 5,
+        "No problem": 20,
+        "Very/small problem": 60,
+        "Moderate/big problem": 20
+      }
+    }
+  },
+  "Focal Therapy": {
+    "Total": 202,
+    "No problem": 151,
+    "Very/small problem": 45,
+    "Moderate/big problem": 6,
+    "Baseline bowel bother": {
+      "No problem": {
+        "N": 165,
+        "No problem": 81,
+        "Very/small problem": 17,
+        "Moderate/big problem": 2
+      },
+      "Very/small problem": {
+        "N": 33,
+        "No problem": 52,
+        "Very/small problem": 42,
+        "Moderate/big problem": 6
+      },
+      "Moderate/big problem": {
+        "N": 4,
+        "No problem": 25,
+        "Very/small problem": 50,
+        "Moderate/big problem": 25
+      }
+    }
+  },
+  "Surgery": {
+    "Total": 289,
+    "No problem": 240,
+    "Very/small problem": 41,
+    "Moderate/big problem": 8,
+    "Baseline bowel bother": {
+      "No problem": {
+        "N": 239,
+        "No problem": 89,
+        "Very/small problem": 10,
+        "Moderate/big problem": 1
+      },
+      "Very/small problem": {
+        "N": 42,
+        "No problem": 60,
+        "Very/small problem": 36,
+        "Moderate/big problem": 5
+      },
+      "Moderate/big problem": {
+        "N": 8,
+        "No problem": 25,
+        "Very/small problem": 25,
+        "Moderate/big problem": 50
+      }
+    }
+  },
+  "Radiotherapy": {
+    "Total": 375,
+    "No problem": 208,
+    "Very/small problem": 132,
+    "Moderate/big problem": 35,
+    "Baseline bowel bother": {
+      "No problem": {
+        "N": 274,
+        "No problem": 66,
+        "Very/small problem": 27,
+        "Moderate/big problem": 7
+      },
+      "Very/small problem": {
+        "N": 85,
+        "No problem": 25,
+        "Very/small problem": 60,
+        "Moderate/big problem": 15
+      },
+      "Moderate/big problem": {
+        "N": 16,
+        "No problem": 44,
+        "Very/small problem": 44,
+        "Moderate/big problem": 12
+      }
+    }
+  }
+}

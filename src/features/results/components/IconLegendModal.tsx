@@ -50,7 +50,7 @@ export const IconLegendModal = ({
                 ) : item.Icon ? (
                   <item.Icon
                     className="h-6 w-6 mr-3"
-                    style={{ color: item.color }}
+                    color={item.color} // Pass color directly as a prop
                   />
                 ) : null}
                 <span className="text-base">{`${item.value}% - ${item.name}`}</span>

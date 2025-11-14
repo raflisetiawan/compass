@@ -1,0 +1,153 @@
+{
+  "TOTAL": {
+    "Total": 148,
+    "Firm intercourse": 54,
+    "Firm masturbation": 34,
+    "Not firm - no assist": 45,
+    "Not firm - with assist": 15,
+    "Baseline erectile quality": {
+      "Firm intercourse": {
+        "N": 65,
+        "Firm intercourse": 73,
+        "Firm masturbation": 17,
+        "Not firm - no assist": 9,
+        "Not firm - with assist": 1
+      },
+      "Firm masturbation": {
+        "N": 32,
+        "Firm intercourse": 6,
+        "Firm masturbation": 26,
+        "Not firm - no assist": 3,
+        "Not firm - with assist": 0
+      },
+      "Not firm - no assist": {
+        "N": 36,
+        "Firm intercourse": 5,
+        "Firm masturbation": 14,
+        "Not firm - no assist": 14,
+        "Not firm - with assist": 3
+      },
+      "Not firm - with assist": {
+        "N": 15,
+        "Firm intercourse": 1,
+        "Firm masturbation": 4,
+        "Not firm - no assist": 4,
+        "Not firm - with assist": 6
+      }
+    }
+  },
+
+  "Focal Therapy": {
+    "Total": 194,
+    "Firm intercourse": 73,
+    "Firm masturbation": 52,
+    "Not firm - no assist": 57,
+    "Not firm - with assist": 12,
+    "Baseline erectile quality": {
+      "Firm intercourse": {
+        "N": 97,
+        "Firm intercourse": 66,
+        "Firm masturbation": 20,
+        "Not firm - no assist": 10,
+        "Not firm - with assist": 1
+      },
+      "Firm masturbation": {
+        "N": 39,
+        "Firm intercourse": 30,
+        "Firm masturbation": 20,
+        "Not firm - no assist": 6,
+        "Not firm - with assist": 3
+      },
+      "Not firm - no assist": {
+        "N": 52,
+        "Firm intercourse": 5,
+        "Firm masturbation": 16,
+        "Not firm - no assist": 22,
+        "Not firm - with assist": 9
+      },
+      "Not firm - with assist": {
+        "N": 6,
+        "Firm intercourse": 1,
+        "Firm masturbation": 1,
+        "Not firm - no assist": 2,
+        "Not firm - with assist": 2
+      }
+    }
+  },
+
+  "Surgery": {
+    "Total": 283,
+    "Firm intercourse": 22,
+    "Firm masturbation": 53,
+    "Not firm - no assist": 92,
+    "Not firm - with assist": 116,
+    "Baseline erectile quality": {
+      "Firm intercourse": {
+        "N": 142,
+        "Firm intercourse": 13,
+        "Firm masturbation": 25,
+        "Not firm - no assist": 22,
+        "Not firm - with assist": 82
+      },
+      "Firm masturbation": {
+        "N": 67,
+        "Firm intercourse": 3,
+        "Firm masturbation": 17,
+        "Not firm - no assist": 46,
+        "Not firm - with assist": 41
+      },
+      "Not firm - no assist": {
+        "N": 58,
+        "Firm intercourse": 1,
+        "Firm masturbation": 9,
+        "Not firm - no assist": 29,
+        "Not firm - with assist": 19
+      },
+      "Not firm - with assist": {
+        "N": 16,
+        "Firm intercourse": 0,
+        "Firm masturbation": 2,
+        "Not firm - no assist": 4,
+        "Not firm - with assist": 10
+      }
+    }
+  },
+
+  "Radiotherapy": {
+    "Total": 343,
+    "Firm intercourse": 21,
+    "Firm masturbation": 31,
+    "Not firm - no assist": 251,
+    "Not firm - with assist": 40,
+    "Baseline erectile quality": {
+      "Firm intercourse": {
+        "N": 73,
+        "Firm intercourse": 23,
+        "Firm masturbation": 25,
+        "Not firm - no assist": 40,
+        "Not firm - with assist": 5
+      },
+      "Firm masturbation": {
+        "N": 68,
+        "Firm intercourse": 6,
+        "Firm masturbation": 28,
+        "Not firm - no assist": 32,
+        "Not firm - with assist": 2
+      },
+      "Not firm - no assist": {
+        "N": 168,
+        "Firm intercourse": 3,
+        "Firm masturbation": 8,
+        "Not firm - no assist": 121,
+        "Not firm - with assist": 36
+      },
+      "Not firm - with assist": {
+        "N": 34,
+        "Firm intercourse": 0,
+        "Firm masturbation": 3,
+        "Not firm - no assist": 14,
+        "Not firm - with assist": 17
+      }
+    }
+  }
+}

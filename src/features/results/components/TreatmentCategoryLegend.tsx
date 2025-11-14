@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -30,7 +25,7 @@ export const TreatmentCategoryLegend = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+    <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-50 flex justify-center items-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="relative pb-2">
           <CardTitle>Treatment Categories</CardTitle>
@@ -45,14 +40,16 @@ export const TreatmentCategoryLegend = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {Object.entries(treatmentDescriptions).map(([name, description]) => (
-              <div key={name}>
-                <h4 className="font-bold">
-                  {name === "RadioTherapy" ? "Radiotherapy" : name}
-                </h4>
-                <p className="text-sm text-gray-600">{description}</p>
-              </div>
-            ))}
+            {Object.entries(treatmentDescriptions).map(
+              ([name, description]) => (
+                <div key={name}>
+                  <h4 className="font-bold">
+                    {name === "RadioTherapy" ? "Radiotherapy" : name}
+                  </h4>
+                  <p className="text-sm text-gray-600">{description}</p>
+                </div>
+              )
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
@@ -11,7 +10,13 @@ import SelectPatientPage from './pages/SelectPatientPage'; // Import the new pag
 import AboutPage from './pages/AboutPage';
 import FunctionalOutcomeDetailPage from './pages/FunctionalOutcomeDetailPage';
 import UrinaryLeakagePage from './pages/UrinaryLeakagePage';
-import UrinaryPadUsagePage from './pages/UrinaryPadUsagePage';
+import UrinaryPadUsagePage from "./pages/UrinaryPadUsagePage";
+import UrinaryBotherPage from "./pages/UrinaryBotherPage";
+import SexualBotherPage from "./pages/SexualBotherPage";
+import BowelBotherPage from "./pages/BowelBotherPage";
+import ErectileFunctionPage from "./pages/ErectileFunctionPage";
+import ProblemWithUrgencyPage from "./pages/ProblemWithUrgencyPage";
+import { Toaster } from "@/components/ui/sonner";
 import ProtectedRoute from './components/ProtectedRoute';
 import AnimatedPage from './components/AnimatedPage';
 
@@ -57,47 +62,70 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route
-          path="/login"
-          element={<AnimatedPage><LoginPage /></AnimatedPage>}
-        />
-        <Route
-          path="/select-patient"
-          element={<ProtectedRoute><AnimatedPage><SelectPatientPage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/introduction"
-          element={<ProtectedRoute><AnimatedPage><IntroductionPage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/questionnaire"
-          element={<ProtectedRoute><AnimatedPage><QuestionnairePage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/results"
-          element={<ProtectedRoute><AnimatedPage><ResultsPage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/about"
-          element={<AnimatedPage><AboutPage /></AnimatedPage>}
-        />
-        <Route
-          path="/functional-outcome/leaking-urine-at-one-year"
-          element={<ProtectedRoute><AnimatedPage><UrinaryLeakagePage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/functional-outcome/use-of-urinary-pads-at-one-year"
-          element={<ProtectedRoute><AnimatedPage><UrinaryPadUsagePage /></AnimatedPage></ProtectedRoute>}
-        />
-        <Route
-          path="/functional-outcome/:outcome"
-          element={<ProtectedRoute><AnimatedPage><FunctionalOutcomeDetailPage /></AnimatedPage></ProtectedRoute>}
-        />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <Toaster />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route
+            path="/login"
+            element={<AnimatedPage><LoginPage /></AnimatedPage>}
+          />
+          <Route
+            path="/select-patient"
+            element={<ProtectedRoute><AnimatedPage><SelectPatientPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/introduction"
+            element={<ProtectedRoute><AnimatedPage><IntroductionPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/questionnaire"
+            element={<ProtectedRoute><AnimatedPage><QuestionnairePage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/results"
+            element={<ProtectedRoute><AnimatedPage><ResultsPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/about"
+            element={<AnimatedPage><AboutPage /></AnimatedPage>}
+          />
+          <Route
+            path="/functional-outcome/leaking-urine-at-one-year"
+            element={<ProtectedRoute><AnimatedPage><UrinaryLeakagePage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/use-of-urinary-pads-at-one-year"
+            element={<ProtectedRoute><AnimatedPage><UrinaryPadUsagePage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/urinary-bother"
+            element={<ProtectedRoute><AnimatedPage><UrinaryBotherPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/sexual-bother"
+            element={<ProtectedRoute><AnimatedPage><SexualBotherPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/bowel-bother"
+            element={<ProtectedRoute><AnimatedPage><BowelBotherPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/sufficient-erections-for-intercourse"
+            element={<ProtectedRoute><AnimatedPage><ErectileFunctionPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/problem-with-urgency"
+            element={<ProtectedRoute><AnimatedPage><ProblemWithUrgencyPage /></AnimatedPage></ProtectedRoute>}
+          />
+          <Route
+            path="/functional-outcome/:outcome"
+            element={<ProtectedRoute><AnimatedPage><FunctionalOutcomeDetailPage /></AnimatedPage></ProtectedRoute>}
+          />
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 }
 

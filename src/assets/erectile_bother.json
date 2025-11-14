@@ -1,0 +1,106 @@
+{
+  "Active Surveillance": {
+    "Total": 153,
+    "No problem": 63,
+    "Very/small problem": 42,
+    "Moderate/big problem": 48,
+    "Baseline sexual bother": {
+      "No problem": {
+        "N": 72,
+        "No problem": 75,
+        "Very/small problem": 15,
+        "Moderate/big problem": 10
+      },
+      "Very/small problem": {
+        "N": 31,
+        "No problem": 21,
+        "Very/small problem": 59,
+        "Moderate/big problem": 20
+      },
+      "Moderate/big problem": {
+        "N": 40,
+        "No problem": 0,
+        "Very/small problem": 18,
+        "Moderate/big problem": 82
+      }
+    }
+  },
+  "Focal Therapy": {
+    "Total": 202,
+    "No problem": 72,
+    "Very/small problem": 86,
+    "Moderate/big problem": 4,
+    "Baseline sexual bother": {
+      "No problem": {
+        "N": 112,
+        "No problem": 50,
+        "Very/small problem": 38,
+        "Moderate/big problem": 12
+      },
+      "Very/small problem": {
+        "N": 59,
+        "No problem": 20,
+        "Very/small problem": 61,
+        "Moderate/big problem": 19
+      },
+      "Moderate/big problem": {
+        "N": 31,
+        "No problem": 13,
+        "Very/small problem": 23,
+        "Moderate/big problem": 64
+      }
+    }
+  },
+  "Surgery": {
+    "Total": 285,
+    "No problem": 39,
+    "Very/small problem": 91,
+    "Moderate/big problem": 155,
+    "Baseline sexual bother": {
+      "No problem": {
+        "N": 128,
+        "No problem": 20,
+        "Very/small problem": 37,
+        "Moderate/big problem": 43
+      },
+      "Very/small problem": {
+        "N": 87,
+        "No problem": 10,
+        "Very/small problem": 37,
+        "Moderate/big problem": 53
+      },
+      "Moderate/big problem": {
+        "N": 70,
+        "No problem": 6,
+        "Very/small problem": 17,
+        "Moderate/big problem": 77
+      }
+    }
+  },
+  "Radiotherapy": {
+    "Total": 349,
+    "No problem": 107,
+    "Very/small problem": 87,
+    "Moderate/big problem": 155,
+    "Baseline sexual bother": {
+      "No problem": {
+        "N": 129,
+        "No problem": 52,
+        "Very/small problem": 20,
+        "Moderate/big problem": 28
+      },
+      "Very/small problem": {
+        "N": 112,
+        "No problem": 21,
+        "Very/small problem": 40,
+        "Moderate/big problem": 39
+      },
+      "Moderate/big problem": {
+        "N": 108,
+        "No problem": 16,
+        "Very/small problem": 15,
+        "Moderate/big problem": 69
+      }
+    }
+  }
+}

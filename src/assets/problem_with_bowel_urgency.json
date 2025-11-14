@@ -1,0 +1,117 @@
+{
+  "Active_Surveillance": {
+    "Totals": {
+      "Total": 158,
+      "No_problem": 95,
+      "Very_small_problem": 51,
+      "Moderate_big_problem": 12
+    },
+    "Baseline": {
+      "No_problem": {
+        "N": 101,
+        "No_problem_%": 74,
+        "Very_small_problem_%": 23,
+        "Moderate_big_problem_%": 3
+      },
+      "Very_small_problem": {
+        "N": 51,
+        "No_problem_%": 33,
+        "Very_small_problem_%": 51,
+        "Moderate_big_problem_%": 16
+      },
+      "Moderate_big_problem": {
+        "N": 6,
+        "No_problem_%": 50,
+        "Very_small_problem_%": 33,
+        "Moderate_big_problem_%": 17
+      }
+    }
+  },
+
+  "Focal": {
+    "Totals": {
+      "Total": 201,
+      "No_problem": 141,
+      "Very_small_problem": 49,
+      "Moderate_big_problem": 11
+    },
+    "Baseline": {
+      "No_problem": {
+        "N": 162,
+        "No_problem_%": 77,
+        "Very_small_problem_%": 19,
+        "Moderate_big_problem_%": 4
+      },
+      "Very_small_problem": {
+        "N": 32,
+        "No_problem_%": 47,
+        "Very_small_problem_%": 44,
+        "Moderate_big_problem_%": 9
+      },
+      "Moderate_big_problem": {
+        "N": 7,
+        "No_problem_%": 14,
+        "Very_small_problem_%": 72,
+        "Moderate_big_problem_%": 14
+      }
+    }
+  },
+
+  "Surgery": {
+    "Totals": {
+      "Total": 291,
+      "No_problem": 229,
+      "Very_small_problem": 51,
+      "Moderate_big_problem": 11
+    },
+    "Baseline": {
+      "No_problem": {
+        "N": 234,
+        "No_problem_%": 85,
+        "Very_small_problem_%": 13,
+        "Moderate_big_problem_%": 2
+      },
+      "Very_small_problem": {
+        "N": 46,
+        "No_problem_%": 59,
+        "Very_small_problem_%": 37,
+        "Moderate_big_problem_%": 4
+      },
+      "Moderate_big_problem": {
+        "N": 11,
+        "No_problem_%": 18,
+        "Very_small_problem_%": 45,
+        "Moderate_big_problem_%": 37
+      }
+    }
+  },
+
+  "EBRT": {
+    "Totals": {
+      "Total": 377,
+      "No_problem": 173,
+      "Very_small_problem": 143,
+      "Moderate_big_problem": 61
+    },
+    "Baseline": {
+      "No_problem": {
+        "N": 267,
+        "No_problem_%": 58,
+        "Very_small_problem_%": 30,
+        "Moderate_big_problem_%": 12
+      },
+      "Very_small_problem": {
+        "N": 96,
+        "No_problem_%": 12,
+        "Very_small_problem_%": 65,
+        "Moderate_big_problem_%": 23
+      },
+      "Moderate_big_problem": {
+        "N": 14,
+        "No_problem_%": 43,
+        "Very_small_problem_%": 7,
+        "Moderate_big_problem_%": 50
+      }
+    }
+  }
+}

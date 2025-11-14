@@ -1,0 +1,106 @@
+{
+  "Active Surveillance": {
+    "Total": 158,
+    "No problem": 54,
+    "Very/small problem": 85,
+    "Moderate/big problem": 19,
+    "Baseline urinary bother": {
+      "No problem": {
+        "N": 59,
+        "No problem": 69,
+        "Very/small problem": 29,
+        "Moderate/big problem": 2
+      },
+      "Very/small problem": {
+        "N": 75,
+        "No problem": 16,
+        "Very/small problem": 72,
+        "Moderate/big problem": 12
+      },
+      "Moderate/big problem": {
+        "N": 24,
+        "No problem": 4,
+        "Very/small problem": 58,
+        "Moderate/big problem": 38
+      }
+    }
+  },
+  "Focal Therapy": {
+    "Total": 201,
+    "No problem": 104,
+    "Very/small problem": 90,
+    "Moderate/big problem": 7,
+    "Baseline urinary bother": {
+      "No problem": {
+        "N": 103,
+        "No problem": 66,
+        "Very/small problem": 32,
+        "Moderate/big problem": 2
+      },
+      "Very/small problem": {
+        "N": 81,
+        "No problem": 36,
+        "Very/small problem": 60,
+        "Moderate/big problem": 4
+      },
+      "Moderate/big problem": {
+        "N": 17,
+        "No problem": 41,
+        "Very/small problem": 47,
+        "Moderate/big problem": 12
+      }
+    }
+  },
+  "Surgery": {
+    "Total": 288,
+    "No problem": 135,
+    "Very/small problem": 126,
+    "Moderate/big problem": 27,
+    "Baseline urinary bother": {
+      "No problem": {
+        "N": 141,
+        "No problem": 60,
+        "Very/small problem": 36,
+        "Moderate/big problem": 4
+      },
+      "Very/small problem": {
+        "N": 103,
+        "No problem": 39,
+        "Very/small problem": 51,
+        "Moderate/big problem": 10
+      },
+      "Moderate/big problem": {
+        "N": 44,
+        "No problem": 25,
+        "Very/small problem": 50,
+        "Moderate/big problem": 25
+      }
+    }
+  },
+  "Radiotherapy": {
+    "Total": 371,
+    "No problem": 148,
+    "Very/small problem": 179,
+    "Moderate/big problem": 44,
+    "Baseline urinary bother": {
+      "No problem": {
+        "N": 151,
+        "No problem": 59,
+        "Very/small problem": 38,
+        "Moderate/big problem": 3
+      },
+      "Very/small problem": {
+        "N": 172,
+        "No problem": 28,
+        "Very/small problem": 59,
+        "Moderate/big problem": 13
+      },
+      "Moderate/big problem": {
+        "N": 48,
+        "No problem": 23,
+        "Very/small problem": 42,
+        "Moderate/big problem": 35
+      }
+    }
+  }
+}
