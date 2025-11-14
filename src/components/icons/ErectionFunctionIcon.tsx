@@ -28,7 +28,14 @@ const ErectionFunctionIcon: React.FC<ErectionFunctionIconProps> = ({
       />
       {/* capsule icon */}
       {withAssist && (
-        <svg x="6" y="9" width="12" height="6" viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          x="6"
+          y="9"
+          width="12"
+          height="6"
+          viewBox="0 0 80 40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M 20,0 L 40,0 L 40,40 L 20,40 A 20,20 0 0 1 20,0 Z"
             fill="#3B5998"
@@ -43,7 +50,7 @@ const ErectionFunctionIcon: React.FC<ErectionFunctionIconProps> = ({
             d="M 20,0 A 20,20 0 0 0 20,40 L 60,40 A 20,20 0 0 0 60,0 Z"
             fill="none"
             stroke="#D0D0D0"
-            stroke-width="1.5"
+            strokeWidth="1.5"
           />
         </svg>
       )}

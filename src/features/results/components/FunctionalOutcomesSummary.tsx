@@ -1,58 +1,9 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 import type { SurvivalData } from "@/types";
-
-const functionalOutcomes = [
-  {
-    title: "Survival after prostate cancer treatment",
-    slug: "survival-after-prostate-cancer-treatment",
-    description: "% are alive at 5 years after diagnosis",
-  },
-  {
-    title: "Leaking urine at 1 year",
-    slug: "leaking-urine-at-one-year",
-    description:
-      "How leaking status changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Use of urinary pads at 1 year",
-    slug: "use-of-urinary-pads-at-one-year",
-    description:
-      "How pad usage status changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Urinary Bother",
-    slug: "urinary-bother",
-    description:
-      "How bother with urinary function changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Erectile function at 1 year",
-    slug: "sufficient-erections-for-intercourse",
-    description:
-      "How erectile function changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Bother with erectile function at 1 year",
-    slug: "sexual-bother",
-    description:
-      "How bother with erectile function changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Problem with bowel urgency at 1 year",
-    slug: "problem-with-urgency",
-    description:
-      "How the degree of problem with bowel urgency changes at 1 year from starting treatment.",
-  },
-  {
-    title: "Bowel bother at 1 year",
-    slug: "bowel-bother",
-    description:
-      "How bother with bowel function changes at 1 year from starting treatment.",
-  },
-];
+import { functionalOutcomes } from '@/data/functional-outcomes';
+import { FunctionalOutcomeCard } from './FunctionalOutcomeCard';
 
 interface FunctionalOutcomesSummaryProps {
   survivalOutcome: SurvivalData | undefined;
@@ -60,59 +11,44 @@ interface FunctionalOutcomesSummaryProps {
 
 export const FunctionalOutcomesSummary = ({
   survivalOutcome,
-}: FunctionalOutcomesSummaryProps) => (
-  <Card>
-    <CardHeader className="text-center p-4">
-      <CardTitle className="text-xl font-bold mt-4">
-        Summary Table of Functional Outcomes
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {functionalOutcomes.map((item) => {
-          let description = item.description;
-          if (item.title === "Survival after prostate cancer treatment") {
-            if (survivalOutcome && survivalOutcome["Alive (%)"]) {
-              const alivePercent = Number(survivalOutcome["Alive (%)"]).toFixed(
-                1
-              );
-              description = `${alivePercent}% are alive at 5 years after diagnosis`;
-            } else {
-              description = "Data not available for the selected parameters.";
-            }
-          }
+}: FunctionalOutcomesSummaryProps) => {
+  const outcomesWithDynamicData = useMemo(() => {
+    return functionalOutcomes.map((item) => {
+      if (item.slug === "survival-after-prostate-cancer-treatment") {
+        let description: string;
+        if (survivalOutcome && survivalOutcome["Alive (%)"]) {
+          const alivePercent = Number(survivalOutcome["Alive (%)"]).toFixed(1);
+          description = `${alivePercent}% are alive at 5 years after diagnosis`;
+        } else {
+          description = "Data not available for the selected parameters.";
+        }
+        return { ...item, description };
+      }
+      return item;
+    });
+  }, [survivalOutcome]);
 
-          return (
-            <Card
-              key={item.title}
-              className="shadow-md rounded-lg border flex flex-col"
-            >
-              <CardContent className="p-4 flex-grow">
-                <h4 className="font-bold text-teal-600">{item.title}</h4>
-                <p className="text-sm text-gray-600 mt-2">{description}</p>
-              </CardContent>
-              <div className="p-4 pt-0">
-                <Button
-                  asChild
-                  variant="link"
-                  className="p-0 h-auto text-teal-600"
-                >
-                  <Link to={`/functional-outcome/${item.slug}`}>
-                    Read More <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-      <div className="mt-6 bg-blue-100 text-blue-800 p-4 rounded-lg flex items-start gap-3">
-        <AlertCircle className="h-5 w-5 mt-1 flex-shrink-0" />
-        <p className="text-sm">
-          These definitions correspond to the lowest score (1 out of 5) of their
-          corresponding EPIC-26 questions.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
-);
+  return (
+    <Card>
+      <CardHeader className="text-center p-4">
+        <CardTitle className="text-xl font-bold mt-4">
+          Summary Table of Functional Outcomes
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {outcomesWithDynamicData.map((item) => (
+            <FunctionalOutcomeCard key={item.slug} outcome={item} />
+          ))}
+        </div>
+        <div className="mt-6 bg-blue-100 text-blue-800 p-4 rounded-lg flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 mt-1 flex-shrink-0" />
+          <p className="text-sm">
+            These definitions correspond to the lowest score (1 out of 5) of their
+            corresponding EPIC-26 questions.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
