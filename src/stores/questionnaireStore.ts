@@ -5,40 +5,22 @@ import {
   loadLatestQuestionnaireSession,
   createNewQuestionnaireSession,
   updateQuestionnaireSession,
+  updateUserLastLogin,
   type QuestionnaireSession,
 } from "@/services/firebase";
 import { useUserStore } from "./userStore";
 import { debounce } from "@/lib/utils";
+import type {
+  Section,
+  Answers,
+  Errors,
+  QuestionnaireData,
+} from "@/types/questionnaire";
 
-// --- Type Definitions ---
+// --- Constants ---
 
-export interface Question {
-  id: string;
-  text: string;
-  type: "radio" | "select" | "number";
-  options?: (string | { label: string; value: string | number })[];
-  placeholder?: string;
-  unit?: string;
-  validation?: { min?: number; max?: number; required?: boolean };
-  required?: boolean;
-}
-
-export interface Section {
-  section: string;
-  questions: Question[];
-}
-
-interface QuestionnaireData {
-  questionnaire: Section[];
-}
-
-export type Answers = {
-  [questionId: string]: string | number;
-};
-
-export type Errors = {
-  [questionId: string]: string | undefined;
-};
+const DEBOUNCE_DELAY = 1500;
+const SESSION_EXPIRY_HOURS = 24;
 
 // --- Store Definition ---
 
@@ -77,7 +59,7 @@ type Actions = {
   reset: () => void;
 };
 
-// --- Helper to get active user access code ---
+// --- Helpers ---
 
 const getActiveAccessCode = (): string | null => {
   const patientId = useQuestionnaireStore.getState().patientId;
@@ -85,6 +67,16 @@ const getActiveAccessCode = (): string | null => {
     return patientId;
   }
   return useUserStore.getState().user?.accessCode || null;
+};
+
+const shouldStartNewSession = (latestSession: QuestionnaireSession | null): boolean => {
+  if (!latestSession || !latestSession.createdAt) return true;
+
+  const now = new Date();
+  const createdAt = (latestSession.createdAt as Timestamp).toDate();
+  const hoursDiff = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+
+  return hoursDiff >= SESSION_EXPIRY_HOURS;
 };
 
 // --- Debounced Save Function ---
@@ -98,7 +90,7 @@ const debouncedUpdateSession = debounce(
     if (!accessCode || !sessionId) return;
     updateQuestionnaireSession(accessCode, sessionId, session);
   },
-  1500
+  DEBOUNCE_DELAY
 );
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
@@ -178,6 +170,9 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
       return;
     }
 
+    // Update last login
+    updateUserLastLogin(accessCode);
+
     const latestSession = await loadLatestQuestionnaireSession(accessCode);
 
     const startNewSession = async () => {
@@ -203,27 +198,17 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
       });
     };
 
-    if (latestSession && latestSession.updatedAt) {
-      const now = new Date();
-      const updatedAt = (latestSession.updatedAt as Timestamp).toDate();
-      const hoursDiff = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60);
-
-      if (hoursDiff < 24) {
-        // Continue existing session
-        set({
-          answers: latestSession.answers || {},
-          currentSectionIndex: latestSession.currentSectionIndex || 0,
-          currentQuestionIndex: latestSession.currentQuestionIndex || 0,
-          sessionId: latestSession.id,
-          isLoading: false,
-        });
-      } else {
-        // Session expired, start a new one
-        await startNewSession();
-      }
-    } else {
-      // No previous session found, start a new one
+    if (shouldStartNewSession(latestSession)) {
       await startNewSession();
+    } else if (latestSession) {
+      // Continue existing session
+      set({
+        answers: latestSession.answers || {},
+        currentSectionIndex: latestSession.currentSectionIndex || 0,
+        currentQuestionIndex: latestSession.currentQuestionIndex || 0,
+        sessionId: latestSession.id,
+        isLoading: false,
+      });
     }
   },
 

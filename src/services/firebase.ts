@@ -83,6 +83,15 @@ export const updateUserUid = async (accessCode: string, uid: string) => {
   }
 };
 
+export const updateUserLastLogin = async (accessCode: string) => {
+  try {
+    const userDocRef = doc(db, USERS_COLLECTION, accessCode);
+    await updateDoc(userDocRef, { lastLoginAt: Timestamp.now() });
+  } catch (error) {
+    console.error("Error updating user last login: ", error);
+  }
+};
+
 
 // --- Questionnaire Session Management ---
 

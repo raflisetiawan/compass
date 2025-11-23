@@ -2,6 +2,7 @@ export type User = {
   uid?: string;
   role: 'clinican' | 'patient';
   accessCode?: string;
+  lastLoginAt?: any; // Using any to avoid import issues, but conceptually Timestamp
 };
 
 export type ClinicalParameters = { [key: string]: string | number };

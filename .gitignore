@@ -24,10 +24,10 @@ dist-ssr
 *.sln
 *.sw?
 
-GEMINI.md
 
 .firebase
 .gemini
 .gemini/*
 
+GEMINI.md
 .me
