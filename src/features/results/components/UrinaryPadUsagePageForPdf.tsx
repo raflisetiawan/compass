@@ -5,7 +5,7 @@ import UrinaryPadUsageTable from "@/features/results/components/UrinaryPadUsageT
 import sunUnderwear from "@/assets/img/icons/sun_underwear.png";
 import padWater from "@/assets/img/icons/pad_water.png";
 import darkPadWater from "@/assets/img/icons/dark_pad_water.png";
-import { QuestionnaireAnswers } from "@/types";
+import type { Answers } from "@/stores/questionnaireStore";
 
 type PadUsageOutcome = {
   N: number;
@@ -25,7 +25,7 @@ type TreatmentData = {
 };
 
 interface UrinaryPadUsagePageForPdfProps {
-  answers: QuestionnaireAnswers;
+  answers: Answers;
 }
 
 const UrinaryPadUsagePageForPdf = ({
@@ -51,7 +51,7 @@ const UrinaryPadUsagePageForPdf = ({
     return treatments.map((treatment) => {
       const treatmentData =
         data[treatment]["Pad status at baseline"][
-          baselinePadStatus as keyof (typeof data)[string]["Pad status at baseline"]
+        baselinePadStatus as keyof (typeof data)[string]["Pad status at baseline"]
         ];
       let notUsing = Math.round(treatmentData["Not using pad"]);
       const onePad = Math.round(treatmentData["Using one pad a day"]);

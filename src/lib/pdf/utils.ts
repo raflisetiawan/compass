@@ -24,10 +24,21 @@ export const renderChartToImage = async (
     const root = ReactDOM.createRoot(tempContainer);
     root.render(React.createElement(Component, props));
 
-    // Wait for rendering - 200ms is a good balance between speed and reliability
+    // 200ms wait time - balanced for speed and reliability
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    const canvas = await html2canvas(tempContainer, { scale });
+    // Optimized html2canvas settings for faster PDF generation
+    const canvas = await html2canvas(tempContainer, {
+        scale,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+        logging: false, // Disable logging for performance
+        imageTimeout: 0, // Don't wait for external images
+        removeContainer: false, // We'll handle cleanup
+        windowWidth: tempContainer.scrollWidth,
+        windowHeight: tempContainer.scrollHeight
+    });
 
     root.unmount();
     document.body.removeChild(tempContainer);
