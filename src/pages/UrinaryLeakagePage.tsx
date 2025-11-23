@@ -40,7 +40,7 @@ const UrinaryLeakagePageContent = () => {
 
   const treatmentOutcomes = useMemo(() => {
     const data: TreatmentData = urinaryLeakageData;
-    const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "RadioTherapy"];
+    const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
 
     return treatments.map((treatment) => {
       const treatmentData = data[treatment]["Baseline urine leakage"][baselineLeakageStatus as keyof typeof data[string]['Baseline urine leakage']];
@@ -91,7 +91,7 @@ const UrinaryLeakagePageContent = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name === "RadioTherapy" ? "Radiotherapy" : treatment.name}</h3>
+            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -106,7 +106,7 @@ const UrinaryLeakagePageContent = () => {
         </p>
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name}>
-            <p className="font-semibold">For men who choose {treatment.name === "RadioTherapy" ? "Radiotherapy" : treatment.name}:</p>
+            <p className="font-semibold">For men who choose {treatment.name}:</p>
             <ul className="list-disc list-inside pl-4">
               {treatment.data.map((outcome) => (
                 <li key={outcome.name}>{outcome.value}% will be {outcome.name.toLowerCase()}.</li>
@@ -119,7 +119,7 @@ const UrinaryLeakagePageContent = () => {
         <IconLegendModal
           isOpen={!!legendModalData}
           onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name === "RadioTherapy" ? "Radiotherapy" : legendModalData.name}`}
+          title={`Legend for ${legendModalData.name}`}
           legendData={legendModalData.data}
         />
       )}

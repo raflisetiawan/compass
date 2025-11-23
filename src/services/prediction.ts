@@ -22,11 +22,13 @@ export const getGradeGroup = (gleasonScore: string | undefined): number => {
       return 3;
     case "4+4":
     case "8":
+    case "4+4 / 3+5 / 5+3":
       return 4;
     case "4+5":
     case "5+4":
     case "9":
     case "10":
+    case "4+5 / 5+4 / 5+5":
       return 5;
     default:
       return 1;

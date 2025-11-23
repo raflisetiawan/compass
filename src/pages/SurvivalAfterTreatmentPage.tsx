@@ -14,10 +14,23 @@ const SurvivalAfterTreatmentPageContent = () => {
   const survivalOutcome = useMemo(() => {
     const age = parseInt(String(answers.age || "65"), 10);
     const psa = parseFloat(String(answers.psa || "8"));
-    const tStage = String(answers.cancer_stage || "T2").replace("T", "");
+    let tStage = String(answers.cancer_stage || "T2").replace("T", "");
+
+    // Apply T-stage fixes to match PDF logic
+    if (tStage === "4") {
+      tStage = "3b"; // Map T4 to 3b as T4 is not in the dataset
+    }
+    if (tStage === "Unknown") {
+      tStage = "2"; // Default to T2 if unknown
+    }
+
     const gleasonScore = String(answers.gleason_score || "3+4");
 
-    const ageGroup = getAgeGroup(age);
+    let ageGroup = getAgeGroup(age);
+    // Fix: Map age groups 65- and 70- to 60- as the JSON only supports 60-
+    if (ageGroup === '65-' || ageGroup === '70-') {
+      ageGroup = '60-';
+    }
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
 
@@ -46,15 +59,25 @@ const SurvivalAfterTreatmentPageContent = () => {
 
     return [
       { name: "Alive", value: alive, color: "#8BC34A" },
-      { name: "Death (from prostate cancer)", value: pcaDeath, color: "#F44336" },
-      { name: "Death (from other causes)", value: otherDeath, color: "#9E9E9E" },
+      {
+        name: "Death (from prostate cancer)",
+        value: pcaDeath,
+        color: "#F44336",
+      },
+      {
+        name: "Death (from other causes)",
+        value: otherDeath,
+        color: "#9E9E9E",
+      },
     ];
   }, [survivalOutcome]);
 
   return (
     <>
       <p className="text-sm text-gray-600 mb-4">
-        The following graph represents 100 men with the same characteristics that you have indicated. The icon plot shows what happens those men after 5 years from receiving their diagnosis of prostate cancer.
+        The following graph represents 100 men with the same characteristics
+        that you have indicated. The icon plot shows what happens those men
+        after 5 years from receiving their diagnosis of prostate cancer.
       </p>
       <div className="flex flex-col md:flex-row md:items-start gap-4">
         <IconArray data={iconArrayData} />
@@ -62,7 +85,9 @@ const SurvivalAfterTreatmentPageContent = () => {
           {iconArrayData.map((item) => (
             <div key={item.name} className="flex items-center gap-2">
               <LegendIcon color={item.color} name={item.name} />
-              <span className="text-sm text-gray-700">{item.name} ({item.value}%)</span>
+              <span className="text-sm text-gray-700">
+                {item.name} ({item.value}%)
+              </span>
             </div>
           ))}
         </div>
@@ -74,9 +99,18 @@ const SurvivalAfterTreatmentPageContent = () => {
         <div className="text-sm text-gray-600 space-y-2">
           <p>Based on the information you have entered:</p>
           <ul className="list-disc list-inside pl-4">
-            <li>{iconArrayData[0].value}% of men who are diagnosed with prostate cancer in the UK will be alive at 5 years.</li>
-            <li>{iconArrayData[1].value}% of men will have died from prostate cancer.</li>
-            <li>{iconArrayData[2].value}% of men will have died from causes that are not related to prostate cancer.</li>
+            <li>
+              {iconArrayData[0].value}% of men who are diagnosed with prostate
+              cancer in the UK will be alive at 5 years.
+            </li>
+            <li>
+              {iconArrayData[1].value}% of men will have died from prostate
+              cancer.
+            </li>
+            <li>
+              {iconArrayData[2].value}% of men will have died from causes that
+              are not related to prostate cancer.
+            </li>
           </ul>
         </div>
       )}
