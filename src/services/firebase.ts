@@ -97,6 +97,8 @@ export interface QuestionnaireSession {
   currentQuestionIndex: number;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  completedAt?: Timestamp;
+  userAgent: string;
 }
 
 /**

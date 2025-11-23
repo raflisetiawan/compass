@@ -188,6 +188,7 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
         currentQuestionIndex: 0,
         createdAt: now,
         updatedAt: now,
+        userAgent: navigator.userAgent,
       };
       const newSessionId = await createNewQuestionnaireSession(
         accessCode,
@@ -242,6 +243,7 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
         currentSectionIndex,
         currentQuestionIndex,
         updatedAt: Timestamp.now(),
+        completedAt: Timestamp.now(),
       });
     }
   },

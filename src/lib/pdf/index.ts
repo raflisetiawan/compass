@@ -10,6 +10,7 @@ import { addSexualBotherPage } from './pages/sexualBother';
 import { addBowelUrgencyPage } from './pages/bowelUrgency';
 import { addBowelBotherPage } from './pages/bowelBother';
 
+
 export const generatePdf = async (onProgress?: (progress: number) => void) => {
     const doc = new jsPDF({
         compress: true // Enable PDF compression
@@ -37,28 +38,37 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
     const updateProgress = () => {
         currentStep++;
         if (onProgress) {
-            onProgress(Math.round((currentStep / totalSteps) * 100));
+            const percentage = Math.round((currentStep / totalSteps) * 100);
+            onProgress(percentage);
         }
     };
 
     addResultsPage(pageProps);
     updateProgress();
+
     await addSurvivalPage(pageProps);
     updateProgress();
+
     await addUrinaryLeakagePage(pageProps);
     updateProgress();
+
     await addUrinaryPadPage(pageProps);
     updateProgress();
+
     await addUrinaryBotherPage(pageProps);
     updateProgress();
+
     await addErectileFunctionPage(pageProps);
     updateProgress();
+
     await addSexualBotherPage(pageProps);
     updateProgress();
+
     await addBowelUrgencyPage(pageProps);
     updateProgress();
+
     await addBowelBotherPage(pageProps);
     updateProgress();
 
-    doc.save('compass-results.pdf');
+    doc.save('BeSpoke-results.pdf');
 };

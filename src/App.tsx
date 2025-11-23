@@ -54,9 +54,9 @@ function App() {
         } else {
           const outcomeTitle = pathParts[1]
             ? pathParts[1]
-                .split("-")
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" ")
+              .split("-")
+              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(" ")
             : "Detail";
           title = `${outcomeTitle} | COMPASS`;
         }
