@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage, toDataURL } from '../utils';
+import { renderChartToImage } from '../utils';
 import urinaryPadData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { UrinaryPadUsageChartForPdf } from '@/features/results/components/UrinaryPadUsageChartForPdf';
 

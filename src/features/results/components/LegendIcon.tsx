@@ -13,7 +13,10 @@ const LegendIcon: React.FC<LegendIconProps> = ({ color, name }) => {
       width={iconSize}
       height={iconSize}
       viewBox={`0 0 ${iconSize} ${iconSize}`}
+      aria-label={name}
+      role="img"
     >
+      <title>{name}</title>
       {/* Background circle */}
       <circle
         cx={iconSize / 2}

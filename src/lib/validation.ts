@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Question } from '@/stores/questionnaireStore';
+import type { Question } from '@/types/questionnaire';
 
 export const createQuestionSchema = (question: Question): z.ZodTypeAny => {
   switch (question.type) {
@@ -33,4 +33,3 @@ export const createQuestionSchema = (question: Question): z.ZodTypeAny => {
       return z.any();
   }
 };
-  

@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import type { Answers } from '@/stores/questionnaireStore';
+import type { Answers } from '@/types/questionnaire';
 
 export interface PdfPageProps {
     doc: jsPDF;

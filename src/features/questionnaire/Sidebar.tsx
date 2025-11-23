@@ -2,7 +2,8 @@ import { CheckCircle2, Clock, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { useQuestionnaireStore, type Section } from '@/stores/questionnaireStore';
+import { useQuestionnaireStore } from '@/stores/questionnaireStore';
+import type { Section } from '@/types/questionnaire';
 
 type Status = 'COMPLETED' | 'ON GOING' | 'LOCKED';
 

@@ -5,7 +5,7 @@ import UrinaryPadUsageTable from "@/features/results/components/UrinaryPadUsageT
 import sunUnderwear from "@/assets/img/icons/sun_underwear.png";
 import padWater from "@/assets/img/icons/pad_water.png";
 import darkPadWater from "@/assets/img/icons/dark_pad_water.png";
-import type { Answers } from "@/stores/questionnaireStore";
+import type { Answers } from '@/types/questionnaire';
 
 type PadUsageOutcome = {
   N: number;
