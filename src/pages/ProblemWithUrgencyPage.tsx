@@ -5,9 +5,7 @@ import IconArray from "@/features/results/components/IconArray";
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import ProblemWithUrgencyTable from "@/features/results/components/ProblemWithUrgencyTable";
-import WaterClosetOutlined from "@/components/icons/WaterClosetOutlined";
-import WaterClosetGray from "@/components/icons/WaterClosetGray";
-import WaterClosetBlack from "@/components/icons/WaterClosetBlack";
+import LegendIcon from "@/features/results/components/LegendIcon";
 
 type UrgencyOutcome = {
   N: number;
@@ -30,7 +28,7 @@ const ProblemWithUrgencyPageContent = () => {
   const { answers } = useOutcomePageData();
   const [legendModalData, setLegendModalData] = useState<{
     name: string;
-    data: { name: string; value: number; color: string; Icon: React.ElementType }[];
+    data: { name: string; value: number; color: string; Icon?: React.ElementType }[];
   } | null>(null);
 
   const baselineStatus = useMemo(() => {
@@ -52,7 +50,7 @@ const ProblemWithUrgencyPageContent = () => {
 
     return treatments.map((treatment) => {
       const treatmentData = data[treatment].Baseline[baselineStatus as keyof typeof data[string]['Baseline']];
-      
+
       let noProblem = Math.round(treatmentData["No_problem_%"]);
       const smallProblem = Math.round(treatmentData["Very_small_problem_%"]);
       const bigProblem = Math.round(treatmentData["Moderate_big_problem_%"]);
@@ -65,9 +63,9 @@ const ProblemWithUrgencyPageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No problem", value: noProblem, color: "black", Icon: WaterClosetOutlined },
-          { name: "Very small or small problem", value: smallProblem, color: "#808080", Icon: WaterClosetGray },
-          { name: "Moderate or big problem", value: bigProblem, color: "black", Icon: WaterClosetBlack },
+          { name: "No problem", value: noProblem, color: "#28a745" },
+          { name: "Very small or small problem", value: smallProblem, color: "#ffc107" },
+          { name: "Moderate or big problem", value: bigProblem, color: "#dc3545" },
         ],
       };
     });
@@ -77,9 +75,9 @@ const ProblemWithUrgencyPageContent = () => {
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">Legend</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><WaterClosetOutlined size={24} /><span className="ml-2">No problem</span></div>
-        <div className="flex items-center"><WaterClosetGray size={24} /><span className="ml-2">Very small or small problem</span></div>
-        <div className="flex items-center"><WaterClosetBlack size={24} /><span className="ml-2">Moderate or big problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#28a745" name="No problem" /><span className="ml-2">No problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#ffc107" name="Small problem" /><span className="ml-2">Very small or small problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#dc3545" name="Big problem" /><span className="ml-2">Moderate or big problem</span></div>
       </div>
     </div>
   );
@@ -92,9 +90,14 @@ const ProblemWithUrgencyPageContent = () => {
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current problem with bowel urgency status:</h3>
         <div className="flex items-center bg-pink-100 p-2 rounded">
-          {baselineStatus === "No_problem" && <WaterClosetOutlined size={24} />}
-          {baselineStatus === "Very_small_problem" && <WaterClosetGray size={24} />}
-          {baselineStatus === "Moderate_big_problem" && <WaterClosetBlack size={24} />}
+          <LegendIcon
+            color={
+              baselineStatus === "No_problem" ? "#28a745" :
+                baselineStatus === "Very_small_problem" ? "#ffc107" :
+                  "#dc3545"
+            }
+            name={baselineStatus}
+          />
           <span className="ml-2">{answers.bowel_urgency || "No problem"}</span>
         </div>
       </div>
@@ -130,7 +133,7 @@ const ProblemWithUrgencyPageContent = () => {
           isOpen={!!legendModalData}
           onClose={() => setLegendModalData(null)}
           title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data.map((d) => ({ ...d, Icon: d.Icon }))}
+          legendData={legendModalData.data}
         />
       )}
     </>

@@ -5,9 +5,7 @@ import IconArray from "@/features/results/components/IconArray";
 import erectileBotherData from "@/assets/erectile_bother.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import SexualBotherTable from "@/features/results/components/SexualBotherTable";
-import HappyFace from "@/components/icons/HappyFace";
-import NeutralFace from "@/components/icons/NeutralFace";
-import SadFace from "@/components/icons/SadFace";
+import LegendIcon from "@/features/results/components/LegendIcon";
 
 type SexualBotherOutcome = {
   N: number;
@@ -30,7 +28,7 @@ const SexualBotherPageContent = () => {
   const { answers } = useOutcomePageData();
   const [legendModalData, setLegendModalData] = useState<{
     name: string;
-    data: { name: string; value: number; color: string; Icon: React.ElementType }[];
+    data: { name: string; value: number; color: string; Icon?: React.ElementType }[];
   } | null>(null);
 
   const baselineBotherStatus = useMemo(() => {
@@ -60,9 +58,9 @@ const SexualBotherPageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No problem", value: noProblem, color: "#28a745", Icon: HappyFace },
-          { name: "Very small or small problem", value: smallProblem, color: "#ffc107", Icon: NeutralFace },
-          { name: "Moderate or big problem", value: bigProblem, color: "#dc3545", Icon: SadFace },
+          { name: "No problem", value: noProblem, color: "#28a745" },
+          { name: "Very small or small problem", value: smallProblem, color: "#ffc107" },
+          { name: "Moderate or big problem", value: bigProblem, color: "#dc3545" },
         ],
       };
     });
@@ -72,9 +70,9 @@ const SexualBotherPageContent = () => {
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">Legend</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><HappyFace size={24} /><span className="ml-2">No problem</span></div>
-        <div className="flex items-center"><NeutralFace size={24} /><span className="ml-2">Very small or small problem</span></div>
-        <div className="flex items-center"><SadFace size={24} /><span className="ml-2">Moderate or big problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#28a745" name="No problem" /><span className="ml-2">No problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#ffc107" name="Small problem" /><span className="ml-2">Very small or small problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#dc3545" name="Big problem" /><span className="ml-2">Moderate or big problem</span></div>
       </div>
     </div>
   );
@@ -87,9 +85,14 @@ const SexualBotherPageContent = () => {
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current sexual bother status:</h3>
         <div className="flex items-center bg-pink-100 p-2 rounded">
-          {baselineBotherStatus === "No problem" && <HappyFace size={24} />}
-          {baselineBotherStatus === "Very/small problem" && <NeutralFace size={24} />}
-          {baselineBotherStatus === "Moderate/big problem" && <SadFace size={24} />}
+          <LegendIcon
+            color={
+              baselineBotherStatus === "No problem" ? "#28a745" :
+                baselineBotherStatus === "Very/small problem" ? "#ffc107" :
+                  "#dc3545"
+            }
+            name={baselineBotherStatus}
+          />
           <span className="ml-2">{answers.erection_bother || "Not a problem"}</span>
         </div>
       </div>
@@ -126,7 +129,7 @@ const SexualBotherPageContent = () => {
           isOpen={!!legendModalData}
           onClose={() => setLegendModalData(null)}
           title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data.map((d) => ({ ...d, Icon: d.Icon }))}
+          legendData={legendModalData.data}
         />
       )}
     </>

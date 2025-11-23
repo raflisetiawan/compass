@@ -3,9 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import erectileBotherData from "@/assets/erectile_bother.json";
 import { SexualBotherChartForPdf } from '@/features/results/components/SexualBotherChartForPdf';
-import HappyFace from '@/components/icons/HappyFace';
-import NeutralFace from '@/components/icons/NeutralFace';
-import SadFace from '@/components/icons/SadFace';
 
 export const addSexualBotherPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 7: Bother with erectile function at 1 year
@@ -40,9 +37,9 @@ export const addSexualBotherPage = async ({ doc, answers, margin, gutter, imgWid
         return {
             name: treatment,
             data: [
-                { name: "No problem", value: noProblem, color: "#28a745", Icon: HappyFace },
-                { name: "Very small or small problem", value: smallProblem, color: "#ffc107", Icon: NeutralFace },
-                { name: "Moderate or big problem", value: bigProblem, color: "#dc3545", Icon: SadFace },
+                { name: "No problem", value: noProblem, color: "#1B5E20" },
+                { name: "Very small or small problem", value: smallProblem, color: "#FBC02D" },
+                { name: "Moderate or big problem", value: bigProblem, color: "#D32F2F" },
             ],
         };
     });

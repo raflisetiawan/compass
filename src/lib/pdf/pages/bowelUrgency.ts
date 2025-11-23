@@ -3,10 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { ProblemWithUrgencyChartForPdf } from '@/features/results/components/ProblemWithUrgencyChartForPdf';
-import WaterClosetOutlined from "@/components/icons/WaterClosetOutlined";
-import WaterClosetGray from "@/components/icons/WaterClosetGray";
-import WaterClosetBlack from "@/components/icons/WaterClosetBlack";
-import React from 'react';
 
 export const addBowelUrgencyPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 8: Problem with bowel urgency at 1 year
@@ -49,11 +45,11 @@ export const addBowelUrgencyPage = async ({ doc, answers, margin, gutter, imgWid
             name: treatment,
             data: [
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "No problem", value: noProblem, color: "black", Icon: (props: any) => React.createElement(WaterClosetOutlined, { ...props }) },
+                { name: "No problem", value: noProblem, color: "#1B5E20" },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Very small or small problem", value: smallProblem, color: "#808080", Icon: (props: any) => React.createElement(WaterClosetGray, { ...props }) },
+                { name: "Very small or small problem", value: smallProblem, color: "#FBC02D" },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Moderate or big problem", value: bigProblem, color: "black", Icon: (props: any) => React.createElement(WaterClosetBlack, { ...props }) },
+                { name: "Moderate or big problem", value: bigProblem, color: "#D32F2F" },
             ],
         };
     });

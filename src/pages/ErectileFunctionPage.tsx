@@ -4,8 +4,8 @@ import { useOutcomePageData } from "@/hooks/useOutcomePageData";
 import IconArray from "@/features/results/components/IconArray";
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
-import ErectionFunctionIcon from "@/components/icons/ErectionFunctionIcon";
 import ErectileFunctionTable from "@/features/results/components/ErectileFunctionTable";
+import LegendIcon from "@/features/results/components/LegendIcon";
 
 type ErectileFunctionOutcome = {
   N: number;
@@ -37,7 +37,7 @@ const ErectileFunctionPageContent = () => {
   const { answers } = useOutcomePageData();
   const [legendModalData, setLegendModalData] = useState<{
     name: string;
-    data: { name: string; value: number; color: string; Icon: React.ElementType }[];
+    data: { name: string; value: number; color: string; Icon?: React.ElementType }[];
   } | null>(null);
 
   const baselineStatus = useMemo(() => {
@@ -64,10 +64,10 @@ const ErectileFunctionPageContent = () => {
         return {
           name: treatment,
           data: [
-            { name: "Firm enough for intercourse", value: 0, color: '#28a745', Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-            { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-            { name: "Not firm enough for any sexual activity", value: 0, color: '#dc3545', Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-            { name: "Not firm enough, using medication/device", value: 0, color: '#dc3545', Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={true} /> },
+            { name: "Firm enough for intercourse", value: 0, color: '#28a745' },
+            { name: "Firm enough for masturbation only", value: 0, color: '#ffc107' },
+            { name: "Not firm enough for any sexual activity", value: 0, color: '#dc3545' },
+            { name: "Not firm enough, using medication/device", value: 0, color: '#dc3545' },
           ]
         };
       }
@@ -93,16 +93,16 @@ const ErectileFunctionPageContent = () => {
         const keyToAdjust = Object.keys(percentages).reduce((a, b) => percentages[a as keyof PercentageValues] > percentages[b as keyof PercentageValues] ? a : b) as keyof PercentageValues;
         roundedPercentages[keyToAdjust] -= diff;
       }
-      
+
       const { firmIntercourse, firmMasturbation, notFirmNoAssist, notFirmWithAssist } = roundedPercentages;
 
       return {
         name: treatment,
         data: [
-          { name: "Firm enough for intercourse", value: firmIntercourse, color: "#28a745", Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-          { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#ffc107", Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-          { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#dc3545", Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={false} /> },
-          { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545", Icon: (props: { size?: number; color?: string }) => <ErectionFunctionIcon {...props} withAssist={true} /> },
+          { name: "Firm enough for intercourse", value: firmIntercourse, color: "#28a745" },
+          { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#ffc107" },
+          { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#dc3545" },
+          { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545" },
         ],
       };
     });
@@ -112,10 +112,10 @@ const ErectileFunctionPageContent = () => {
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">Legend</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><ErectionFunctionIcon color="#28a745" withAssist={false} /><span className="ml-2">Firm enough for intercourse</span></div>
-        <div className="flex items-center"><ErectionFunctionIcon color="#ffc107" withAssist={false} /><span className="ml-2">Firm enough for masturbation only</span></div>
-        <div className="flex items-center"><ErectionFunctionIcon color="#dc3545" withAssist={false} /><span className="ml-2">Not firm enough for any sexual activity</span></div>
-        <div className="flex items-center"><ErectionFunctionIcon color="#dc3545" withAssist={true} /><span className="ml-2">Not firm enough, using medication/device</span></div>
+        <div className="flex items-center"><LegendIcon color="#28a745" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
+        <div className="flex items-center"><LegendIcon color="#ffc107" name="Firm masturbation" /><span className="ml-2">Firm enough for masturbation only</span></div>
+        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity</span></div>
+        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm (assist)" /><span className="ml-2">Not firm enough, using medication/device</span></div>
       </div>
     </div>
   );
@@ -128,10 +128,14 @@ const ErectileFunctionPageContent = () => {
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current erectile function status:</h3>
         <div className="flex items-center bg-pink-100 p-2 rounded">
-          {baselineStatus === "Firm intercourse" && <ErectionFunctionIcon color="#28a745" withAssist={false} />}
-          {baselineStatus === "Firm masturbation" && <ErectionFunctionIcon color="#ffc107" withAssist={false} />}
-          {baselineStatus === "Not firm - no assist" && <ErectionFunctionIcon color="#dc3545" withAssist={false} />}
-          {baselineStatus === "Not firm - with assist" && <ErectionFunctionIcon color="#dc3545" withAssist={true} />}
+          <LegendIcon
+            color={
+              baselineStatus === "Firm intercourse" ? "#28a745" :
+                baselineStatus === "Firm masturbation" ? "#ffc107" :
+                  "#dc3545"
+            }
+            name={baselineStatus}
+          />
           <span className="ml-2">
             {answers.erection_quality || "Firm enough for intercourse"}
             {answers.sex_medication === 'Yes' && ' (with medication/device)'}
@@ -171,7 +175,7 @@ const ErectileFunctionPageContent = () => {
           isOpen={!!legendModalData}
           onClose={() => setLegendModalData(null)}
           title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data.map((d) => ({ ...d, Icon: d.Icon }))}
+          legendData={legendModalData.data}
         />
       )}
     </>

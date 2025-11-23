@@ -3,8 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { ErectileFunctionChartForPdf } from '@/features/results/components/ErectileFunctionChartForPdf';
-import ErectionFunctionIcon from '@/components/icons/ErectionFunctionIcon';
-import React from 'react';
 
 export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 6: Erectile function at 1 year
@@ -40,13 +38,13 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, im
                 name: treatment,
                 data: [
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    { name: "Firm enough for intercourse", value: 0, color: '#28a745', Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                    { name: "Firm enough for intercourse", value: 0, color: '#1B5E20' },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                    { name: "Firm enough for masturbation only", value: 0, color: '#FBC02D' },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    { name: "Not firm enough for any sexual activity", value: 0, color: '#dc3545', Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                    { name: "Not firm enough for any sexual activity", value: 0, color: '#D32F2F' },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    { name: "Not firm enough, using medication/device", value: 0, color: '#dc3545', Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: true }) },
+                    { name: "Not firm enough, using medication/device", value: 0, color: '#D32F2F' },
                 ]
             };
         }
@@ -81,13 +79,13 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, im
             name: treatment,
             data: [
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Firm enough for intercourse", value: firmIntercourse, color: "#28a745", Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                { name: "Firm enough for intercourse", value: firmIntercourse, color: "#1B5E20" },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#ffc107", Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#FBC02D" },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#dc3545", Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: false }) },
+                { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#D32F2F" },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545", Icon: (props: any) => React.createElement(ErectionFunctionIcon, { ...props, withAssist: true }) },
+                { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#D32F2F" },
             ],
         };
     });

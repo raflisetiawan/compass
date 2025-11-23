@@ -3,9 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage, toDataURL } from '../utils';
 import urinaryPadData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { UrinaryPadUsageChartForPdf } from '@/features/results/components/UrinaryPadUsageChartForPdf';
-import sunUnderwear from '@/assets/img/icons/sun_underwear.png';
-import padWater from '@/assets/img/icons/pad_water.png';
-import darkPadWater from '@/assets/img/icons/dark_pad_water.png';
 
 export const addUrinaryPadPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 4: Use of urinary pads at 1 year
@@ -23,9 +20,7 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, gutter, imgWidth
     })();
 
     const padTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
-    const sunUnderwearDataUrl = await toDataURL(sunUnderwear);
-    const padWaterDataUrl = await toDataURL(padWater);
-    const darkPadWaterDataUrl = await toDataURL(darkPadWater);
+
 
     const padTreatmentOutcomes = padTreatments.map((treatment) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,9 +37,9 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, gutter, imgWidth
         return {
             name: treatment,
             data: [
-                { name: "No use of pad; rarely or never leaking urine", value: noPads, color: "#FFC107", iconUrl: sunUnderwearDataUrl as string },
-                { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#64B5F6", iconUrl: padWaterDataUrl as string },
-                { name: ">=2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#1976D2", iconUrl: darkPadWaterDataUrl as string },
+                { name: "No use of pad; rarely or never leaking urine", value: noPads, color: "#1B5E20" },
+                { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#FBC02D" },
+                { name: ">=2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#D32F2F" },
             ],
         };
     });

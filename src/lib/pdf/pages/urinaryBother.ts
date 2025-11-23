@@ -3,9 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import urinaryBotherData from "@/assets/urinary_bother.json";
 import { UrinaryBotherChartForPdf } from '@/features/results/components/UrinaryBotherChartForPdf';
-import HappyFace from '@/components/icons/HappyFace';
-import NeutralFace from '@/components/icons/NeutralFace';
-import SadFace from '@/components/icons/SadFace';
 
 export const addUrinaryBotherPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 5: Bother with urinary function at 1 year
@@ -38,9 +35,9 @@ export const addUrinaryBotherPage = async ({ doc, answers, margin, gutter, imgWi
         return {
             name: treatment,
             data: [
-                { name: "No problem", value: noProblem, color: "#8BC34A", Icon: HappyFace },
-                { name: "Very/small problem", value: smallProblem, color: "#FFC107", Icon: NeutralFace },
-                { name: "Moderate/big problem", value: bigProblem, color: "#F44336", Icon: SadFace },
+                { name: "No problem", value: noProblem, color: "#1B5E20" },
+                { name: "Very/small problem", value: smallProblem, color: "#FBC02D" },
+                { name: "Moderate/big problem", value: bigProblem, color: "#D32F2F" },
             ],
         };
     });

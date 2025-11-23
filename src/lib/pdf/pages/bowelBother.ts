@@ -3,9 +3,6 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import bowelBotherData from "@/assets/bowel_bother.json";
 import { BowelBotherChartForPdf } from '@/features/results/components/BowelBotherChartForPdf';
-import HappyFace from '@/components/icons/HappyFace';
-import NeutralFace from '@/components/icons/NeutralFace';
-import SadFace from '@/components/icons/SadFace';
 
 export const addBowelBotherPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
     // Page 9: Bowel bother at 1 year
@@ -40,9 +37,9 @@ export const addBowelBotherPage = async ({ doc, answers, margin, gutter, imgWidt
         return {
             name: treatment,
             data: [
-                { name: "No problem", value: noProblem, color: "#28a745", Icon: HappyFace },
-                { name: "Very small or small problem", value: smallProblem, color: "#ffc107", Icon: NeutralFace },
-                { name: "Moderate or big problem", value: bigProblem, color: "#dc3545", Icon: SadFace },
+                { name: "No problem", value: noProblem, color: "#1B5E20" },
+                { name: "Very small or small problem", value: smallProblem, color: "#FBC02D" },
+                { name: "Moderate or big problem", value: bigProblem, color: "#D32F2F" },
             ],
         };
     });

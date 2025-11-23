@@ -16,6 +16,7 @@ import type {
   Errors,
   QuestionnaireData,
 } from "@/types/questionnaire";
+import { calculateOutcomes } from "@/services/outcomes";
 
 // --- Constants ---
 
@@ -223,12 +224,14 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
       get();
 
     if (accessCode && sessionId) {
+      const clinicalOutcomes = calculateOutcomes(answers);
       await updateQuestionnaireSession(accessCode, sessionId, {
         answers,
         currentSectionIndex,
         currentQuestionIndex,
         updatedAt: Timestamp.now(),
         completedAt: Timestamp.now(),
+        clinicalOutcomes,
       });
     }
   },

@@ -94,54 +94,13 @@ const IconArray = ({ data }: IconArrayProps) => {
               .attr("height", iconSize)
               .html(iconHtml);
           } else {
-            // Fallback for survival icons
-            if (item.category === "Alive" || item.category.includes("Death")) {
-              group
-                .append("circle")
-                .attr("r", iconSize / 2)
-                .attr("cx", iconSize / 2)
-                .attr("cy", iconSize / 2)
-                .attr("fill", item.color);
-              group
-                .append("circle")
-                .attr("r", 1)
-                .attr("cx", iconSize / 2 - 3)
-                .attr("cy", iconSize / 2 - 1.5)
-                .attr("fill", "black");
-              group
-                .append("circle")
-                .attr("r", 1)
-                .attr("cx", iconSize / 2 + 3)
-                .attr("cy", iconSize / 2 - 1.5)
-                .attr("fill", "black");
-              const arc = d3
-                .arc<void>()
-                .innerRadius(iconSize / 5)
-                .outerRadius(iconSize / 5);
-              if (item.category === "Alive") {
-                arc.startAngle(Math.PI * 0.5).endAngle(Math.PI * 1.5);
-                group
-                  .append("path")
-                  .attr("d", arc())
-                  .attr(
-                    "transform",
-                    `translate(${iconSize / 2}, ${iconSize / 2 + 1.5})`
-                  )
-                  .attr("stroke", "black")
-                  .attr("stroke-width", 1);
-              } else {
-                arc.startAngle(-Math.PI * 0.5).endAngle(Math.PI * 0.5);
-                group
-                  .append("path")
-                  .attr("d", arc())
-                  .attr(
-                    "transform",
-                    `translate(${iconSize / 2}, ${iconSize / 2 + 3.5})`
-                  )
-                  .attr("stroke", "black")
-                  .attr("stroke-width", 1);
-              }
-            }
+            // Fallback: Simple circle
+            group
+              .append("circle")
+              .attr("r", iconSize / 2)
+              .attr("cx", iconSize / 2)
+              .attr("cy", iconSize / 2)
+              .attr("fill", item.color);
           }
         }
       });

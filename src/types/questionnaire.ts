@@ -25,3 +25,24 @@ export type Answers = {
 export type Errors = {
     [questionId: string]: string | undefined;
 };
+
+export interface OutcomeProbabilities {
+    [treatment: string]: {
+        "No problem": number;
+        "Very/small problem": number;
+        "Moderate/big problem": number;
+    };
+}
+
+export interface SurvivalOutcome {
+    "Alive (%)": number;
+    "PCa Death (%)": number;
+    "Other Death (%)": number;
+}
+
+export interface ClinicalOutcomes {
+    bowel?: OutcomeProbabilities;
+    urinary?: OutcomeProbabilities;
+    erectile?: OutcomeProbabilities;
+    survival?: SurvivalOutcome;
+}

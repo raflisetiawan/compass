@@ -5,9 +5,7 @@ import IconArray from "@/features/results/components/IconArray";
 import padUsageData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import UrinaryPadUsageTable from "@/features/results/components/UrinaryPadUsageTable";
-import sunUnderwear from "@/assets/img/icons/sun_underwear.png";
-import padWater from "@/assets/img/icons/pad_water.png";
-import darkPadWater from "@/assets/img/icons/dark_pad_water.png";
+import LegendIcon from "@/features/results/components/LegendIcon";
 
 type PadUsageOutcome = {
   "N": number;
@@ -30,7 +28,7 @@ const UrinaryPadUsagePageContent = () => {
   const { answers } = useOutcomePageData();
   const [legendModalData, setLegendModalData] = useState<{
     name: string;
-    data: { name: string; value: number; color: string; iconUrl: string }[];
+    data: { name: string; value: number; color: string; iconUrl?: string }[];
   } | null>(null);
 
   const baselinePadStatus = useMemo(() => {
@@ -58,9 +56,9 @@ const UrinaryPadUsagePageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No use of pad; rarely or never leaking urine", value: notUsing, color: "#FFC107", iconUrl: sunUnderwear },
-          { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#64B5F6", iconUrl: padWater },
-          { name: "≥2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#1976D2", iconUrl: darkPadWater },
+          { name: "No use of pad; rarely or never leaking urine", value: notUsing, color: "#1B5E20" },
+          { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#FBC02D" },
+          { name: "≥2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#D32F2F" },
         ],
       };
     });
@@ -70,9 +68,18 @@ const UrinaryPadUsagePageContent = () => {
     <div className="mb-6">
       <h3 className="font-bold mb-2 text-lg">Legend:</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><img src={sunUnderwear} alt="No use of pad; rarely or never leaking urine" className="w-5 h-5 mr-2" /><span>No use of pad; rarely or never leaking urine</span></div>
-        <div className="flex items-center"><img src={padWater} alt="1 pad used per day; any degree of leaking urine" className="w-5 h-5 mr-2" /><span>1 pad used per day; any degree of leaking urine</span></div>
-        <div className="flex items-center"><img src={darkPadWater} alt="≥2 pad used per day; any degree of leaking urine" className="w-5 h-5 mr-2" /><span>≥2 pad used per day; any degree of leaking urine</span></div>
+        <div className="flex items-center">
+          <LegendIcon color="#1B5E20" name="No use of pad" />
+          <span className="ml-2">No use of pad; rarely or never leaking urine</span>
+        </div>
+        <div className="flex items-center">
+          <LegendIcon color="#FBC02D" name="1 pad used" />
+          <span className="ml-2">1 pad used per day; any degree of leaking urine</span>
+        </div>
+        <div className="flex items-center">
+          <LegendIcon color="#D32F2F" name="≥2 pad used" />
+          <span className="ml-2">≥2 pad used per day; any degree of leaking urine</span>
+        </div>
       </div>
     </div>
   );
@@ -85,8 +92,15 @@ const UrinaryPadUsagePageContent = () => {
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current use of pad and leaking status:</h3>
         <div className="flex items-center bg-pink-100 p-2 rounded">
-          <img src={sunUnderwear} alt={baselinePadStatus} className="w-5 h-5 mr-2" />
-          <span>{baselinePadStatus}</span>
+          <LegendIcon
+            color={
+              baselinePadStatus.includes("2 or more") ? "#D32F2F" :
+                baselinePadStatus.includes("1 pad") ? "#FBC02D" :
+                  "#1B5E20"
+            }
+            name={baselinePadStatus}
+          />
+          <span className="ml-2">{baselinePadStatus}</span>
         </div>
       </div>
       <Legend />

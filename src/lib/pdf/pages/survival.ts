@@ -44,8 +44,8 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
 
     if (survivalOutcome) {
         const iconArrayData = [
-            { name: "Alive", value: Math.round(Number(survivalOutcome["Alive (%)"])), color: "#8BC34A" },
-            { name: "Death (from prostate cancer)", value: Math.round(Number(survivalOutcome["PCa Death (%)"])), color: "#F44336" },
+            { name: "Alive", value: Math.round(Number(survivalOutcome["Alive (%)"])), color: "#1B5E20" },
+            { name: "Death (from prostate cancer)", value: Math.round(Number(survivalOutcome["PCa Death (%)"])), color: "#D32F2F" },
             { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E" },
         ];
 

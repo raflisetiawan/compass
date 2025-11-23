@@ -1,10 +1,6 @@
-
-
-
 import { initializeApp } from 'firebase/app';
 
 import { initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
-
 import {
   getFirestore,
   doc,
@@ -97,6 +93,8 @@ export const updateUserLastLogin = async (accessCode: string) => {
 
 const SESSIONS_COLLECTION = 'questionnaireSessions';
 
+import { type ClinicalOutcomes } from '@/types/questionnaire';
+
 export type Answers = { [questionId: string]: string | number };
 
 export interface QuestionnaireSession {
@@ -108,6 +106,7 @@ export interface QuestionnaireSession {
   updatedAt: Timestamp;
   completedAt?: Timestamp;
   userAgent: string;
+  clinicalOutcomes?: ClinicalOutcomes;
 }
 
 /**

@@ -58,11 +58,11 @@ const SurvivalAfterTreatmentPageContent = () => {
     }
 
     return [
-      { name: "Alive", value: alive, color: "#8BC34A" },
+      { name: "Alive", value: alive, color: "#1B5E20" },
       {
         name: "Death (from prostate cancer)",
         value: pcaDeath,
-        color: "#F44336",
+        color: "#D32F2F",
       },
       {
         name: "Death (from other causes)",
