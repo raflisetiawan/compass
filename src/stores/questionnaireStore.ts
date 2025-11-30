@@ -19,12 +19,10 @@ import type {
 import { calculateOutcomes } from "@/services/outcomes";
 
 // --- Constants ---
-
 const DEBOUNCE_DELAY = 1500;
 const SESSION_EXPIRY_HOURS = 24;
 
 // --- Store Definition ---
-
 type State = {
   sections: Section[];
   answers: Answers;
@@ -32,7 +30,7 @@ type State = {
   currentSectionIndex: number;
   currentQuestionIndex: number;
   isLoading: boolean;
-  patientId: string | null; // For clinican to manage patient sessions
+  patientId: string | null; // For clinician to manage patient sessions
   sessionId: string | null; // ID of the active session document in Firestore
 };
 
@@ -61,7 +59,6 @@ type Actions = {
 };
 
 // --- Helpers ---
-
 const getActiveAccessCode = (): string | null => {
   const patientId = useQuestionnaireStore.getState().patientId;
   if (patientId) {
@@ -72,27 +69,23 @@ const getActiveAccessCode = (): string | null => {
 
 const shouldStartNewSession = (latestSession: QuestionnaireSession | null): boolean => {
   if (!latestSession || !latestSession.createdAt) return true;
-
   const now = new Date();
   const createdAt = (latestSession.createdAt as Timestamp).toDate();
   const hoursDiff = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
-
   return hoursDiff >= SESSION_EXPIRY_HOURS;
 };
 
 // --- Debounced Save Function ---
-
 const debouncedUpdateSession = debounce(
-  (
-    accessCode: string,
-    sessionId: string,
-    session: Partial<QuestionnaireSession>
-  ) => {
+  (accessCode: string, sessionId: string, session: Partial<QuestionnaireSession>) => {
     if (!accessCode || !sessionId) return;
     updateQuestionnaireSession(accessCode, sessionId, session);
   },
   DEBOUNCE_DELAY
 );
+
+// Flag to prevent concurrent loadInitialData calls
+let isLoadingSessionData = false;
 
 export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   ...initialState,
@@ -101,14 +94,11 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   setAnswer: (questionId, value) => {
     const { answers, errors, sessionId } = get();
     const newAnswers = { ...answers, [questionId]: value };
-
     const newErrors = { ...errors };
     if (newErrors[questionId]) {
       delete newErrors[questionId];
     }
-
     set({ answers: newAnswers, errors: newErrors });
-
     const accessCode = getActiveAccessCode();
     if (accessCode && sessionId) {
       const { answers, currentSectionIndex, currentQuestionIndex } = get();
@@ -123,24 +113,17 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   setErrors: (errors) => set({ errors }),
 
-  setCurrentSectionIndex: (index) =>
-    set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
+  setCurrentSectionIndex: (index) => set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
 
-  goToSection: (index) =>
-    set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
+  goToSection: (index) => set({ currentSectionIndex: index, currentQuestionIndex: 0 }),
 
   nextQuestion: () => {
     const { sections, currentSectionIndex, currentQuestionIndex } = get();
     const currentSection = sections[currentSectionIndex];
-    const isLastQuestion =
-      currentQuestionIndex === currentSection.questions.length - 1;
+    const isLastQuestion = currentQuestionIndex === currentSection.questions.length - 1;
     const isLastSection = currentSectionIndex === sections.length - 1;
-
     if (isLastQuestion && !isLastSection) {
-      set({
-        currentSectionIndex: currentSectionIndex + 1,
-        currentQuestionIndex: 0,
-      });
+      set({ currentSectionIndex: currentSectionIndex + 1, currentQuestionIndex: 0 });
     } else if (!isLastQuestion) {
       set({ currentQuestionIndex: currentQuestionIndex + 1 });
     }
@@ -150,7 +133,6 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
     const { sections, currentSectionIndex, currentQuestionIndex } = get();
     const isFirstQuestion = currentQuestionIndex === 0;
     const isFirstSection = currentSectionIndex === 0;
-
     if (isFirstQuestion && !isFirstSection) {
       const prevSection = sections[currentSectionIndex - 1];
       set({
@@ -163,53 +145,64 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   },
 
   loadInitialData: async () => {
-    set({ isLoading: true });
-    const accessCode = getActiveAccessCode();
+    if (isLoadingSessionData) return;
+    isLoadingSessionData = true;
+    try {
+      set({ isLoading: true });
+      const accessCode = getActiveAccessCode();
+      if (!accessCode) {
+        set({ ...initialState, isLoading: false });
+        return;
+      }
+      updateUserLastLogin(accessCode);
+      const latestSession = await loadLatestQuestionnaireSession(accessCode);
 
-    if (!accessCode) {
-      set({ ...initialState, isLoading: false });
-      return;
-    }
-
-    // Update last login
-    updateUserLastLogin(accessCode);
-
-    const latestSession = await loadLatestQuestionnaireSession(accessCode);
-
-    const startNewSession = async () => {
-      const now = Timestamp.now();
-      const newSessionData = {
-        answers: {},
-        currentSectionIndex: 0,
-        currentQuestionIndex: 0,
-        createdAt: now,
-        updatedAt: now,
-        userAgent: navigator.userAgent,
+      const startNewSession = async () => {
+        const now = Timestamp.now();
+        const newSessionData = {
+          answers: {},
+          currentSectionIndex: 0,
+          currentQuestionIndex: 0,
+          createdAt: now,
+          updatedAt: now,
+          userAgent: navigator.userAgent,
+        };
+        const newSessionId = await createNewQuestionnaireSession(accessCode, newSessionData);
+        const currentPatientId = get().patientId;
+        set({
+          ...initialState,
+          patientId: currentPatientId,
+          sessionId: newSessionId,
+          isLoading: false,
+        });
       };
-      const newSessionId = await createNewQuestionnaireSession(
-        accessCode,
-        newSessionData
-      );
-      const currentPatientId = get().patientId;
-      set({
-        ...initialState,
-        patientId: currentPatientId,
-        sessionId: newSessionId,
-        isLoading: false,
-      });
-    };
 
-    if (shouldStartNewSession(latestSession)) {
-      await startNewSession();
-    } else if (latestSession) {
-      // Continue existing session
-      set({
-        answers: latestSession.answers || {},
-        currentSectionIndex: latestSession.currentSectionIndex || 0,
-        currentQuestionIndex: latestSession.currentQuestionIndex || 0,
-        sessionId: latestSession.id,
-        isLoading: false,
-      });
+      if (shouldStartNewSession(latestSession)) {
+        await startNewSession();
+      } else if (latestSession) {
+        // Continue existing session with bounds checking
+        const { sections } = get();
+        let sectionIdx = latestSession.currentSectionIndex || 0;
+        let questionIdx = latestSession.currentQuestionIndex || 0;
+        if (sectionIdx >= sections.length) {
+          sectionIdx = 0;
+          questionIdx = 0;
+        } else {
+          const currentSec = sections[sectionIdx];
+          if (questionIdx >= currentSec.questions.length) {
+            questionIdx = 0;
+          }
+        }
+        set({
+          answers: latestSession.answers || {},
+          currentSectionIndex: sectionIdx,
+          currentQuestionIndex: questionIdx,
+          sessionId: latestSession.id,
+          isLoading: false,
+        });
+      }
+    } finally {
+      isLoadingSessionData = false;
     }
   },
 
@@ -220,9 +213,7 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
 
   saveFinalAnswers: async () => {
     const accessCode = getActiveAccessCode();
-    const { sessionId, answers, currentSectionIndex, currentQuestionIndex } =
-      get();
-
+    const { sessionId, answers, currentSectionIndex, currentQuestionIndex } = get();
     if (accessCode && sessionId) {
       const clinicalOutcomes = calculateOutcomes(answers);
       await updateQuestionnaireSession(accessCode, sessionId, {

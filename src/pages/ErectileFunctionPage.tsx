@@ -9,19 +9,19 @@ import LegendIcon from "@/features/results/components/LegendIcon";
 
 type ErectileFunctionOutcome = {
   N: number;
-  "Firm intercourse": number;
-  "Firm masturbation": number;
-  "Not firm - no assist": number;
-  "Not firm - with assist": number;
+  "Firm enough for intercourse": number;
+  "Firm enough for masturbation": number;
+  "Not firm enough for any sexual activity": number;
+  "None at all": number;
 };
 
 type TreatmentData = {
   [key: string]: {
-    "Baseline erectile quality": {
-      "Firm intercourse": ErectileFunctionOutcome;
-      "Firm masturbation": ErectileFunctionOutcome;
-      "Not firm - no assist": ErectileFunctionOutcome;
-      "Not firm - with assist": ErectileFunctionOutcome;
+    "Baseline quality of erection": {
+      "Firm enough for intercourse": ErectileFunctionOutcome;
+      "Firm enough for masturbation and foreplay only": ErectileFunctionOutcome;
+      "Not firm enough for any sexual activity": ErectileFunctionOutcome;
+      "None at all": ErectileFunctionOutcome;
     };
   };
 };
@@ -42,23 +42,20 @@ const ErectileFunctionPageContent = () => {
 
   const baselineStatus = useMemo(() => {
     const quality = answers.erection_quality || "Firm enough for intercourse";
-    const medication = answers.sex_medication || "No";
 
-    if (quality === "Firm enough for intercourse") return "Firm intercourse";
-    if (quality === "Firm enough for masturbation/foreplay only") return "Firm masturbation";
-    if (quality === "Not firm enough for any sexual activity" || quality === "None at all") {
-      if (medication === "Yes") return "Not firm - with assist";
-      return "Not firm - no assist";
-    }
-    return "Firm intercourse"; // Default
-  }, [answers.erection_quality, answers.sex_medication]);
+    if (quality === "Firm enough for intercourse") return "Firm enough for intercourse";
+    if (quality === "Firm enough for masturbation and foreplay only") return "Firm enough for masturbation and foreplay only";
+    if (quality === "Not firm enough for any sexual activity") return "Not firm enough for any sexual activity";
+    if (quality === "None at all") return "None at all";
+    return "Firm enough for intercourse"; // Default
+  }, [answers.erection_quality]);
 
   const treatmentOutcomes = useMemo(() => {
-    const data: TreatmentData = { ...erectileFunctionData, "Active Surveillance": erectileFunctionData.TOTAL };
+    const data: TreatmentData = erectileFunctionData as TreatmentData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
 
     return treatments.map((treatment) => {
-      const treatmentData = data[treatment]["Baseline erectile quality"][baselineStatus];
+      const treatmentData = data[treatment]["Baseline quality of erection"][baselineStatus];
       const N = treatmentData.N;
       if (N === 0) {
         return {
@@ -73,10 +70,10 @@ const ErectileFunctionPageContent = () => {
       }
 
       const percentages: PercentageValues = {
-        firmIntercourse: (treatmentData["Firm intercourse"] / N) * 100,
-        firmMasturbation: (treatmentData["Firm masturbation"] / N) * 100,
-        notFirmNoAssist: (treatmentData["Not firm - no assist"] / N) * 100,
-        notFirmWithAssist: (treatmentData["Not firm - with assist"] / N) * 100,
+        firmIntercourse: (treatmentData["Firm enough for intercourse"] / N) * 100,
+        firmMasturbation: (treatmentData["Firm enough for masturbation"] / N) * 100,
+        notFirmNoAssist: (treatmentData["Not firm enough for any sexual activity"] / N) * 100,
+        notFirmWithAssist: (treatmentData["None at all"] / N) * 100,
       };
 
       const roundedPercentages: PercentageValues = {
@@ -130,8 +127,8 @@ const ErectileFunctionPageContent = () => {
         <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
-              baselineStatus === "Firm intercourse" ? "#28a745" :
-                baselineStatus === "Firm masturbation" ? "#ffc107" :
+              baselineStatus === "Firm enough for intercourse" ? "#28a745" :
+                baselineStatus === "Firm enough for masturbation and foreplay only" ? "#ffc107" :
                   "#dc3545"
             }
             name={baselineStatus}

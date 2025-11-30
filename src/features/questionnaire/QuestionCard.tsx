@@ -168,6 +168,9 @@ const QuestionCard = () => {
           >
             {question.text}
           </label>
+          {question.helpText && (
+            <p className="text-sm text-gray-500 mt-1 mb-3">{question.helpText}</p>
+          )}
           {renderInput()}
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </div>

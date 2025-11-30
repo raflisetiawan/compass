@@ -29,7 +29,7 @@ const MobileSectionSelector = () => {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="sections">
           <AccordionTrigger className="p-4 text-lg font-semibold">
-            {sections[currentSectionIndex].section}
+            {sections[currentSectionIndex]?.section || 'Loading...'}
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-col gap-1 p-2">

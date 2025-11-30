@@ -26,12 +26,12 @@ const calculateProbabilities = (
         const treatmentData = data[treatment];
         if (treatmentData && treatmentData[baselineKey] && treatmentData[baselineKey][mappedKey]) {
             const stats = treatmentData[baselineKey][mappedKey];
-            const total = stats.N || 1; // Avoid division by zero, though N should be > 0
+
 
             result[treatment] = {
-                "No problem": Math.round((stats["No problem"] / total) * 100),
-                "Very/small problem": Math.round((stats["Very/small problem"] / total) * 100),
-                "Moderate/big problem": Math.round((stats["Moderate/big problem"] / total) * 100),
+                "No problem": stats["No problem"],
+                "Very/small problem": stats["Very/small problem"],
+                "Moderate/big problem": stats["Moderate/big problem"],
             };
         }
     }

@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import { useQuestionnaireStore } from '@/stores/questionnaireStore';
 import { addResultsPage } from './pages/results';
+import { addSummaryPage } from './pages/summary';
 import { addSurvivalPage } from './pages/survival';
 import { addUrinaryLeakagePage } from './pages/urinaryLeakage';
 import { addUrinaryPadPage } from './pages/urinaryPad';
@@ -32,7 +33,7 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
         imgWidth,
     };
 
-    const totalSteps = 9;
+    const totalSteps = 10;
     let currentStep = 0;
 
     const updateProgress = () => {
@@ -44,6 +45,9 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
     };
 
     addResultsPage(pageProps);
+    updateProgress();
+
+    addSummaryPage(pageProps);
     updateProgress();
 
     await addSurvivalPage(pageProps);

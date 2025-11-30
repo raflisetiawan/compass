@@ -65,8 +65,6 @@ const ResultsPage = () => {
     "T Stage": answers.cancer_stage || "T2",
     "MRI visibility": answers.mri_visibility || "Visible (Score 4-5)",
     "Maximal Cancer Core Length": "8mm", // Not in questionnaire
-    "Nerve sparing": answers.nerve_sparing || "Unknown",
-    "Hormone treatment": answers.radiotherapy_hormone || "Unknown",
   };
 
   const baselineGenitoUrinaryBowelFunction: BaselineFunction = {

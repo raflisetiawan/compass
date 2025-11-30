@@ -14,23 +14,22 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, im
 
     const baselineErectileStatus = (() => {
         const quality = answers.erection_quality || "Firm enough for intercourse";
-        const medication = answers.sex_medication || "No";
 
-        if (quality === "Firm enough for intercourse") return "Firm intercourse";
-        if (quality === "Firm enough for masturbation/foreplay only") return "Firm masturbation";
-        if (quality === "Not firm enough for any sexual activity" || quality === "None at all") {
-            if (medication === "Yes") return "Not firm - with assist";
-            return "Not firm - no assist";
-        }
-        return "Firm intercourse"; // Default
+        if (quality === "Firm enough for intercourse") return "Firm enough for intercourse";
+        if (quality === "Firm enough for masturbation/foreplay only") return "Firm enough for masturbation and foreplay only";
+        if (quality === "Not firm enough for any sexual activity") return "Not firm enough for any sexual activity";
+        if (quality === "None at all") return "None at all";
+        
+        // Default fallback
+        return "Firm enough for intercourse";
     })();
 
     const efTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const efData: any = { ...erectileFunctionData, "Active Surveillance": (erectileFunctionData as any).TOTAL };
+    const efData = erectileFunctionData;
 
     const efTreatmentOutcomes = efTreatments.map((treatment) => {
-        const treatmentData = efData[treatment]["Baseline erectile quality"][baselineErectileStatus];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const treatmentData = (efData as any)[treatment]["Baseline quality of erection"][baselineErectileStatus];
         const N = treatmentData.N;
 
         if (N === 0) {
@@ -50,10 +49,10 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, im
         }
 
         const percentages = {
-            firmIntercourse: (treatmentData["Firm intercourse"] / N) * 100,
-            firmMasturbation: (treatmentData["Firm masturbation"] / N) * 100,
-            notFirmNoAssist: (treatmentData["Not firm - no assist"] / N) * 100,
-            notFirmWithAssist: (treatmentData["Not firm - with assist"] / N) * 100,
+            firmIntercourse: treatmentData["Firm enough for intercourse"] || 0,
+            firmMasturbation: treatmentData["Firm enough for masturbation"] || 0,
+            notFirmNoAssist: treatmentData["Not firm enough for any sexual activity"] || 0,
+            notFirmWithAssist: treatmentData["None at all"] || 0,
         };
 
         const roundedPercentages = {

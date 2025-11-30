@@ -16,6 +16,7 @@ import { AnimatePresence } from "framer-motion";
 import LoginPage from "./pages/LoginPage";
 import SelectPatientPage from "./pages/SelectPatientPage";
 import IntroductionPage from "./pages/IntroductionPage";
+import PatientInfoPage from "./pages/PatientInfoPage";
 import ResultsPage from "./pages/ResultsPage";
 import AboutPage from "./pages/AboutPage";
 
@@ -36,6 +37,9 @@ function App() {
         break;
       case "/introduction":
         title = "Introduction | COMPASS";
+        break;
+      case "/patient-info":
+        title = "Patient Info | COMPASS";
         break;
       case "/questionnaire":
         title = "Questionnaire | COMPASS";
@@ -89,12 +93,22 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
+            <Route
             path="/introduction"
             element={
               <ProtectedRoute>
                 <AnimatedPage>
                   <IntroductionPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/patient-info"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <PatientInfoPage />
                 </AnimatedPage>
               </ProtectedRoute>
             }

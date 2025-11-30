@@ -9,6 +9,7 @@
           "type": "number",
           "unit": "years",
           "placeholder": "e.g., 58",
+          "helpText": "We do not make decisions about prostate cancer treatment based on age alone, but it might be useful for you to know how men your age respond to different treatments and their overall life expectancy.",
           "validation": { "min": 18, "max": 120, "required": true }
         },
         {
@@ -17,6 +18,7 @@
           "type": "number",
           "unit": "ng/mL",
           "placeholder": "e.g., 6.5",
+          "helpText": "PSA, especially when combined with prostate volume, is a helpful predictor of prostate cancer outcomes, among several other factors.",
           "validation": { "min": 0, "required": true }
         },
         {
@@ -25,20 +27,23 @@
           "type": "number",
           "unit": "mL",
           "placeholder": "e.g., 40",
+          "helpText": "Measured on your MRI, or occasionally on ultrasound, prostate volume is necessary to work out your PSA density.",
           "validation": { "min": 0, "required": true }
         },
         {
           "id": "gleason_score",
-          "text": "What was the Overall Gleason Score that was assigned to your biopsy?",
+          "text": "What was the Gleason Score of your biopsy?",
           "type": "radio",
-          "options": ["3+3", "3+4", "4+3", "4+4 / 3+5 / 5+3", "4+5 / 5+4 / 5+5"],
+          "options": ["3+3", "3+4", "4+3", "4+4 or 3+5 or 5+3", "4+5 or 5+4 or 5+5"],
+          "helpText": "The Gleason score is how we describe the 'grade' of your prostate cancer. It is usually composed of two numbers (e.g. 3+4). The first number is the most common pattern seen, and the second number is the next most common pattern. \n\n• Gleason 3 is a low-grade cancer.\n• Gleason 4 is a medium-grade cancer.\n• Gleason 5 is a high-grade cancer.\n\nKnowing your combined score (e.g. 3+4) helps us to give you tailored information about your treatment options.",
           "required": true
         },
         {
           "id": "cancer_stage",
-          "text": "What stage was assigned to your prostate cancer?",
+          "text": "What stage prostate cancer do you have?",
           "type": "radio",
           "options": ["T2", "T3a", "T3b", "T4", "Unknown"],
+          "helpText": "'Stage' means whether your prostate cancer is in one or more areas of the prostate... The stage of the cancer helps predict how effective different treatments are likely to be",
           "required": true
         },
         {
@@ -46,36 +51,8 @@
           "text": "Is your prostate cancer visible on MRI?",
           "type": "radio",
           "options": ["Yes (PI-RADS/Likert 4-5)", "No or equivocal (PI-RADS/Likert 1-3)", "Unknown"],
+          "helpText": "Knowing whether the cancer can be seen on an MRI scan helps us guide you about likely treatment outcomes, because on average, cancer that is visible on MRI behaves differently from cancer that is not visible.",
           "required": true
-        }
-      ]
-    },
-    {
-      "section": "Treatment Options",
-      "questions": [
-        {
-          "id": "nerve_sparing",
-          "text": "If you discussed prostatectomy, what did your surgeon tell you about nerve sparing?",
-          "type": "radio",
-          "options": [
-            "Both sides",
-            "One side only",
-            "Neither side",
-            "Unknown/Not discussed",
-            "Not suitable for prostatectomy"
-          ]
-        },
-        {
-          "id": "radiotherapy_hormone",
-          "text": "If you discussed radiotherapy, what did your oncologist tell you about hormone treatment?",
-          "type": "radio",
-          "options": [
-            "No hormone treatment",
-            "6 months hormone therapy",
-            "2 years hormone therapy",
-            "Unknown/Not discussed",
-            "Not suitable for radiotherapy"
-          ]
         }
       ]
     },
@@ -96,15 +73,15 @@
         },
         {
           "id": "pad_usage",
-          "text": "How many pads or adult diapers per day did you usually use in the last 4 weeks?",
+          "text": "How many pads or adult diapers per day did you usually use to control leakage during the last 4 weeks?",
           "type": "radio",
-          "options": ["None", "1 pad", "2 pads", "3 or more pads"]
+          "options": ["None", "1 pad per day", "2 or more pads per day", "3 or more pads per day"]
         },
         {
           "id": "urine_problem",
-          "text": "How big a problem has dripping or leaking urine been during the last 4 weeks?",
+          "text": "How big a problem, if any, has dripping or leaking urine been for you during the last 4 weeks?",
           "type": "radio",
-          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+          "options": ["No problem", "Very small problem", "Small problem", "Moderate problem"]
         }
       ]
     },
@@ -118,27 +95,22 @@
           "options": [
             "None at all",
             "Not firm enough for any sexual activity",
-            "Firm enough for masturbation/foreplay only",
+            "Firm enough for masturbation and foreplay only",
             "Firm enough for intercourse"
           ]
         },
         {
           "id": "erection_bother",
-          "text": "Overall, how big a problem has your sexual function been during the last 4 weeks?",
+          "text": "Overall, how big a problem has your sexual function or lack of sexual function been for you during the last 4 weeks?",
           "type": "radio",
-          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
-        },
-        {
-          "id": "sex_interest",
-          "text": "During the last 4 weeks, to what extent were you interested in sex?",
-          "type": "radio",
-          "options": ["Not at all", "A little", "Quite a bit", "Very much"]
+          "options": ["No problem", "Very small problem", "Small problem", "Moderate problem", "Big problem"]
         },
         {
           "id": "sex_medication",
           "text": "Have you used any medication or devices to aid/improve erections?",
           "type": "radio",
-          "options": ["Yes", "No"]
+          "options": ["Yes", "No"],
+          "helpText": "Knowing about how your erections are before treatment is very helpful in offering a realistic idea about what you personally can expect after treatment."
         }
       ]
     },
@@ -149,13 +121,13 @@
           "id": "bowel_urgency",
           "text": "How big a problem, if any, has urgency to have a bowel movement been for you?",
           "type": "radio",
-          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+          "options": ["No problem", "Very small problem", "Small problem", "Moderate problem", "Big problem"]
         },
         {
           "id": "bowel_bother",
           "text": "Overall, how big a problem have your bowel habits been for you during the last 4 weeks?",
           "type": "radio",
-          "options": ["No problem", "Very small", "Small", "Moderate", "Big problem"]
+          "options": ["No problem", "Very small problem", "Small problem", "Moderate problem", "Big problem"]
         }
       ]
     }

@@ -78,28 +78,28 @@
     }
   },
   "Radiotherapy": {
-    "Total": 284,
-    "Not using pad": 182,
-    "Using one pad a day": 77,
-    "Using two or more pads a day": 25,
+    "Total": 372,
+    "Not using pad": 346,
+    "Using one pad a day": 21,
+    "Using two or more pads a day": 7,
     "Pad status at baseline": {
       "Not using pad": {
-        "N": 278,
-        "Not using pad": 65,
-        "Using one pad a day": 27,
-        "Using two or more pads a day": 8
+        "N": 357,
+        "Not using pad": 95,
+        "Using one pad a day": 4,
+        "Using two or more pads a day": 1
       },
       "Using one pad a day": {
-        "N": 3,
-        "Not using pad": 33,
-        "Using one pad a day": 34,
-        "Using two or more pads a day": 33
+        "N": 11,
+        "Not using pad": 55,
+        "Using one pad a day": 45,
+        "Using two or more pads a day": 0
       },
       "Using two or more pads a day": {
-        "N": 3,
-        "Not using pad": 0,
-        "Using one pad a day": 67,
-        "Using two or more pads a day": 33
+        "N": 4,
+        "Not using pad": 25,
+        "Using one pad a day": 25,
+        "Using two or more pads a day": 50
       }
     }
   }

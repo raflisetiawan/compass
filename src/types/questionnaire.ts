@@ -4,6 +4,7 @@ export interface Question {
     type: "radio" | "select" | "number";
     options?: (string | { label: string; value: string | number })[];
     placeholder?: string;
+    helpText?: string;
     unit?: string;
     validation?: { min?: number; max?: number; required?: boolean };
     required?: boolean;

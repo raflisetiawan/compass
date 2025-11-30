@@ -16,8 +16,6 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
         { id: 'cancer_stage', label: 'T Stage' },
         { id: 'mri_visibility', label: 'MRI visibility' },
         { id: 'maximal_cancer_core_length', label: 'Maximal Cancer Core Length' },
-        { id: 'nerve_sparing', label: 'Nerve sparing' },
-        { id: 'radiotherapy_hormone', label: 'Hormone treatment' },
     ];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clinicalParamsBody = clinicalParams.map(param => [(answers as any)[param.id] || 'Unknown', param.label]);
