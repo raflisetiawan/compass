@@ -6,6 +6,43 @@ import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import ErectileFunctionTable from "@/features/results/components/ErectileFunctionTable";
 import LegendIcon from "@/features/results/components/LegendIcon";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+// Custom component for pill icon in a circle
+const PillIcon = ({ color, size = 24, className }: { color: string; size?: number; className?: string }) => {
+  const pillSize = size * 0.5;
+  const center = size / 2;
+  
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
+      <circle cx={center} cy={center} r={center} fill={color} />
+      <g transform={`translate(${center}, ${center})`}>
+        {/* Pill icon - simplified capsule shape */}
+        <g transform={`translate(${-pillSize/2}, ${-pillSize/2}) scale(${pillSize/24})`}>
+          <path
+            d="M15.5 8.5l-7 7a3.5 3.5 0 1 0 4.95 4.95l7-7a3.5 3.5 0 1 0-4.95-4.95z"
+            fill="white"
+            stroke="white"
+            strokeWidth="2"
+          />
+          <line
+            x1="9"
+            y1="15"
+            x2="15"
+            y2="9"
+            stroke={color}
+            strokeWidth="2"
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
 
 type ErectileFunctionOutcome = {
   N: number;
@@ -99,7 +136,7 @@ const ErectileFunctionPageContent = () => {
           { name: "Firm enough for intercourse", value: firmIntercourse, color: "#28a745" },
           { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#ffc107" },
           { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#dc3545" },
-          { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545" },
+          { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545", Icon: PillIcon },
         ],
       };
     });
@@ -107,21 +144,26 @@ const ErectileFunctionPageContent = () => {
 
   const Legend = () => (
     <div className="mb-6 p-4 rounded-lg">
-      <h3 className="font-bold mb-2 text-lg">Legend</h3>
+      <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
         <div className="flex items-center"><LegendIcon color="#28a745" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
         <div className="flex items-center"><LegendIcon color="#ffc107" name="Firm masturbation" /><span className="ml-2">Firm enough for masturbation only</span></div>
         <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity</span></div>
-        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm (assist)" /><span className="ml-2">Not firm enough, using medication/device</span></div>
+        <div className="flex items-center"><PillIcon color="#dc3545" size={16} /><span className="ml-2">Not firm enough, using medication/device</span></div>
       </div>
     </div>
   );
 
   return (
     <>
-      <p className="text-sm text-gray-600 mb-4">
-        The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.
-      </p>
+      <div className="text-sm text-gray-600 mb-4 space-y-2">
+        <p>
+          As men get older, some will develop problems with erections. This can happen even without prostate cancer or its treatment.
+        </p>
+        <p>
+          The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.
+        </p>
+      </div>
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current erectile function status:</h3>
         <div className="flex items-center bg-pink-100 p-2 rounded">
@@ -150,23 +192,43 @@ const ErectileFunctionPageContent = () => {
       </div>
       <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
       <ErectileFunctionTable data={treatmentOutcomes} />
-      <h3 className="font-bold mt-6 mb-2 text-lg">Summary</h3>
-      <div className="text-sm text-gray-600 space-y-4">
-        <p>
-          Based on the information you have entered, for men who currently have erections that are {' '}
-          <span className="font-semibold">{baselineStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
-        </p>
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name}>
-            <p className="font-semibold">For men who choose {treatment.name}:</p>
-            <ul className="list-disc list-inside pl-4">
-              {treatment.data.map((outcome) => (
-                <li key={outcome.name}>{outcome.value}% will have erections that are {outcome.name.toLowerCase()}.</li>
+      <Accordion type="single" collapsible className="w-full mt-6">
+        <AccordionItem value="summary">
+          <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
+          <AccordionContent>
+            <div className="text-sm text-gray-600 space-y-4">
+              <p>
+                Out of 100 men like you who currently have erections that are {' '}
+                <span className="font-semibold">{baselineStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+              </p>
+              {treatmentOutcomes.map((treatment) => (
+                <div key={treatment.name}>
+                  <p className="font-semibold">For men who choose {treatment.name}:</p>
+                  <ul className="list-disc list-inside pl-4">
+                    {treatment.data.map((outcome) => {
+                      const roundedValue = Math.round(outcome.value);
+                      let description = outcome.name.toLowerCase();
+                      
+                      // Special formatting for intercourse
+                      if (outcome.name === "Firm enough for intercourse") {
+                        description = "have erections of sufficient quality to have full intercourse";
+                      } else if (outcome.name.includes("medication/device")) {
+                        description = "not be firm enough for any sexual activity, even with medication/device";
+                      } else {
+                        description = `have erections that are ${description}`;
+                      }
+                      
+                      return (
+                        <li key={outcome.name}>{roundedValue} out of 100 will {description}.</li>
+                      );
+                    })}
+                  </ul>
+                </div>
               ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       {legendModalData && (
         <IconLegendModal
           isOpen={!!legendModalData}

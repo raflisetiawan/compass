@@ -38,17 +38,9 @@ export const ResultsMobileHeader = ({
 
     return (
         <>
-            <div className="md:hidden mb-4">
-                <h1 className="text-2xl font-bold mb-4">Results</h1>
+            <div className="md:hidden mb-4 space-y-4">
                 <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => onModalOpen("clinical")} disabled={isGenerating}>
-                            Clinical Parameters
-                        </Button>
-                        <Button variant="outline" onClick={() => onModalOpen("baseline")} disabled={isGenerating}>
-                            Baseline Function
-                        </Button>
-                    </div>
+                    <h1 className="text-2xl font-bold">Results</h1>
                     <div className="flex gap-2">
                         <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating}>
                             <RefreshCw className="h-4 w-4" />
@@ -67,6 +59,14 @@ export const ResultsMobileHeader = ({
                             )}
                         </Button>
                     </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                    <Button variant="outline" onClick={() => onModalOpen("clinical")} disabled={isGenerating} className="w-full">
+                        Clinical Parameters
+                    </Button>
+                    <Button variant="outline" onClick={() => onModalOpen("baseline")} disabled={isGenerating} className="w-full">
+                        Baseline Function
+                    </Button>
                 </div>
                 {isGenerating && (
                     <div className="mt-2 text-xs text-center">

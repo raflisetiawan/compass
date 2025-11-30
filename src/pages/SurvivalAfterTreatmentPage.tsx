@@ -2,11 +2,17 @@ import { useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
 import IconArray from "@/features/results/components/IconArray";
-import SurvivalDataTable from "@/features/results/components/SurvivalDataTable";
+import OncologicalOutcomesTable from "@/features/results/components/OncologicalOutcomesTable";
 import { getAgeGroup, getPSARange, getGradeGroup } from "@/services/prediction";
 import survivalData from "@/assets/survival_calculation.json";
 import type { SurvivalData } from "@/types";
 import LegendIcon from "@/features/results/components/LegendIcon";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const SurvivalAfterTreatmentPageContent = () => {
   const { answers } = useOutcomePageData();
@@ -48,14 +54,9 @@ const SurvivalAfterTreatmentPageContent = () => {
   const iconArrayData = useMemo(() => {
     if (!survivalOutcome) return [];
 
-    let alive = Math.round(Number(survivalOutcome["Alive (%)"]));
-    const pcaDeath = Math.round(Number(survivalOutcome["PCa Death (%)"]));
-    const otherDeath = Math.round(Number(survivalOutcome["Other Death (%)"]));
-
-    const total = alive + pcaDeath + otherDeath;
-    if (total !== 100) {
-      alive -= total - 100;
-    }
+    const alive = Number(survivalOutcome["Alive (%)"]);
+    const pcaDeath = Number(survivalOutcome["PCa Death (%)"]);
+    const otherDeath = Number(survivalOutcome["Other Death (%)"]);
 
     return [
       { name: "Alive", value: alive, color: "#1B5E20" },
@@ -74,46 +75,59 @@ const SurvivalAfterTreatmentPageContent = () => {
 
   return (
     <>
-      <p className="text-sm text-gray-600 mb-4">
-        The following graph represents 100 men with the same characteristics
-        that you have indicated. The icon plot shows what happens those men
-        after 5 years from receiving their diagnosis of prostate cancer.
-      </p>
-      <div className="flex flex-col md:flex-row md:items-start gap-4">
+      <div className="text-sm text-gray-600 mb-4 space-y-3">
+        <p>
+          We know that many men, when they are first told they have prostate cancer, worry about whether this means that prostate cancer will shorten their life.
+        </p>
+        <p>
+          We know that for most men with localised prostate cancer, the prostate cancer will not affect how long they live. Survival following a diagnosis of localised prostate cancer is therefore very good and people may have a higher risk of dying from other causes (such as dementia or heart problems).
+        </p>
+        <p className="font-semibold">
+          The following graph represents 100 men with a cancer like yours. The icon plot shows what happens to those men 5 years after receiving a diagnosis of prostate cancer.
+        </p>
+      </div>
+      <div className="flex flex-col md:flex-row md:items-start gap-6">
         <IconArray data={iconArrayData} />
-        <div className="flex flex-wrap gap-4 md:mt-0">
-          {iconArrayData.map((item) => (
-            <div key={item.name} className="flex items-center gap-2">
-              <LegendIcon color={item.color} name={item.name} />
-              <span className="text-sm text-gray-700">
-                {item.name} ({item.value}%)
-              </span>
-            </div>
-          ))}
+        <div className="flex-shrink-0">
+          <h3 className="font-bold mb-3 text-lg">What the icons mean</h3>
+          <div className="flex flex-col space-y-2">
+            {iconArrayData.map((item) => (
+              <div key={item.name} className="flex items-center gap-2">
+                <LegendIcon color={item.color} name={item.name} />
+                <span className="text-sm text-gray-700">
+                  {item.name}: {item.value.toFixed(1)}%
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
-      <SurvivalDataTable data={survivalOutcome} />
-      <h3 className="font-bold mt-6 mb-2 text-lg">Summary</h3>
-      {iconArrayData.length > 0 && (
-        <div className="text-sm text-gray-600 space-y-2">
-          <p>Based on the information you have entered:</p>
-          <ul className="list-disc list-inside pl-4">
-            <li>
-              {iconArrayData[0].value}% of men who are diagnosed with prostate
-              cancer in the UK will be alive at 5 years.
-            </li>
-            <li>
-              {iconArrayData[1].value}% of men will have died from prostate
-              cancer.
-            </li>
-            <li>
-              {iconArrayData[2].value}% of men will have died from causes that
-              are not related to prostate cancer.
-            </li>
-          </ul>
-        </div>
-      )}
+      <div className="mt-6">
+        <OncologicalOutcomesTable data={iconArrayData} />
+      </div>
+      <Accordion type="single" collapsible className="w-full mt-6">
+        <AccordionItem value="summary">
+          <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
+          <AccordionContent>
+            {iconArrayData.length > 0 && (
+              <div className="text-sm text-gray-600 space-y-2">
+                <p>Based on the information you have entered:</p>
+                <ul className="list-disc list-inside pl-4">
+                  <li>
+                    {Math.round(iconArrayData[0].value)} out of 100 men who are diagnosed with prostate cancer in the UK will be alive at 5 years.
+                  </li>
+                  <li>
+                    {Math.round(iconArrayData[1].value)} out of 100 men will have died from prostate cancer.
+                  </li>
+                  <li>
+                    {Math.round(iconArrayData[2].value)} out of 100 men will have died from causes that are not related to prostate cancer.
+                  </li>
+                </ul>
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </>
   );
 };

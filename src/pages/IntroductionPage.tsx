@@ -9,16 +9,16 @@ const IntroductionPage = () => {
         <div className="w-full max-w-2xl bg-white rounded-lg shadow-md">
           <div className="pt-6 pb-4 text-center">
             <BeSpokeLogo />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-6 mb-2 px-4">
+            <p className="text-2xl sm:text-4xl font-bold text-gray-900 mt-6 mb-2 px-4">
               A patient decision aid for prostate cancer treatment options
-            </h1>
+            </p>
           </div>
           <hr className="w-full" />
           <div className="p-8">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800">
               The BeSpoke Decision Support tool
             </h2>
-            <div className="text-gray-600 mb-8 space-y-4 text-lg leading-relaxed">
+            <div className="text-gray-600 mb-8 space-y-4 text-base sm:text-lg leading-relaxed">
               <p>
                 We know it can be difficult to choose a treatment for prostate
                 cancer. We want to help you understand the options that you have

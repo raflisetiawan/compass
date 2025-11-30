@@ -6,6 +6,12 @@ import erectileBotherData from "@/assets/erectile_bother.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import SexualBotherTable from "@/features/results/components/SexualBotherTable";
 import LegendIcon from "@/features/results/components/LegendIcon";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 type SexualBotherOutcome = {
   N: number;
@@ -68,7 +74,7 @@ const SexualBotherPageContent = () => {
 
   const Legend = () => (
     <div className="mb-6 p-4 rounded-lg">
-      <h3 className="font-bold mb-2 text-lg">Legend</h3>
+      <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
         <div className="flex items-center"><LegendIcon color="#28a745" name="No problem" /><span className="ml-2">No problem</span></div>
         <div className="flex items-center"><LegendIcon color="#ffc107" name="Small problem" /><span className="ml-2">Very small or small problem</span></div>
@@ -107,23 +113,29 @@ const SexualBotherPageContent = () => {
       </div>
       <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
       <SexualBotherTable data={treatmentOutcomes} />
-      <h3 className="font-bold mt-6 mb-2 text-lg">Summary</h3>
-      <div className="text-sm text-gray-600 space-y-4">
-        <p>
-          Based on the information you have entered, for men who are currently experiencing{" "}
-          <span className="font-semibold">{baselineBotherStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
-        </p>
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name}>
-            <p className="font-semibold">For men who choose {treatment.name}:</p>
-            <ul className="list-disc list-inside pl-4">
-              {treatment.data.map((outcome) => (
-                <li key={outcome.name}>{outcome.value}% will experience {outcome.name.toLowerCase()}.</li>
+      <Accordion type="single" collapsible className="w-full mt-6">
+        <AccordionItem value="summary">
+          <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
+          <AccordionContent>
+            <div className="text-sm text-gray-600 space-y-4">
+              <p>
+                Out of 100 men like you who are currently experiencing{" "}
+                <span className="font-semibold">{baselineBotherStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+              </p>
+              {treatmentOutcomes.map((treatment) => (
+                <div key={treatment.name}>
+                  <p className="font-semibold">For men who choose {treatment.name}:</p>
+                  <ul className="list-disc list-inside pl-4">
+                    {treatment.data.map((outcome) => (
+                      <li key={outcome.name}>{Math.round(outcome.value)} out of 100 will consider their sexual function {outcome.name.toLowerCase()}.</li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       {legendModalData && (
         <IconLegendModal
           isOpen={!!legendModalData}
