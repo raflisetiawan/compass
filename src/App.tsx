@@ -17,6 +17,11 @@ import LoginPage from "./pages/LoginPage";
 import SelectPatientPage from "./pages/SelectPatientPage";
 import IntroductionPage from "./pages/IntroductionPage";
 import PatientInfoPage from "./pages/PatientInfoPage";
+import PersonalisedInfoIntroPage from "./pages/PersonalisedInfoIntroPage";
+import TreatmentOptionsDefinitionPage from "./pages/TreatmentOptionsDefinitionPage";
+import TreatmentOptionsDeliveryPage from "./pages/TreatmentOptionsDeliveryPage";
+import TreatmentOptionsPostTreatmentPage from "./pages/TreatmentOptionsPostTreatmentPage";
+import TreatmentOptionsFollowUpPage from "./pages/TreatmentOptionsFollowUpPage";
 import ResultsPage from "./pages/ResultsPage";
 import AboutPage from "./pages/AboutPage";
 
@@ -40,6 +45,21 @@ function App() {
         break;
       case "/patient-info":
         title = "Patient Info | COMPASS";
+        break;
+      case "/personalised-info-intro":
+        title = "Personalised Information | COMPASS";
+        break;
+      case "/treatment-options/definition":
+        title = "Treatment Options - Definition | COMPASS";
+        break;
+      case "/treatment-options/delivery":
+        title = "Treatment Options - Delivery | COMPASS";
+        break;
+      case "/treatment-options/post-treatment":
+        title = "Treatment Options - Post Treatment | COMPASS";
+        break;
+      case "/treatment-options/follow-up":
+        title = "Treatment Options - Follow Up | COMPASS";
         break;
       case "/questionnaire":
         title = "Questionnaire | COMPASS";
@@ -109,6 +129,56 @@ function App() {
               <ProtectedRoute>
                 <AnimatedPage>
                   <PatientInfoPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/personalised-info-intro"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <PersonalisedInfoIntroPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/treatment-options/definition"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <TreatmentOptionsDefinitionPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/treatment-options/delivery"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <TreatmentOptionsDeliveryPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/treatment-options/post-treatment"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <TreatmentOptionsPostTreatmentPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/treatment-options/follow-up"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <TreatmentOptionsFollowUpPage />
                 </AnimatedPage>
               </ProtectedRoute>
             }
