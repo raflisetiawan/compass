@@ -136,8 +136,75 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
 
     // Add footnote
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    let currentY = (doc as any).lastAutoTable.finalY + 10;
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.text('* Percentages represent likelihood of achieving the stated outcome at 1 year post-treatment', 14, finalY);
+    doc.text('* Percentages represent likelihood of achieving the stated outcome at 1 year post-treatment', 14, currentY);
+
+    // Add definitions section
+    currentY += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Definitions:', 14, currentY);
+
+    currentY += 6;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    
+    const lineHeight = 5;
+    const margin = 14;
+    const maxWidth = doc.internal.pageSize.getWidth() - (margin * 2);
+
+    // Leak-free definition
+    const leakFreeText = 'Leak free: % of men who rarely or never leak';
+    doc.text(leakFreeText, margin, currentY);
+    currentY += lineHeight;
+
+    // Pad-free definition
+    const padFreeText = 'Pad-Free: % of men who wear no pad';
+    doc.text(padFreeText, margin, currentY);
+    currentY += lineHeight;
+
+    // Urinary bother definition
+    const urinaryBotherText = 'Urinary Bother: % of men for whom their urinary function is not considered to be a problem';
+    const urinaryBotherLines = doc.splitTextToSize(urinaryBotherText, maxWidth);
+    doc.text(urinaryBotherLines, margin, currentY);
+    currentY += lineHeight * urinaryBotherLines.length;
+
+    currentY += 2; // Extra spacing
+
+    // Erectile function definition
+    const erectileText = 'Sufficient erections for intercourse: % of men whose erections are sufficient for intercourse with or without use of medications or sexual devices';
+    const erectileLines = doc.splitTextToSize(erectileText, maxWidth);
+    doc.text(erectileLines, margin, currentY);
+    currentY += lineHeight * erectileLines.length;
+
+    // Sexual bother definition
+    const sexualBotherText = 'Sexual bother: % of men for whom their sexual function is not considered to be a problem';
+    const sexualBotherLines = doc.splitTextToSize(sexualBotherText, maxWidth);
+    doc.text(sexualBotherLines, margin, currentY);
+    currentY += lineHeight * sexualBotherLines.length;
+
+    currentY += 2; // Extra spacing
+
+    // Bowel urgency definition
+    const bowelUrgencyText = 'Problem with urgency: % of men for whom their urgency to have a bowel movement is not considered to be a problem';
+    const bowelUrgencyLines = doc.splitTextToSize(bowelUrgencyText, maxWidth);
+    doc.text(bowelUrgencyLines, margin, currentY);
+    currentY += lineHeight * bowelUrgencyLines.length;
+
+    // Bowel bother definition
+    const bowelBotherText = 'Bowel bother: % of men for whom their bowel function is not considered to be a problem';
+    const bowelBotherLines = doc.splitTextToSize(bowelBotherText, maxWidth);
+    doc.text(bowelBotherLines, margin, currentY);
+    currentY += lineHeight * bowelBotherLines.length;
+
+    currentY += 4; // Extra spacing before final note
+
+    // Add EPIC-26 note
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    const epicNoteText = 'These definitions correspond to the lowest score (1 out of 5) of their corresponding EPIC-26 questions.';
+    const epicNoteLines = doc.splitTextToSize(epicNoteText, maxWidth);
+    doc.text(epicNoteLines, margin, currentY);
 };
