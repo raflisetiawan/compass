@@ -45,6 +45,14 @@ const ProblemWithUrgencyPageContent = () => {
     return "No_problem";
   }, [answers.bowel_urgency]);
 
+  // Helper function to get display name for baseline status
+  const getBaselineDisplayName = (status: string): string => {
+    if (status === "No_problem") return "No problem";
+    if (status === "Very_small_problem") return "Very small or small problem";
+    if (status === "Moderate_big_problem") return "Moderate or big problem";
+    return status.replace(/_/g, ' ');
+  };
+
   const treatmentOutcomes = useMemo(() => {
     const data: TreatmentData = {
       "Active Surveillance": problemWithUrgencyData.Active_Surveillance,
@@ -109,14 +117,14 @@ const ProblemWithUrgencyPageContent = () => {
             }
             name={baselineStatus}
           />
-          <span className="ml-2">{answers.bowel_urgency || "No problem"}</span>
+          <span className="ml-2">{getBaselineDisplayName(baselineStatus)}</span>
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
+            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -129,7 +137,7 @@ const ProblemWithUrgencyPageContent = () => {
           <AccordionContent>
             <div className="text-sm text-gray-600 space-y-4">
               <p>
-                Out of 100 men like you who are currently experiencing a "{baselineStatus.replace(/_/g, ' ').toLowerCase()}", the outcomes at 1 year after treatment are:
+                Out of 100 men like you who are currently experiencing a "{getBaselineDisplayName(baselineStatus).toLowerCase()}", the outcomes at 1 year after treatment are:
               </p>
               {treatmentOutcomes.map((treatment) => (
                 <div key={treatment.name}>

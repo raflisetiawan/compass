@@ -1,149 +1,373 @@
 {
   "Active Surveillance": {
-    "Total": 153,
-    "Firm enough for intercourse": 57,
-    "Firm enough for masturbation": 35,
-    "Not firm enough for any sexual activity": 34,
-    "None at all": 27,
+    "Total": 148,
     "Baseline quality of erection": {
-      "Firm enough for intercourse": {
-        "N": 69,
-        "Firm enough for intercourse": 68,
-        "Firm enough for masturbation": 17,
-        "Not firm enough for any sexual activity": 12,
-        "None at all": 3
+      "Firm for intercourse - no assist": {
+        "N": 59,
+        "Firm for intercourse - no assist": 68,
+        "Firm for intercourse - with assist": 5,
+        "Firm for masturbation - no assist": 15,
+        "Firm for masturbation - with assist": 2,
+        "Not firm - no assist": 5,
+        "Not firm - with assist": 2,
+        "None at all - no assist": 3,
+        "None at all - with assist": 0
       },
-      "Firm enough for masturbation and foreplay only": {
-        "N": 32,
-        "Firm enough for intercourse": 12,
-        "Firm enough for masturbation": 56,
-        "Not firm enough for any sexual activity": 22,
-        "None at all": 9
+      "Firm for intercourse - with assist": {
+        "N": 6,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 17,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 17,
+        "Not firm - no assist": 17,
+        "Not firm - with assist": 50,
+        "None at all - no assist": 0,
+        "None at all - with assist": 0
       },
-      "Not firm enough for any sexual activity": {
+      "Firm for masturbation - no assist": {
         "N": 25,
-        "Firm enough for intercourse": 8,
-        "Firm enough for masturbation": 16,
-        "Not firm enough for any sexual activity": 52,
-        "None at all": 24
+        "Firm for intercourse - no assist": 8,
+        "Firm for intercourse - with assist": 8,
+        "Firm for masturbation - no assist": 52,
+        "Firm for masturbation - with assist": 12,
+        "Not firm - no assist": 12,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 8,
+        "None at all - with assist": 0
       },
-      "None at all": {
-        "N": 27,
-        "Firm enough for intercourse": 15,
-        "Firm enough for masturbation": 4,
-        "Not firm enough for any sexual activity": 22,
-        "None at all": 59
+      "Firm for masturbation - with assist": {
+        "N": 7,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 29,
+        "Not firm - no assist": 43,
+        "Not firm - with assist": 14,
+        "None at all - no assist": 0,
+        "None at all - with assist": 14
+      },
+      "Not firm - no assist": {
+        "N": 14,
+        "Firm for intercourse - no assist": 14,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 14,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 64,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 7,
+        "None at all - with assist": 0
+      },
+      "Not firm - with assist": {
+        "N": 10,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 20,
+        "Not firm - no assist": 10,
+        "Not firm - with assist": 30,
+        "None at all - no assist": 30,
+        "None at all - with assist": 10
+      },
+      "None at all - no assist": {
+        "N": 22,
+        "Firm for intercourse - no assist": 18,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 5,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 27,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 41,
+        "None at all - with assist": 9
+      },
+      "None at all - with assist": {
+        "N": 5,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 40,
+        "None at all - with assist": 60
       }
     }
   },
   "Focal Therapy": {
-    "Total": 195,
-    "Firm enough for intercourse": 73,
-    "Firm enough for masturbation": 52,
-    "Not firm enough for any sexual activity": 34,
-    "None at all": 36,
+    "Total": 194,
     "Baseline quality of erection": {
-      "Firm enough for intercourse": {
-        "N": 98,
-        "Firm enough for intercourse": 63,
-        "Firm enough for masturbation": 22,
-        "Not firm enough for any sexual activity": 11,
-        "None at all": 4
+      "Firm for intercourse - no assist": {
+        "N": 85,
+        "Firm for intercourse - no assist": 58,
+        "Firm for intercourse - with assist": 8,
+        "Firm for masturbation - no assist": 18,
+        "Firm for masturbation - with assist": 2,
+        "Not firm - no assist": 6,
+        "Not firm - with assist": 4,
+        "None at all - no assist": 4,
+        "None at all - with assist": 0
       },
-      "Firm enough for masturbation and foreplay only": {
-        "N": 39,
-        "Firm enough for intercourse": 20,
-        "Firm enough for masturbation": 49,
-        "Not firm enough for any sexual activity": 26,
-        "None at all": 5
+      "Firm for intercourse - with assist": {
+        "N": 12,
+        "Firm for intercourse - no assist": 8,
+        "Firm for intercourse - with assist": 42,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 25,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 17,
+        "None at all - no assist": 0,
+        "None at all - with assist": 8
       },
-      "Not firm enough for any sexual activity": {
-        "N": 29,
-        "Firm enough for intercourse": 7,
-        "Firm enough for masturbation": 31,
-        "Not firm enough for any sexual activity": 24,
-        "None at all": 38
+      "Firm for masturbation - no assist": {
+        "N": 28,
+        "Firm for intercourse - no assist": 21,
+        "Firm for intercourse - with assist": 4,
+        "Firm for masturbation - no assist": 39,
+        "Firm for masturbation - with assist": 7,
+        "Not firm - no assist": 18,
+        "Not firm - with assist": 4,
+        "None at all - no assist": 7,
+        "None at all - with assist": 0
       },
-      "None at all": {
-        "N": 29,
-        "Firm enough for intercourse": 3,
-        "Firm enough for masturbation": 10,
-        "Not firm enough for any sexual activity": 21,
-        "None at all": 66
+      "Firm for masturbation - with assist": {
+        "N": 11,
+        "Firm for intercourse - no assist": 9,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 9,
+        "Firm for masturbation - with assist": 46,
+        "Not firm - no assist": 27,
+        "Not firm - with assist": 9,
+        "None at all - no assist": 0,
+        "None at all - with assist": 0
+      },
+      "Not firm - no assist": {
+        "N": 27,
+        "Firm for intercourse - no assist": 4,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 26,
+        "Firm for masturbation - with assist": 7,
+        "Not firm - no assist": 15,
+        "Not firm - with assist": 7,
+        "None at all - no assist": 41,
+        "None at all - with assist": 0
+      },
+      "Not firm - with assist": {
+        "N": 2,
+        "Firm for intercourse - no assist": 1,
+        "Firm for intercourse - with assist": 50,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 50,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 0,
+        "None at all - with assist": 0
+      },
+      "None at all - no assist": {
+        "N": 25,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 4,
+        "Firm for masturbation - no assist": 8,
+        "Firm for masturbation - with assist": 4,
+        "Not firm - no assist": 16,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 68,
+        "None at all - with assist": 0
+      },
+      "None at all - with assist": {
+        "N": 4,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 25,
+        "Not firm - with assist": 25,
+        "None at all - no assist": 25,
+        "None at all - with assist": 25
       }
     }
   },
   "Surgery": {
-    "Total": 287,
-    "Firm enough for intercourse": 22,
-    "Firm enough for masturbation": 54,
-    "Not firm enough for any sexual activity": 55,
-    "None at all": 156,
+    "Total": 283,
     "Baseline quality of erection": {
-      "Firm enough for intercourse": {
-        "N": 144,
-        "Firm enough for intercourse": 13,
-        "Firm enough for masturbation": 25,
-        "Not firm enough for any sexual activity": 21,
-        "None at all": 41
+      "Firm for intercourse - no assist": {
+        "N": 131,
+        "Firm for intercourse - no assist": 2,
+        "Firm for intercourse - with assist": 11,
+        "Firm for masturbation - no assist": 4,
+        "Firm for masturbation - with assist": 21,
+        "Not firm - no assist": 6,
+        "Not firm - with assist": 16,
+        "None at all - no assist": 16,
+        "None at all - with assist": 24
       },
-      "Firm enough for masturbation and foreplay only": {
-        "N": 68,
-        "Firm enough for intercourse": 3,
-        "Firm enough for masturbation": 21,
-        "Not firm enough for any sexual activity": 22,
-        "None at all": 54
+      "Firm for intercourse - with assist": {
+        "N": 11,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 18,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 18,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 9,
+        "None at all - no assist": 0,
+        "None at all - with assist": 55
       },
-      "Not firm enough for any sexual activity": {
-        "N": 46,
-        "Firm enough for intercourse": 0,
-        "Firm enough for masturbation": 7,
-        "Not firm enough for any sexual activity": 17,
-        "None at all": 76
+      "Firm for masturbation - no assist": {
+        "N": 58,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 3,
+        "Firm for masturbation - no assist": 5,
+        "Firm for masturbation - with assist": 12,
+        "Not firm - no assist": 10,
+        "Not firm - with assist": 10,
+        "None at all - no assist": 36,
+        "None at all - with assist": 22
       },
-      "None at all": {
-        "N": 29,
-        "Firm enough for intercourse": 3,
-        "Firm enough for masturbation": 3,
-        "Not firm enough for any sexual activity": 7,
-        "None at all": 87
+      "Firm for masturbation - with assist": {
+        "N": 9,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 44,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 33,
+        "None at all - no assist": 11,
+        "None at all - with assist": 11
+      },
+      "Not firm - no assist": {
+        "N": 33,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 3,
+        "Not firm - no assist": 9,
+        "Not firm - with assist": 9,
+        "None at all - no assist": 39,
+        "None at all - with assist": 39
+      },
+      "Not firm - with assist": {
+        "N": 12,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 17,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 8,
+        "None at all - no assist": 25,
+        "None at all - with assist": 50
+      },
+      "None at all - no assist": {
+        "N": 25,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 4,
+        "Firm for masturbation - no assist": 4,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 8,
+        "None at all - no assist": 56,
+        "None at all - with assist": 28
+      },
+      "None at all - with assist": {
+        "N": 4,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 50,
+        "None at all - with assist": 50
       }
     }
   },
   "Radiotherapy": {
-    "Total": 349,
-    "Firm enough for intercourse": 21,
-    "Firm enough for masturbation": 31,
-    "Not firm enough for any sexual activity": 65,
-    "None at all": 232,
+    "Total": 343,
     "Baseline quality of erection": {
-      "Firm enough for intercourse": {
-        "N": 74,
-        "Firm enough for intercourse": 23,
-        "Firm enough for masturbation": 7,
-        "Not firm enough for any sexual activity": 16,
-        "None at all": 54
+      "Firm for intercourse - no assist": {
+        "N": 64,
+        "Firm for intercourse - no assist": 20,
+        "Firm for intercourse - with assist": 3,
+        "Firm for masturbation - no assist": 3,
+        "Firm for masturbation - with assist": 2,
+        "Not firm - no assist": 16,
+        "Not firm - with assist": 2,
+        "None at all - no assist": 47,
+        "None at all - with assist": 5
       },
-      "Firm enough for masturbation and foreplay only": {
-        "N": 68,
-        "Firm enough for intercourse": 2,
-        "Firm enough for masturbation": 24,
-        "Not firm enough for any sexual activity": 28,
-        "None at all": 46
+      "Firm for intercourse - with assist": {
+        "N": 9,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 1,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 11,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 11,
+        "None at all - no assist": 44,
+        "None at all - with assist": 22
       },
-      "Not firm enough for any sexual activity": {
-        "N": 72,
-        "Firm enough for intercourse": 0,
-        "Firm enough for masturbation": 9,
-        "Not firm enough for any sexual activity": 26,
-        "None at all": 65
+      "Firm for masturbation - no assist": {
+        "N": 51,
+        "Firm for intercourse - no assist": 1,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 24,
+        "Firm for masturbation - with assist": 2,
+        "Not firm - no assist": 22,
+        "Not firm - with assist": 4,
+        "None at all - no assist": 47,
+        "None at all - with assist": 0
       },
-      "None at all": {
-        "N": 135,
-        "Firm enough for intercourse": 1,
-        "Firm enough for masturbation": 3,
-        "Not firm enough for any sexual activity": 11,
-        "None at all": 84
+      "Firm for masturbation - with assist": {
+        "N": 17,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 1,
+        "Firm for masturbation - no assist": 18,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 18,
+        "Not firm - with assist": 18,
+        "None at all - no assist": 24,
+        "None at all - with assist": 18
+      },
+      "Not firm - no assist": {
+        "N": 59,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 7,
+        "Firm for masturbation - with assist": 3,
+        "Not firm - no assist": 27,
+        "Not firm - with assist": 2,
+        "None at all - no assist": 53,
+        "None at all - with assist": 8
+      },
+      "Not firm - with assist": {
+        "N": 12,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 0,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 0,
+        "Not firm - with assist": 17,
+        "None at all - no assist": 50,
+        "None at all - with assist": 33
+      },
+      "None at all - no assist": {
+        "N": 109,
+        "Firm for intercourse - no assist": 2,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 2,
+        "Firm for masturbation - with assist": 0,
+        "Not firm - no assist": 9,
+        "Not firm - with assist": 0,
+        "None at all - no assist": 83,
+        "None at all - with assist": 4
+      },
+      "None at all - with assist": {
+        "N": 22,
+        "Firm for intercourse - no assist": 0,
+        "Firm for intercourse - with assist": 0,
+        "Firm for masturbation - no assist": 5,
+        "Firm for masturbation - with assist": 5,
+        "Not firm - no assist": 5,
+        "Not firm - with assist": 18,
+        "None at all - no assist": 45,
+        "None at all - with assist": 23
       }
     }
   }

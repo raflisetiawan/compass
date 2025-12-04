@@ -6,6 +6,7 @@ import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import ErectileFunctionTable from "@/features/results/components/ErectileFunctionTable";
 import LegendIcon from "@/features/results/components/LegendIcon";
+import PillIcon from "@/features/results/components/PillIcon";
 import {
   Accordion,
   AccordionContent,
@@ -13,62 +14,66 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-// Custom component for pill icon in a circle
-const PillIcon = ({ color, size = 24, className }: { color: string; size?: number; className?: string }) => {
-  const pillSize = size * 0.5;
-  const center = size / 2;
-  
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
-      <circle cx={center} cy={center} r={center} fill={color} />
-      <g transform={`translate(${center}, ${center})`}>
-        {/* Pill icon - simplified capsule shape */}
-        <g transform={`translate(${-pillSize/2}, ${-pillSize/2}) scale(${pillSize/24})`}>
-          <path
-            d="M15.5 8.5l-7 7a3.5 3.5 0 1 0 4.95 4.95l7-7a3.5 3.5 0 1 0-4.95-4.95z"
-            fill="white"
-            stroke="white"
-            strokeWidth="2"
-          />
-          <line
-            x1="9"
-            y1="15"
-            x2="15"
-            y2="9"
-            stroke={color}
-            strokeWidth="2"
-          />
-        </g>
-      </g>
-    </svg>
-  );
-};
 
 type ErectileFunctionOutcome = {
   N: number;
-  "Firm enough for intercourse": number;
-  "Firm enough for masturbation": number;
-  "Not firm enough for any sexual activity": number;
-  "None at all": number;
+  "Firm for intercourse - no assist": number;
+  "Firm for intercourse - with assist": number;
+  "Firm for masturbation - no assist": number;
+  "Firm for masturbation - with assist": number;
+  "Not firm - no assist": number;
+  "Not firm - with assist": number;
+  "None at all - no assist": number;
+  "None at all - with assist": number;
 };
 
 type TreatmentData = {
   [key: string]: {
     "Baseline quality of erection": {
-      "Firm enough for intercourse": ErectileFunctionOutcome;
-      "Firm enough for masturbation and foreplay only": ErectileFunctionOutcome;
-      "Not firm enough for any sexual activity": ErectileFunctionOutcome;
-      "None at all": ErectileFunctionOutcome;
+      "Firm for intercourse - no assist": ErectileFunctionOutcome;
+      "Firm for intercourse - with assist": ErectileFunctionOutcome;
+      "Firm for masturbation - no assist": ErectileFunctionOutcome;
+      "Firm for masturbation - with assist": ErectileFunctionOutcome;
+      "Not firm - no assist": ErectileFunctionOutcome;
+      "Not firm - with assist": ErectileFunctionOutcome;
+      "None at all - no assist": ErectileFunctionOutcome;
+      "None at all - with assist": ErectileFunctionOutcome;
     };
   };
 };
 
-interface PercentageValues {
-  firmIntercourse: number;
-  firmMasturbation: number;
-  notFirmNoAssist: number;
-  notFirmWithAssist: number;
+interface CategoryData {
+  name: string;
+  displayName: string;
+  value: number;
+  color: string;
+  showPill: boolean;
 }
+
+// Helper function to get user-friendly baseline name
+const getBaselineDisplayName = (baselineStatus: string): string => {
+  if (baselineStatus.includes("Firm for intercourse")) {
+    return baselineStatus.includes("with assist") 
+      ? "firm enough for intercourse (with medication/device)"
+      : "firm enough for intercourse";
+  }
+  if (baselineStatus.includes("Firm for masturbation")) {
+    return baselineStatus.includes("with assist")
+      ? "firm enough for masturbation and foreplay only (with medication/device)"
+      : "firm enough for masturbation and foreplay only";
+  }
+  if (baselineStatus.includes("Not firm")) {
+    return baselineStatus.includes("with assist")
+      ? "not firm enough for any sexual activity (with medication/device)"
+      : "not firm enough for any sexual activity";
+  }
+  if (baselineStatus.includes("None at all")) {
+    return baselineStatus.includes("with assist")
+      ? "none at all (with medication/device)"
+      : "none at all";
+  }
+  return baselineStatus.toLowerCase();
+};
 
 const ErectileFunctionPageContent = () => {
   const { answers } = useOutcomePageData();
@@ -77,67 +82,138 @@ const ErectileFunctionPageContent = () => {
     data: { name: string; value: number; color: string; Icon?: React.ElementType }[];
   } | null>(null);
 
+  // Map questionnaire answers to the new baseline categories
   const baselineStatus = useMemo(() => {
     const quality = answers.erection_quality || "Firm enough for intercourse";
+    const useMedication = answers.sex_medication === "Yes";
 
-    if (quality === "Firm enough for intercourse") return "Firm enough for intercourse";
-    if (quality === "Firm enough for masturbation and foreplay only") return "Firm enough for masturbation and foreplay only";
-    if (quality === "Not firm enough for any sexual activity") return "Not firm enough for any sexual activity";
-    if (quality === "None at all") return "None at all";
-    return "Firm enough for intercourse"; // Default
-  }, [answers.erection_quality]);
+    if (quality === "Firm enough for intercourse") {
+      return useMedication ? "Firm for intercourse - with assist" : "Firm for intercourse - no assist";
+    }
+    if (quality === "Firm enough for masturbation and foreplay only") {
+      return useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
+    }
+    if (quality === "Not firm enough for any sexual activity") {
+      return useMedication ? "Not firm - with assist" : "Not firm - no assist";
+    }
+    if (quality === "None at all") {
+      return useMedication ? "None at all - with assist" : "None at all - no assist";
+    }
+    return "Firm for intercourse - no assist"; // Default
+  }, [answers.erection_quality, answers.sex_medication]);
 
   const treatmentOutcomes = useMemo(() => {
-    const data: TreatmentData = erectileFunctionData as TreatmentData;
+    const jsonData: TreatmentData = erectileFunctionData as TreatmentData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
 
     return treatments.map((treatment) => {
-      const treatmentData = data[treatment]["Baseline quality of erection"][baselineStatus];
+      const treatmentData = jsonData[treatment]["Baseline quality of erection"][baselineStatus];
       const N = treatmentData.N;
       if (N === 0) {
         return {
           name: treatment,
           data: [
-            { name: "Firm enough for intercourse", value: 0, color: '#28a745' },
-            { name: "Firm enough for masturbation only", value: 0, color: '#ffc107' },
-            { name: "Not firm enough for any sexual activity", value: 0, color: '#dc3545' },
-            { name: "Not firm enough, using medication/device", value: 0, color: '#dc3545' },
+            { name: "Firm enough for intercourse", value: 0, color: '#28a745', showPill: false },
+            { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
+            { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545', showPill: false },
+            { name: "Using sexual medication or device", value: 0, color: '#007bff', showPill: false },
           ]
         };
       }
 
-      const percentages: PercentageValues = {
-        firmIntercourse: (treatmentData["Firm enough for intercourse"] / N) * 100,
-        firmMasturbation: (treatmentData["Firm enough for masturbation"] / N) * 100,
-        notFirmNoAssist: (treatmentData["Not firm enough for any sexual activity"] / N) * 100,
-        notFirmWithAssist: (treatmentData["None at all"] / N) * 100,
-      };
+      // The values in JSON are already percentages out of 100
+      // We need to show each category with its appropriate color, and add pill for "with assist"
+      const categories: CategoryData[] = [
+        {
+          name: "Firm for intercourse - no assist",
+          displayName: "Firm enough for intercourse",
+          value: treatmentData["Firm for intercourse - no assist"],
+          color: "#28a745",
+          showPill: false
+        },
+        {
+          name: "Firm for intercourse - with assist",
+          displayName: "Firm enough for intercourse (with assist)",
+          value: treatmentData["Firm for intercourse - with assist"],
+          color: "#28a745",
+          showPill: true
+        },
+        {
+          name: "Firm for masturbation - no assist",
+          displayName: "Firm enough for masturbation only",
+          value: treatmentData["Firm for masturbation - no assist"],
+          color: "#ffc107",
+          showPill: false
+        },
+        {
+          name: "Firm for masturbation - with assist",
+          displayName: "Firm enough for masturbation only (with assist)",
+          value: treatmentData["Firm for masturbation - with assist"],
+          color: "#ffc107",
+          showPill: true
+        },
+        {
+          name: "Not firm - no assist",
+          displayName: "Not firm enough for any sexual activity",
+          value: treatmentData["Not firm - no assist"],
+          color: "#dc3545",
+          showPill: false
+        },
+        {
+          name: "Not firm - with assist",
+          displayName: "Not firm enough for any sexual activity (with assist)",
+          value: treatmentData["Not firm - with assist"],
+          color: "#dc3545",
+          showPill: true
+        },
+        {
+          name: "None at all - no assist",
+          displayName: "None at all",
+          value: treatmentData["None at all - no assist"],
+          color: "#dc3545",
+          showPill: false
+        },
+        {
+          name: "None at all - with assist",
+          displayName: "None at all (with assist)",
+          value: treatmentData["None at all - with assist"],
+          color: "#dc3545",
+          showPill: true
+        }
+      ];
 
-      const roundedPercentages: PercentageValues = {
-        firmIntercourse: Math.round(percentages.firmIntercourse),
-        firmMasturbation: Math.round(percentages.firmMasturbation),
-        notFirmNoAssist: Math.round(percentages.notFirmNoAssist),
-        notFirmWithAssist: Math.round(percentages.notFirmWithAssist),
-      };
+      // Round each value
+      const roundedData = categories.map(item => ({
+        ...item,
+        value: Math.round(item.value)
+      }));
 
-      const total = Object.values(roundedPercentages).reduce((sum, p) => sum + p, 0);
+      // Adjust total to ensure it equals 100%
+      const total = roundedData.reduce((sum, item) => sum + item.value, 0);
       const diff = total - 100;
 
       if (diff !== 0) {
-        const keyToAdjust = Object.keys(percentages).reduce((a, b) => percentages[a as keyof PercentageValues] > percentages[b as keyof PercentageValues] ? a : b) as keyof PercentageValues;
-        roundedPercentages[keyToAdjust] -= diff;
+        // Find the item with the highest original percentage to adjust
+        const maxIndex = categories.reduce((maxIdx, item, idx, arr) => 
+          item.value > arr[maxIdx].value ? idx : maxIdx, 0);
+        roundedData[maxIndex].value -= diff;
       }
 
-      const { firmIntercourse, firmMasturbation, notFirmNoAssist, notFirmWithAssist } = roundedPercentages;
+      // Filter out items with 0 value and create final display data
+      const displayData = roundedData
+        .filter(item => item.value > 0)
+        .map(item => ({
+          name: item.displayName,
+          value: item.value,
+          color: item.color,
+          showPill: item.showPill
+        }));
+
+      console.log(`${treatment} displayData:`, displayData);
 
       return {
         name: treatment,
-        data: [
-          { name: "Firm enough for intercourse", value: firmIntercourse, color: "#28a745" },
-          { name: "Firm enough for masturbation only", value: firmMasturbation, color: "#ffc107" },
-          { name: "Not firm enough for any sexual activity", value: notFirmNoAssist, color: "#dc3545" },
-          { name: "Not firm enough, using medication/device", value: notFirmWithAssist, color: "#dc3545", Icon: PillIcon },
-        ],
+        data: displayData,
       };
     });
   }, [baselineStatus]);
@@ -148,8 +224,11 @@ const ErectileFunctionPageContent = () => {
       <div className="flex flex-col space-y-2">
         <div className="flex items-center"><LegendIcon color="#28a745" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
         <div className="flex items-center"><LegendIcon color="#ffc107" name="Firm masturbation" /><span className="ml-2">Firm enough for masturbation only</span></div>
-        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity</span></div>
-        <div className="flex items-center"><PillIcon color="#dc3545" size={16} /><span className="ml-2">Not firm enough, using medication/device</span></div>
+        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity or none at all</span></div>
+        <div className="flex items-center">
+          <PillIcon size={16} />
+          <span className="ml-2">Using sexual medication or device</span>
+        </div>
       </div>
     </div>
   );
@@ -169,23 +248,23 @@ const ErectileFunctionPageContent = () => {
         <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
-              baselineStatus === "Firm enough for intercourse" ? "#28a745" :
-                baselineStatus === "Firm enough for masturbation and foreplay only" ? "#ffc107" :
+              baselineStatus.includes("Firm for intercourse") ? "#28a745" :
+                baselineStatus.includes("Firm for masturbation") ? "#ffc107" :
                   "#dc3545"
             }
             name={baselineStatus}
+            showPill={baselineStatus.includes("with assist")}
           />
           <span className="ml-2">
-            {answers.erection_quality || "Firm enough for intercourse"}
-            {answers.sex_medication === 'Yes' && ' (with medication/device)'}
+            {getBaselineDisplayName(baselineStatus)}
           </span>
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
+            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -199,7 +278,7 @@ const ErectileFunctionPageContent = () => {
             <div className="text-sm text-gray-600 space-y-4">
               <p>
                 Out of 100 men like you who currently have erections that are {' '}
-                <span className="font-semibold">{baselineStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                <span className="font-semibold">{getBaselineDisplayName(baselineStatus)}</span>, the outcomes at 1 year after treatment are:
               </p>
               {treatmentOutcomes.map((treatment) => (
                 <div key={treatment.name}>
@@ -209,11 +288,11 @@ const ErectileFunctionPageContent = () => {
                       const roundedValue = Math.round(outcome.value);
                       let description = outcome.name.toLowerCase();
                       
-                      // Special formatting for intercourse
+                      // Special formatting for each category
                       if (outcome.name === "Firm enough for intercourse") {
                         description = "have erections of sufficient quality to have full intercourse";
-                      } else if (outcome.name.includes("medication/device")) {
-                        description = "not be firm enough for any sexual activity, even with medication/device";
+                      } else if (outcome.name === "Using sexual medication or device") {
+                        description = "be using sexual medication or device";
                       } else {
                         description = `have erections that are ${description}`;
                       }

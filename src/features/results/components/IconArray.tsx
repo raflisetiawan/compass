@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import LegendIcon from "./LegendIcon";
 import ReactDOMServer from "react-dom/server";
 
 interface IconArrayProps {
@@ -7,6 +8,7 @@ interface IconArrayProps {
     name: string;
     value: number;
     color: string;
+    showPill?: boolean;
     Icon?: React.ElementType;
     iconUrl?: string;
   }[];
@@ -46,6 +48,7 @@ const IconArray = ({ data }: IconArrayProps) => {
       const iconsData: {
         color: string;
         category: string;
+        showPill?: boolean;
         Icon?: React.ElementType;
         iconUrl?: string;
       }[] = [];
@@ -54,6 +57,7 @@ const IconArray = ({ data }: IconArrayProps) => {
           iconsData.push({
             color: d.color,
             category: d.name,
+            showPill: d.showPill,
             Icon: d.Icon,
             iconUrl: d.iconUrl,
           });
@@ -77,7 +81,17 @@ const IconArray = ({ data }: IconArrayProps) => {
         const group = d3.select(this);
         const item = iconsData[i];
         if (item) {
-          if (item.iconUrl) {
+          // If showPill is true, use LegendIcon with pill
+          if (item.showPill) {
+            const iconHtml = ReactDOMServer.renderToString(
+              <LegendIcon color={item.color} name={item.category} showPill={true} size={iconSize} />
+            );
+            group
+              .append("foreignObject")
+              .attr("width", iconSize)
+              .attr("height", iconSize)
+              .html(iconHtml);
+          } else if (item.iconUrl) {
             group
               .append("image")
               .attr("href", item.iconUrl)
@@ -94,13 +108,15 @@ const IconArray = ({ data }: IconArrayProps) => {
               .attr("height", iconSize)
               .html(iconHtml);
           } else {
-            // Fallback: Simple circle
+            // Fallback: Simple circle (using LegendIcon without pill)
+            const iconHtml = ReactDOMServer.renderToString(
+              <LegendIcon color={item.color} name={item.category} showPill={false} size={iconSize} />
+            );
             group
-              .append("circle")
-              .attr("r", iconSize / 2)
-              .attr("cx", iconSize / 2)
-              .attr("cy", iconSize / 2)
-              .attr("fill", item.color);
+              .append("foreignObject")
+              .attr("width", iconSize)
+              .attr("height", iconSize)
+              .html(iconHtml);
           }
         }
       });

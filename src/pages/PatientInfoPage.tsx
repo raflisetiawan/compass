@@ -13,42 +13,84 @@ const PatientInfoPage = () => {
           <hr className="w-full" />
           <div className="p-8 space-y-6">
             <div className="space-y-4 text-gray-700">
-              <ul className="list-disc pl-5 space-y-2">
-                <li>
-                  You have received a new diagnosis of localised prostate cancer,
-                  which means that the cancer is confined to the prostate.
-                </li>
-                <li>
-                  You have been asked to decide how your prostate cancer should be
-                  managed and if you opt for treatment, which treatment you would
-                  like to have.
-                </li>
-                <li>
-                  The options available to you will depend on your cancer
-                  characteristics and your overall health.
-                </li>
-                <li>
-                  The options may include active surveillance, focal therapy,
-                  surgery or radiotherapy.
-                </li>
-                <li>
-                  Your clinical team will be able to tell you which treatment
-                  options are available to you.
-                </li>
-              </ul>
+              <p>
+                You have received a new diagnosis of localised prostate cancer,
+                which means that the cancer is confined to the prostate.
+              </p>
+              <p>
+                You have been asked to decide how your prostate cancer should be
+                managed and if you opt for treatment, which treatment you would
+                like to have.
+              </p>
+              <p>
+                The options available to you will depend on your cancer
+                characteristics and your overall health. The options may include
+                active surveillance, focal therapy, surgery or radiotherapy. Your
+                clinical team will be able to tell you which treatment options are
+                available to you.
+              </p>
             </div>
 
-            <div className="space-y-2">
-              <p className="font-semibold text-gray-800">
-                This tool consists of three sections:
+            <div className="space-y-4">
+              <p className="font-semibold text-gray-800 text-lg">
+                This tool has three sections:
               </p>
-              <ol className="list-decimal pl-5 space-y-1 text-gray-700">
-                <li>
-                  What are the treatment options for localised prostate cancer?
-                </li>
-                <li>How will each treatment option impact my life?</li>
-                <li>What factors should I consider in my choice?</li>
-              </ol>
+
+              {/* Section 1 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-gray-800">
+                  1. What are the treatment options for localised prostate cancer?
+                </h3>
+                <p className="text-gray-700 pl-4">
+                  In this section, you will find a description of four modern
+                  treatment options available for localised prostate cancer in the
+                  UK. You will be able to see:
+                </p>
+                <ul className="list-disc pl-8 space-y-1 text-gray-700">
+                  <li>what each treatment is</li>
+                  <li>where and how treatment options are delivered</li>
+                  <li>what to expect after treatment</li>
+                  <li>
+                    what follow up would involve, including the type of tests and
+                    how often they are needed
+                  </li>
+                </ul>
+              </div>
+
+              {/* Section 2 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-gray-800">
+                  2. How will each treatment option impact my life?
+                </h3>
+                <p className="text-gray-700 pl-4">
+                  We will ask questions about your health and your prostate cancer
+                  so that we can help you understand how effective treatment might
+                  be for you. We know that some people need more than one prostate
+                  cancer treatment. Reassuringly, we know that most men with
+                  localised prostate cancer will die of something else.
+                </p>
+                <p className="text-gray-700 pl-4">
+                  We know that different prostate cancer treatments can have
+                  different side effects such as urinary problems, bowel problems,
+                  and difficulty having erections. By asking questions about how
+                  things are now, we can help predict how likely these problems are
+                  for you, across the different treatment options.
+                </p>
+              </div>
+
+              {/* Section 3 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-gray-800">
+                  3. What factors should I consider in my choice?
+                </h3>
+                <p className="text-gray-700 pl-4">
+                  This section will help you reflect on what matters most to you.
+                  This can help you choose the treatment option that is best for
+                  you. To help you in this process, you will be asked to answer
+                  some specific questions about the different aspects of the
+                  treatments and how important they are to you.
+                </p>
+              </div>
             </div>
 
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">

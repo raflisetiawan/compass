@@ -46,6 +46,14 @@ const UrinaryBotherPageContent = () => {
     return "No problem";
   }, [answers.urine_problem]);
 
+  // Helper function to get display name for baseline status
+  const getBaselineDisplayName = (status: string): string => {
+    if (status === "No problem") return "No problem";
+    if (status === "Very/small problem") return "Very small or small problem";
+    if (status === "Moderate/big problem") return "Moderate or big problem";
+    return status;
+  };
+
   const treatmentOutcomes = useMemo(() => {
     const data: TreatmentData = urinaryBotherData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
@@ -99,14 +107,14 @@ const UrinaryBotherPageContent = () => {
             }
             name={baselineBotherStatus}
           />
-          <span className="ml-2">{answers.urine_problem || "Not a problem"}</span>
+          <span className="ml-2">{getBaselineDisplayName(baselineBotherStatus)}</span>
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
+            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -120,7 +128,7 @@ const UrinaryBotherPageContent = () => {
             <div className="text-sm text-gray-600 space-y-4">
               <p>
                 Out of 100 men like you who are currently experiencing{" "}
-                <span className="font-semibold">{baselineBotherStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                <span className="font-semibold">{getBaselineDisplayName(baselineBotherStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
               </p>
               {treatmentOutcomes.map((treatment) => (
                 <div key={treatment.name}>

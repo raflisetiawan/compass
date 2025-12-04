@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
-import { Sun, Droplet } from "lucide-react";
+import FilledSun from "@/features/results/components/FilledSun";
+import FilledDroplet from "@/features/results/components/FilledDroplet";
 import IconArray from "@/features/results/components/IconArray";
 import urinaryLeakageData from "@/assets/leaking_urine_at_one_year.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
@@ -44,6 +45,14 @@ const UrinaryLeakagePageContent = () => {
     return "Rarely or never";
   }, [answers.urine_leak]);
 
+  // Helper function to get display name for baseline status
+  const getBaselineDisplayName = (status: string): string => {
+    if (status === "Rarely or never") return "Rarely or never leaking";
+    if (status === "At least once a week") return "Leaking once a week or more";
+    if (status === "At least once a day") return "Leaking once a day or more";
+    return status;
+  };
+
   const treatmentOutcomes = useMemo(() => {
     const data: TreatmentData = urinaryLeakageData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
@@ -62,9 +71,9 @@ const UrinaryLeakagePageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "Rarely or never leaking", value: rarely, color: "#FFC107", Icon: Sun },
-          { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", Icon: Droplet },
-          { name: "Leaking once a day or more", value: daily, color: "#1976D2", Icon: Droplet },
+          { name: "Rarely or never leaking", value: rarely, color: "#FFC107", Icon: FilledSun },
+          { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", Icon: FilledDroplet },
+          { name: "Leaking once a day or more", value: daily, color: "#1976D2", Icon: FilledDroplet },
         ],
       };
     });
@@ -74,9 +83,9 @@ const UrinaryLeakagePageContent = () => {
     <div className="mb-6">
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><Sun className="h-5 w-5 mr-2 text-yellow-500" /><span >Rarely or never leaking</span></div>
-        <div className="flex items-center"><Droplet className="h-5 w-5 mr-2 text-blue-400" fill="currentColor" /><span>Leaking once a week or more</span></div>
-        <div className="flex items-center"><Droplet className="h-5 w-5 mr-2 text-blue-700" fill="currentColor" /><span>Leaking once a day or more</span></div>
+        <div className="flex items-center"><FilledSun color="#FFC107" size={20} className="mr-2" /><span >Rarely or never leaking</span></div>
+        <div className="flex items-center"><FilledDroplet color="#64B5F6" size={20} className="mr-2" /><span>Leaking once a week or more</span></div>
+        <div className="flex items-center"><FilledDroplet color="#1976D2" size={20} className="mr-2" /><span>Leaking once a day or more</span></div>
       </div>
     </div>
   );
@@ -93,16 +102,22 @@ const UrinaryLeakagePageContent = () => {
       </div>
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-2 text-lg">Your current urinary function:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded">
-          <Sun className="h-5 w-5 mr-2 text-yellow-500" />
-          <span>{baselineLeakageStatus}</span>
+        <div className="flex items-center bg-pink-100 p-2 rounded"> 
+          {baselineLeakageStatus === "Rarely or never" ? (
+            <FilledSun color="#FFC107" size={20} className="mr-2" />
+          ) : baselineLeakageStatus === "At least once a week" ? (
+            <FilledDroplet color="#64B5F6" size={20} className="mr-2" />
+          ) : (
+            <FilledDroplet color="#1976D2" size={20} className="mr-2" />
+          )}
+          <span>{getBaselineDisplayName(baselineLeakageStatus)}</span>
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
+            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -116,7 +131,7 @@ const UrinaryLeakagePageContent = () => {
             <div className="text-sm text-gray-600 space-y-4">
               <p>
                 Out of 100 men like you who are currently{" "}
-                <span className="font-semibold">{baselineLeakageStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                <span className="font-semibold">{getBaselineDisplayName(baselineLeakageStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
               </p>
               {treatmentOutcomes.map((treatment) => (
                 <div key={treatment.name}>

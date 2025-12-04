@@ -44,6 +44,14 @@ const UrinaryPadUsagePageContent = () => {
     return "Not using pad";
   }, [answers.pad_usage]);
 
+  // Helper function to get display name for baseline status
+  const getBaselineDisplayName = (status: string): string => {
+    if (status === "Not using pad") return "No use of pad; rarely or never leaking urine";
+    if (status === "Using one pad a day") return "1 pad used per day; any degree of leaking urine";
+    if (status === "Using two or more pads a day") return "≥2 pad used per day; any degree of leaking urine";
+    return status;
+  };
+
   const treatmentOutcomes = useMemo(() => {
     const data: TreatmentData = padUsageData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
@@ -100,20 +108,20 @@ const UrinaryPadUsagePageContent = () => {
         <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
-              baselinePadStatus.includes("2 or more") ? "#D32F2F" :
-                baselinePadStatus.includes("1 pad") ? "#FBC02D" :
+              baselinePadStatus.includes("two or more") ? "#D32F2F" :
+                baselinePadStatus.includes("one pad") ? "#FBC02D" :
                   "#1B5E20"
             }
             name={baselinePadStatus}
           />
-          <span className="ml-2">{baselinePadStatus}</span>
+          <span className="ml-2">{getBaselineDisplayName(baselinePadStatus)}</span>
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-xl mb-2 text-center">{treatment.name}</h3>
+            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
             <IconArray data={treatment.data} />
           </div>
         ))}
@@ -127,7 +135,7 @@ const UrinaryPadUsagePageContent = () => {
             <div className="text-sm text-gray-600 space-y-4">
               <p>
                 Out of 100 men like you who are currently{" "}
-                <span className="font-semibold">{baselinePadStatus.toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                <span className="font-semibold">{getBaselineDisplayName(baselinePadStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
               </p>
               {treatmentOutcomes.map((treatment) => (
                 <div key={treatment.name}>

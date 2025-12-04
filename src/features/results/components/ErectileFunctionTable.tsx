@@ -6,12 +6,14 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
+  import PillIcon from "./PillIcon";
   
   interface OutcomeData {
     name: string;
     data: {
-      name:string;
+      name: string;
       value: number;
+      showPill?: boolean;
     }[];
   }
   
@@ -20,25 +22,41 @@ import {
   }
   
   const ErectileFunctionTable = ({ data }: ErectileFunctionTableProps) => {
-    const headers = data[0]?.data.map(d => d.name) || [];
+    // Get all unique headers from data
+    const headers = data[0]?.data || [];
   
     return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Treatment</TableHead>
-            {headers.map(header => <TableHead key={header}>{header}</TableHead>)}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell className="font-medium">{row.name}</TableCell>
-              {row.data.map(d => <TableCell key={d.name}>{d.value.toFixed(0)}%</TableCell>)}
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-bold">Treatment</TableHead>
+              {headers.map((header, idx) => (
+                <TableHead key={idx} className="text-center min-w-[150px]">
+                  <div className="flex flex-col items-center gap-1">
+                    <span>{header.name}</span>
+                    {header.showPill && (
+                      <PillIcon size={12} />
+                    )}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell className="font-medium">{row.name}</TableCell>
+                {row.data.map((d, idx) => (
+                  <TableCell key={idx} className="text-center">
+                    {d.value.toFixed(0)}%
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     );
   };
   

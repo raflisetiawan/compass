@@ -8,7 +8,6 @@
           "text": "How old are you (at time of prostate biopsy)?",
           "type": "number",
           "unit": "years",
-          "placeholder": "e.g., 58",
           "helpText": "We do not make decisions about prostate cancer treatment based on age alone, but it might be useful for you to know how men your age respond to different treatments and their overall life expectancy.",
           "validation": { "min": 18, "max": 120, "required": true }
         },
@@ -17,7 +16,6 @@
           "text": "What was your last PSA (Prostate-Specific Antigen) prior to biopsy?",
           "type": "number",
           "unit": "ng/mL",
-          "placeholder": "e.g., 6.5",
           "helpText": "PSA, especially when combined with prostate volume, is a helpful predictor of prostate cancer outcomes, among several other factors.",
           "validation": { "min": 0, "required": true }
         },
@@ -26,7 +24,6 @@
           "text": "What is the volume of your prostate?",
           "type": "number",
           "unit": "mL",
-          "placeholder": "e.g., 40",
           "helpText": "Measured on your MRI, or occasionally on ultrasound, prostate volume is necessary to work out your PSA density.",
           "validation": { "min": 0, "required": true }
         },
