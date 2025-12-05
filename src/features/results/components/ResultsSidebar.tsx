@@ -70,7 +70,7 @@ export const ResultsSidebar = ({
           <AccordionTrigger className="text-lg font-semibold">
             <div className="flex items-center gap-3">
               <MessageSquareQuoteIcon className="h-6 w-6" />
-              Baseline genito-urinary-bowel function
+              Baseline Function
             </div>
           </AccordionTrigger>
           <AccordionContent className="p-0">

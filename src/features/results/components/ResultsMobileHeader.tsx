@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Loader2 } from "lucide-react";
+import { Download, RefreshCw, Loader2, ClipboardList } from "lucide-react";
 import { generatePdf } from "@/lib/pdf";
 import type { ModalContentType } from "@/types";
 import { PdfGenerationWarningDialog } from "@/components/PdfGenerationWarningDialog";
@@ -14,9 +15,14 @@ export const ResultsMobileHeader = ({
     onModalOpen,
     onStartOver,
 }: ResultsMobileHeaderProps) => {
+    const navigate = useNavigate();
     const [isGenerating, setIsGenerating] = useState(false);
     const [progress, setProgress] = useState(0);
     const [showWarningDialog, setShowWarningDialog] = useState(false);
+
+    const handleQuestionnaireClick = () => {
+        navigate("/questionnaire");
+    };
 
     const handleDownloadClick = () => {
         setShowWarningDialog(true);
@@ -44,6 +50,9 @@ export const ResultsMobileHeader = ({
                     <div className="flex gap-2">
                         <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating}>
                             <RefreshCw className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleQuestionnaireClick} disabled={isGenerating}>
+                            <ClipboardList className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="outline"

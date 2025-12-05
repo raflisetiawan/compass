@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { generatePdf } from "@/lib/pdf";
 import { Loader2 } from "lucide-react";
@@ -9,9 +10,14 @@ interface ResultsDesktopHeaderProps {
 }
 
 export const ResultsDesktopHeader = ({ onStartOver }: ResultsDesktopHeaderProps) => {
+  const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
+
+  const handleQuestionnaireClick = () => {
+    navigate("/questionnaire");
+  };
 
   const handleDownloadClick = () => {
     setShowWarningDialog(true);
@@ -34,22 +40,27 @@ export const ResultsDesktopHeader = ({ onStartOver }: ResultsDesktopHeaderProps)
   return (
     <>
       <div className="hidden md:flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-bold">Results</h1>
-        <div className="flex gap-4 flex-col items-end">
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={onStartOver} disabled={isGenerating}>
-              START OVER
+        <h1 className="text-4xl font-bold w-sm">Results</h1>
+        <div className="flex flex-col gap-2 flex-1 ml-8">
+          <div className="flex justify-between items-center w-full">
+            <Button variant="outline" onClick={handleQuestionnaireClick} disabled={isGenerating}>
+              QUESTIONNAIRE
             </Button>
-            <Button variant="default" onClick={handleDownloadClick} disabled={isGenerating}>
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating PDF... {progress}%
-                </>
-              ) : (
-                "DOWNLOAD PDF"
-              )}
-            </Button>
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={onStartOver} disabled={isGenerating}>
+                START OVER
+              </Button>
+              <Button variant="default" onClick={handleDownloadClick} disabled={isGenerating}>
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating PDF... {progress}%
+                  </>
+                ) : (
+                  "DOWNLOAD PDF"
+                )}
+              </Button>
+            </div>
           </div>
           {isGenerating && (
             <span className="text-xs text-gray-600 text-right">

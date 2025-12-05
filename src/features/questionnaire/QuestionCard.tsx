@@ -141,6 +141,11 @@ const QuestionCard = () => {
   };
 
   const isAnswered = answer !== undefined && String(answer).trim() !== "";
+  
+  // Check if this is the last question in the last section
+  const isLastQuestion = currentQuestionIndex === section.questions.length - 1;
+  const isLastSection = currentSectionIndex === sections.length - 1;
+  const isLastQuestionOverall = isLastQuestion && isLastSection;
 
   return (
     <Card className="w-full">
@@ -189,7 +194,7 @@ const QuestionCard = () => {
           disabled={!isAnswered}
           className="bg-[#e0f2f7] text-gray-700 hover:bg-cyan-200 disabled:bg-gray-100 disabled:text-gray-400"
         >
-          Next
+          {isLastQuestionOverall ? "View Results" : "Next"}
         </Button>
       </CardFooter>
     </Card>

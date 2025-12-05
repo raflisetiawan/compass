@@ -54,17 +54,17 @@ interface CategoryData {
 const getBaselineDisplayName = (baselineStatus: string): string => {
   if (baselineStatus.includes("Firm for intercourse")) {
     return baselineStatus.includes("with assist") 
-      ? "firm enough for intercourse (with medication/device)"
+      ? "firm enough for intercourse "
       : "firm enough for intercourse";
   }
   if (baselineStatus.includes("Firm for masturbation")) {
     return baselineStatus.includes("with assist")
-      ? "firm enough for masturbation and foreplay only (with medication/device)"
-      : "firm enough for masturbation and foreplay only";
+      ? "firm enough for masturbation only "
+      : "firm enough for masturbation only";
   }
   if (baselineStatus.includes("Not firm")) {
     return baselineStatus.includes("with assist")
-      ? "not firm enough for any sexual activity (with medication/device)"
+      ? "not firm enough for any sexual activity"
       : "not firm enough for any sexual activity";
   }
   if (baselineStatus.includes("None at all")) {

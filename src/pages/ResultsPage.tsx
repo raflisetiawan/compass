@@ -69,7 +69,7 @@ const ResultsPage = () => {
 
   const baselineGenitoUrinaryBowelFunction: BaselineFunction = {
     Leakage: answers.urine_leak || "Rarely or never",
-    Pad: answers.pad_usage || "No pads",
+    "Urinary Pad Use": answers.pad_usage || "No pads",
     "Bother with urinary function": answers.urine_problem || "Not a problem",
     "Erectile function":
       answers.erection_quality || "Sufficient erections for intercourse",

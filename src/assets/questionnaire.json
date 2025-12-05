@@ -50,6 +50,14 @@
           "options": ["Yes (PI-RADS/Likert 4-5)", "No or equivocal (PI-RADS/Likert 1-3)", "Unknown"],
           "helpText": "Knowing whether the cancer can be seen on an MRI scan helps us guide you about likely treatment outcomes, because on average, cancer that is visible on MRI behaves differently from cancer that is not visible.",
           "required": true
+        },
+        {
+          "id": "max_cancer_core_length",
+          "text": "What is the maximal cancer core length of your biopsy?",
+          "type": "number",
+          "unit": "mm",
+          "helpText": "Knowing the maximum length of cancer, in mm, found in your biopsy tells us how big your cancer is and helps us to give you personalised cancer outcomes.",
+          "validation": { "min": 0, "required": true }
         }
       ]
     },
