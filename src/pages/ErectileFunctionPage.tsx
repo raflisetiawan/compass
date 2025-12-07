@@ -211,33 +211,9 @@ const ErectileFunctionPageContent = () => {
       };
     });
 
-    // Determine which categories are active (value > 0) in at least one treatment
-    const activeCategoryNames = new Set<string>();
-    allTreatmentsData.forEach(treatment => {
-      treatment.data.forEach(item => {
-        if (item.value > 0) {
-          activeCategoryNames.add(item.name);
-        }
-      });
-    });
-
-    // Setup active categories list to preserve order
-    const templateData = allTreatmentsData[0].data;
-    const finalOrderedCategories = templateData
-      .filter(item => activeCategoryNames.has(item.name))
-      .map(item => item.name);
-
-    // Map the data to only include active categories, preserving 0s for alignment
-    const finalTreatments = allTreatmentsData.map(treatment => {
-      const filteredData = treatment.data.filter(item => finalOrderedCategories.includes(item.name));
-      return {
-        ...treatment,
-        data: filteredData
-      };
-    });
-
-    console.log("Renormalized displayData:", finalTreatments);
-    return finalTreatments;
+    // Return all treatments with all 8 categories (no filtering)
+    console.log("Treatment outcomes data:", allTreatmentsData);
+    return allTreatmentsData;
 
   }, [baselineStatus]);
 

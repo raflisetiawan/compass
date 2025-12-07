@@ -32,6 +32,88 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
         return "Firm for intercourse - no assist";
     })();
 
+    // Helper function to get color for baseline status
+    const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
+        if (status.includes("Firm for intercourse")) return { r: 27, g: 94, b: 32 }; // #1b5e20
+        if (status.includes("Firm for masturbation")) return { r: 255, g: 193, b: 7 }; // #ffc107
+        return { r: 220, g: 53, b: 69 }; // #dc3545
+    };
+
+    // Draw current status box
+    const statusBoxY = 42;
+    const statusColor = getBaselineColor(baselineErectileStatus);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your current erectile function status:', margin, statusBoxY);
+    
+    // Draw colored circle
+    const circleX = margin + 3;
+    const circleY = statusBoxY + 7;
+    const circleRadius = 2.5;
+    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
+    doc.circle(circleX, circleY, circleRadius, 'F');
+    
+    // Check if "with assist" - draw pill icon INSIDE the circle
+    const isWithAssist = baselineErectileStatus.includes("with assist");
+    let textStartX = circleX + 5;
+    
+    if (isWithAssist) {
+        // Draw pill inside the circle (matching iconRenderers.ts drawCircleWithPill)
+        const size = circleRadius * 2; // diameter
+        const pillWidth = size * 0.6;
+        const pillHeight = size * 0.35;
+        const pillRadius = pillHeight / 2;
+        const pillX = circleX - pillWidth / 2;
+        const pillY = circleY - pillHeight / 2;
+        
+        // Left half (blue)
+        doc.setFillColor(0, 123, 255); // #007bff
+        doc.roundedRect(pillX, pillY, pillWidth / 2 + pillRadius/2, pillHeight, pillRadius, pillRadius, 'F');
+        
+        // Right half (white) - draw slightly overlapping to avoid gap
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(pillX + pillWidth / 2 - pillRadius/2, pillY, pillWidth / 2 + pillRadius/2, pillHeight, pillRadius, pillRadius, 'F');
+        
+        // Draw outline
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.2);
+        doc.roundedRect(pillX, pillY, pillWidth, pillHeight, pillRadius, pillRadius, 'S');
+        
+        // Center dividing line
+        doc.line(pillX + pillWidth / 2, pillY, pillX + pillWidth / 2, pillY + pillHeight);
+        
+        textStartX = circleX + 5;
+    }
+    
+    // Draw status text (using the getBaselineDisplayName helper defined later)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const statusDisplayName = (() => {
+        if (baselineErectileStatus.includes("Firm for intercourse")) {
+            return baselineErectileStatus.includes("with assist") 
+                ? "Firm enough for intercourse (with medication/device)"
+                : "Firm enough for intercourse";
+        }
+        if (baselineErectileStatus.includes("Firm for masturbation")) {
+            return baselineErectileStatus.includes("with assist")
+                ? "Firm enough for masturbation only (with medication/device)"
+                : "Firm enough for masturbation only";
+        }
+        if (baselineErectileStatus.includes("Not firm")) {
+            return baselineErectileStatus.includes("with assist")
+                ? "Not firm enough for any sexual activity (with medication/device)"
+                : "Not firm enough for any sexual activity";
+        }
+        if (baselineErectileStatus.includes("None at all")) {
+            return baselineErectileStatus.includes("with assist")
+                ? "None at all (with medication/device)"
+                : "None at all";
+        }
+        return baselineErectileStatus;
+    })();
+    doc.text(statusDisplayName, textStartX, circleY + 1);
+
     const efTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
     const efData = erectileFunctionData;
 
@@ -128,19 +210,18 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
             roundedData[maxIndex].value -= diff;
         }
 
-        // Filter out items with 0 value and create final display data
-        const displayData = roundedData
-            .filter(item => item.value > 0)
-            .map(item => ({
-                name: item.displayName,
-                value: item.value,
-                color: item.color,
-                iconType: item.iconType
-            })) as IconData[];
+        // Return all 8 categories (no filtering)
+        const displayData = roundedData.map(item => ({
+            name: item.displayName,
+            value: item.value,
+            color: item.color,
+            iconType: item.iconType
+        })) as IconData[];
 
         return {
             name: treatment,
             data: displayData,
+            rawData: roundedData, // Keep raw data for table
         };
     });
 
@@ -159,7 +240,7 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
     const imgHeight = fourColWidth * aspectRatio;
 
-    const yPos = 45;
+    const yPos = 58; // Adjusted to accommodate status box
 
     chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;
@@ -169,35 +250,38 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     const efRowMaxHeight = imgHeight;
     const efTableY = yPos + efRowMaxHeight + 10;
 
+    // Build table with all 8 columns matching web
     const efTableBody = efTreatmentOutcomes.map(t => {
-        // Aggregate back to 3 categories for the table
-        let firmIntercourse = 0;
-        let firmMasturbation = 0;
-        let notFirm = 0;
-
-        t.data.forEach(d => {
-            if (d.name.includes("intercourse")) {
-                firmIntercourse += d.value;
-            } else if (d.name.includes("masturbation")) {
-                firmMasturbation += d.value;
-            } else {
-                notFirm += d.value;
-            }
-        });
-
         return [
             t.name,
-            `${firmIntercourse}%`,
-            `${firmMasturbation}%`,
-            `${notFirm}%`,
+            `${t.data[0]?.value || 0}%`,  // Firm for intercourse - no assist
+            `${t.data[1]?.value || 0}%`,  // Firm for intercourse - with assist
+            `${t.data[2]?.value || 0}%`,  // Firm for masturbation - no assist
+            `${t.data[3]?.value || 0}%`,  // Firm for masturbation - with assist
+            `${t.data[4]?.value || 0}%`,  // Not firm - no assist
+            `${t.data[5]?.value || 0}%`,  // Not firm - with assist
+            `${t.data[6]?.value || 0}%`,  // None at all - no assist
+            `${t.data[7]?.value || 0}%`,  // None at all - with assist
         ];
     });
 
     autoTable(doc, {
         startY: efTableY,
-        head: [['Treatment', 'Firm enough for intercourse', 'Firm enough for masturbation only', 'Not firm enough for any sexual activity or none at all']],
+        head: [[
+            'Treatment',
+            'Firm intercourse (no assist)',
+            'Firm intercourse (with assist)',
+            'Firm masturbation (no assist)',
+            'Firm masturbation (with assist)',
+            'Not firm (no assist)',
+            'Not firm (with assist)',
+            'None (no assist)',
+            'None (with assist)'
+        ]],
         body: efTableBody,
         theme: 'grid',
+        styles: { fontSize: 7 },
+        headStyles: { fontSize: 6 },
     });
 
     // Helper function to get user-friendly baseline name

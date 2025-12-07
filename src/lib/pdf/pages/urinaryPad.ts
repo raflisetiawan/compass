@@ -11,12 +11,46 @@ export const addUrinaryPadPage = ({ doc, answers, margin, pdfWidth }: PdfPagePro
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same pad usage as you. The icon plot shows how their pad usage changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Helper function to get display name for baseline status
+    const getBaselineDisplayName = (status: string): string => {
+        if (status === "Not using pad") return "No use of pad; rarely or never leaking urine";
+        if (status === "Using one pad a day") return "1 pad used per day; any degree of leaking urine";
+        if (status === "Using two or more pads a day") return "≥2 pad used per day; any degree of leaking urine";
+        return status;
+    };
+
+    // Helper function to get color for baseline status
+    const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
+        if (status === "Not using pad") return { r: 27, g: 94, b: 32 }; // #1B5E20
+        if (status === "Using one pad a day") return { r: 251, g: 192, b: 45 }; // #FBC02D
+        return { r: 211, g: 47, b: 47 }; // #D32F2F
+    };
+
     const baselinePadStatus = (() => {
         const padUsage = answers.pad_usage || 'No pads';
         if (String(padUsage).includes("2 or more")) return "Using two or more pads a day";
         if (String(padUsage).includes("1 pad")) return "Using one pad a day";
         return "Not using pad";
     })();
+
+    // Draw current status box
+    const statusBoxY = 42;
+    const statusColor = getBaselineColor(baselinePadStatus);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your current use of pad and leaking status:', margin, statusBoxY);
+    
+    // Draw colored circle
+    const circleX = margin + 3;
+    const circleY = statusBoxY + 7;
+    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
+    doc.circle(circleX, circleY, 2.5, 'F');
+    
+    // Draw status text
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(getBaselineDisplayName(baselinePadStatus), circleX + 5, circleY + 1);
 
     const padTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
 
@@ -58,7 +92,7 @@ export const addUrinaryPadPage = ({ doc, answers, margin, pdfWidth }: PdfPagePro
     const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
     const imgHeight = fourColWidth * aspectRatio;
 
-    const yPos = 45;
+    const yPos = 58; // Adjusted to accommodate status box
 
     chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;

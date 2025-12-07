@@ -11,12 +11,58 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Helper function to get display name for baseline status
+    const getBaselineDisplayName = (status: string): string => {
+        if (status === "Rarely or never") return "Rarely or never leaking";
+        if (status === "At least once a week") return "Leaking once a week or more";
+        if (status === "At least once a day") return "Leaking once a day or more";
+        return status;
+    };
+
+    // Helper function to get color for baseline status
+    const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
+        if (status === "Rarely or never") return { r: 255, g: 193, b: 7 }; // #FFC107 (sun/yellow)
+        if (status === "At least once a week") return { r: 100, g: 181, b: 246 }; // #64B5F6 (light blue)
+        return { r: 25, g: 118, b: 210 }; // #1976D2 (dark blue)
+    };
+
     const baselineLeakageStatus = (() => {
         const leakage = answers.urine_leak || "Rarely or never";
         if (String(leakage).includes("day")) return "At least once a day";
         if (String(leakage).includes("week")) return "At least once a week";
         return "Rarely or never";
     })();
+
+    // Draw current status box
+    const statusBoxY = 42;
+    const statusColor = getBaselineColor(baselineLeakageStatus);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your current leaking urine status:', margin, statusBoxY);
+    
+    // Draw water droplet icon
+    const dropletX = margin + 3;
+    const dropletY = statusBoxY + 5;
+    const dropletSize = 2.5;
+    
+    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
+    
+    // Draw droplet shape using lines (teardrop shape)
+    // Start from top point, curve down to rounded bottom
+    doc.triangle(
+        dropletX, dropletY,                           // Top point
+        dropletX - dropletSize, dropletY + dropletSize * 1.5,  // Bottom left
+        dropletX + dropletSize, dropletY + dropletSize * 1.5,  // Bottom right
+        'F'
+    );
+    // Draw bottom circle to complete the droplet
+    doc.circle(dropletX, dropletY + dropletSize * 1.5, dropletSize, 'F');
+    
+    // Draw status text
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(getBaselineDisplayName(baselineLeakageStatus), dropletX + 5, dropletY + 3);
 
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
     const treatmentOutcomes = treatments.map((treatment) => {
@@ -56,7 +102,7 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
     const imgHeight = fourColWidth * aspectRatio;
 
-    const yPos = 45;
+    const yPos = 58; // Adjusted to accommodate status box
 
     chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;

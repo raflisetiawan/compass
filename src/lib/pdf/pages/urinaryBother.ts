@@ -11,12 +11,48 @@ export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPage
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same urinary bother as you. The icon plot shows how their urinary bother changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Helper function to get display name for baseline status
+    const getBaselineDisplayName = (status: string): string => {
+        if (status === "No problem") return "No problem";
+        if (status === "Very/small problem") return "Very small or small problem";
+        if (status === "Moderate/big problem") return "Moderate or big problem";
+        return status;
+    };
+
+    // Helper function to get color for baseline status
+    const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
+        if (status === "No problem") return { r: 27, g: 94, b: 32 }; // #1b5e20
+        if (status === "Very/small problem") return { r: 255, g: 193, b: 7 }; // #ffc107
+        return { r: 220, g: 53, b: 69 }; // #dc3545
+    };
+
     const baselineBotherStatus = (() => {
         const bother = answers.urine_problem || 'No problem';
-        if (String(bother).includes("Very/small")) return "Very/small problem";
-        if (String(bother).includes("Moderate/big")) return "Moderate/big problem";
+        if (String(bother).includes("Moderate") || String(bother).includes("big")) 
+            return "Moderate/big problem";
+        if (String(bother).includes("Very") || String(bother).includes("small"))
+            return "Very/small problem";
         return "No problem";
     })();
+
+    // Draw current status box
+    const statusBoxY = 42;
+    const statusColor = getBaselineColor(baselineBotherStatus);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your current urinary bother status:', margin, statusBoxY);
+    
+    // Draw colored circle
+    const circleX = margin + 3;
+    const circleY = statusBoxY + 7;
+    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
+    doc.circle(circleX, circleY, 2.5, 'F');
+    
+    // Draw status text
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(getBaselineDisplayName(baselineBotherStatus), circleX + 5, circleY + 1);
 
     const botherTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
     const botherTreatmentOutcomes = botherTreatments.map((treatment) => {
@@ -34,9 +70,9 @@ export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPage
         return {
             name: treatment,
             data: [
-                { name: "No problem", value: noProblem, color: "#1B5E20" },
-                { name: "Very/small problem", value: smallProblem, color: "#FBC02D" },
-                { name: "Moderate/big problem", value: bigProblem, color: "#D32F2F" },
+                { name: "No problem", value: noProblem, color: "#1b5e20" },
+                { name: "Very small or small problem", value: smallProblem, color: "#ffc107" },
+                { name: "Moderate or big problem", value: bigProblem, color: "#dc3545" },
             ],
         };
     });
@@ -56,7 +92,7 @@ export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPage
     const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
     const imgHeight = fourColWidth * aspectRatio;
 
-    const yPos = 45;
+    const yPos = 58; // Adjusted to accommodate status box
 
     chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;
@@ -77,7 +113,7 @@ export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPage
 
     autoTable(doc, {
         startY: botherTableY,
-        head: [['Treatment', 'No problem', 'Very/small problem', 'Moderate/big problem']],
+        head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
         body: botherTableBody,
         theme: 'grid',
     });

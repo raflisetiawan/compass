@@ -11,12 +11,46 @@ export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPagePr
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same degree of bother with their bowel function as you. The icon plot shows how the degree of their bowel bother changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Helper function to get display name for baseline status
+    const getBaselineDisplayName = (status: string): string => {
+        if (status === "No problem") return "No problem";
+        if (status === "Very/small problem") return "Very small or small problem";
+        if (status === "Moderate/big problem") return "Moderate or big problem";
+        return status;
+    };
+
+    // Helper function to get color for baseline status
+    const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
+        if (status === "No problem") return { r: 27, g: 94, b: 32 }; // #1B5E20
+        if (status === "Very/small problem") return { r: 251, g: 192, b: 45 }; // #FBC02D
+        return { r: 211, g: 47, b: 47 }; // #D32F2F
+    };
+
     const baselineBowelBotherStatus = (() => {
         const bother = answers.bowel_bother || "Not a problem";
         if (String(bother).includes("Moderate") || String(bother).includes("big")) return "Moderate/big problem";
         if (String(bother).includes("Very") || String(bother).includes("small")) return "Very/small problem";
         return "No problem";
     })();
+
+    // Draw current status box
+    const statusBoxY = 42;
+    const statusColor = getBaselineColor(baselineBowelBotherStatus);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your current bowel bother status:', margin, statusBoxY);
+    
+    // Draw colored circle
+    const circleX = margin + 3;
+    const circleY = statusBoxY + 7;
+    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
+    doc.circle(circleX, circleY, 2.5, 'F');
+    
+    // Draw status text
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(getBaselineDisplayName(baselineBowelBotherStatus), circleX + 5, circleY + 1);
 
     const bbTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,7 +92,7 @@ export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPagePr
     const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
     const imgHeight = fourColWidth * aspectRatio;
 
-    const yPos = 45;
+    const yPos = 58; // Adjusted to accommodate status box
 
     chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;
