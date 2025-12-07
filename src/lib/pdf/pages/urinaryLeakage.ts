@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartsNonBlocking } from '../utils';
 import urinaryLeakageData from "@/assets/leaking_urine_at_one_year.json";
 import { UrinaryLeakageChartForPdf } from '@/features/results/components/UrinaryLeakageChartForPdf';
 import FilledSun from "@/features/results/components/FilledSun";
@@ -44,32 +44,26 @@ export const addUrinaryLeakagePage = async ({ doc, answers, margin, pdfWidth }: 
         };
     });
 
-    const canvases = [];
-    for (const treatment of treatmentOutcomes) {
-        canvases.push(await renderChartToImage(UrinaryLeakageChartForPdf, { treatment }));
-    }
+    // Render all charts with non-blocking approach
+    const chartConfigs = treatmentOutcomes.map(treatment => ({
+        Component: UrinaryLeakageChartForPdf,
+        props: { treatment }
+    }));
+    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
 
-    const colGutter = 5; // Reduced gutter for 4 columns
+    const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-
-    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
-        if (!canvas || !canvas.width) return 0;
-        return (canvas.height * width) / canvas.width;
-    };
-
-    const imgHeight1 = getSafeHeight(canvases[0], fourColWidth);
-    const imgHeight2 = getSafeHeight(canvases[1], fourColWidth);
-    const imgHeight3 = getSafeHeight(canvases[2], fourColWidth);
-    const imgHeight4 = getSafeHeight(canvases[3], fourColWidth);
+    // Estimate height based on typical chart aspect ratio
+    const imgHeight = fourColWidth * 1.5;
 
     const yPos = 45;
 
-    doc.addImage(canvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, imgHeight1);
-    doc.addImage(canvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, imgHeight2);
-    doc.addImage(canvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, imgHeight3);
-    doc.addImage(canvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, imgHeight4);
+    imageDataUrls.forEach((dataUrl, idx) => {
+        const xPos = margin + (fourColWidth + colGutter) * idx;
+        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+    });
 
-    const rowMaxHeight = Math.max(imgHeight1, imgHeight2, imgHeight3, imgHeight4);
+    const rowMaxHeight = imgHeight;
     const tableY = yPos + rowMaxHeight + 10;
 
     const tableBody = treatmentOutcomes.map(t => {

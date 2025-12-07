@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartsNonBlocking } from '../utils';
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { ProblemWithUrgencyChartForPdf } from '@/features/results/components/ProblemWithUrgencyChartForPdf';
 
@@ -54,32 +54,25 @@ export const addBowelUrgencyPage = async ({ doc, answers, margin, pdfWidth }: Pd
         };
     });
 
-    const urgencyCanvases = [];
-    for (const treatment of urgencyTreatmentOutcomes) {
-        urgencyCanvases.push(await renderChartToImage(ProblemWithUrgencyChartForPdf, { treatment }));
-    }
+    // Render all charts with non-blocking approach
+    const chartConfigs = urgencyTreatmentOutcomes.map(treatment => ({
+        Component: ProblemWithUrgencyChartForPdf,
+        props: { treatment }
+    }));
+    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-
-    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
-        if (!canvas || !canvas.width) return 0;
-        return (canvas.height * width) / canvas.width;
-    };
-
-    const urgencyImgHeight1 = getSafeHeight(urgencyCanvases[0], fourColWidth);
-    const urgencyImgHeight2 = getSafeHeight(urgencyCanvases[1], fourColWidth);
-    const urgencyImgHeight3 = getSafeHeight(urgencyCanvases[2], fourColWidth);
-    const urgencyImgHeight4 = getSafeHeight(urgencyCanvases[3], fourColWidth);
+    const imgHeight = fourColWidth * 1.5;
 
     const yPos = 45;
 
-    doc.addImage(urgencyCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, urgencyImgHeight1);
-    doc.addImage(urgencyCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, urgencyImgHeight2);
-    doc.addImage(urgencyCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, urgencyImgHeight3);
-    doc.addImage(urgencyCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, urgencyImgHeight4);
+    imageDataUrls.forEach((dataUrl, idx) => {
+        const xPos = margin + (fourColWidth + colGutter) * idx;
+        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+    });
 
-    const urgencyRowMaxHeight = Math.max(urgencyImgHeight1, urgencyImgHeight2, urgencyImgHeight3, urgencyImgHeight4);
+    const urgencyRowMaxHeight = imgHeight;
     const urgencyTableY = yPos + urgencyRowMaxHeight + 10;
 
     const urgencyTableBody = urgencyTreatmentOutcomes.map(t => {

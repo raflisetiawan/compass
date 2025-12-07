@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartsNonBlocking } from '../utils';
 import bowelBotherData from "@/assets/bowel_bother.json";
 import { BowelBotherChartForPdf } from '@/features/results/components/BowelBotherChartForPdf';
 
@@ -44,32 +44,25 @@ export const addBowelBotherPage = async ({ doc, answers, margin, pdfWidth }: Pdf
         };
     });
 
-    const bbCanvases = [];
-    for (const treatment of bbTreatmentOutcomes) {
-        bbCanvases.push(await renderChartToImage(BowelBotherChartForPdf, { treatment }));
-    }
+    // Render all charts with non-blocking approach
+    const chartConfigs = bbTreatmentOutcomes.map(treatment => ({
+        Component: BowelBotherChartForPdf,
+        props: { treatment }
+    }));
+    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-
-    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
-        if (!canvas || !canvas.width) return 0;
-        return (canvas.height * width) / canvas.width;
-    };
-
-    const bbImgHeight1 = getSafeHeight(bbCanvases[0], fourColWidth);
-    const bbImgHeight2 = getSafeHeight(bbCanvases[1], fourColWidth);
-    const bbImgHeight3 = getSafeHeight(bbCanvases[2], fourColWidth);
-    const bbImgHeight4 = getSafeHeight(bbCanvases[3], fourColWidth);
+    const imgHeight = fourColWidth * 1.5;
 
     const yPos = 45;
 
-    doc.addImage(bbCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, bbImgHeight1);
-    doc.addImage(bbCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, bbImgHeight2);
-    doc.addImage(bbCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, bbImgHeight3);
-    doc.addImage(bbCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, bbImgHeight4);
+    imageDataUrls.forEach((dataUrl, idx) => {
+        const xPos = margin + (fourColWidth + colGutter) * idx;
+        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+    });
 
-    const bbRowMaxHeight = Math.max(bbImgHeight1, bbImgHeight2, bbImgHeight3, bbImgHeight4);
+    const bbRowMaxHeight = imgHeight;
     const bbTableY = yPos + bbRowMaxHeight + 10;
 
     const bbTableBody = bbTreatmentOutcomes.map(t => {

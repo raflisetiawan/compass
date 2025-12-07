@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartsNonBlocking } from '../utils';
 import urinaryPadData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { UrinaryPadUsageChartForPdf } from '@/features/results/components/UrinaryPadUsageChartForPdf';
 
@@ -44,32 +44,25 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfP
         };
     });
 
-    const padCanvases = [];
-    for (const treatment of padTreatmentOutcomes) {
-        padCanvases.push(await renderChartToImage(UrinaryPadUsageChartForPdf, { treatment }));
-    }
+    // Render all charts with non-blocking approach
+    const chartConfigs = padTreatmentOutcomes.map(treatment => ({
+        Component: UrinaryPadUsageChartForPdf,
+        props: { treatment }
+    }));
+    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-
-    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
-        if (!canvas || !canvas.width) return 0;
-        return (canvas.height * width) / canvas.width;
-    };
-
-    const padImgHeight1 = getSafeHeight(padCanvases[0], fourColWidth);
-    const padImgHeight2 = getSafeHeight(padCanvases[1], fourColWidth);
-    const padImgHeight3 = getSafeHeight(padCanvases[2], fourColWidth);
-    const padImgHeight4 = getSafeHeight(padCanvases[3], fourColWidth);
+    const imgHeight = fourColWidth * 1.5;
 
     const yPos = 45;
 
-    doc.addImage(padCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, padImgHeight1);
-    doc.addImage(padCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, padImgHeight2);
-    doc.addImage(padCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, padImgHeight3);
-    doc.addImage(padCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, padImgHeight4);
+    imageDataUrls.forEach((dataUrl, idx) => {
+        const xPos = margin + (fourColWidth + colGutter) * idx;
+        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+    });
 
-    const padRowMaxHeight = Math.max(padImgHeight1, padImgHeight2, padImgHeight3, padImgHeight4);
+    const padRowMaxHeight = imgHeight;
     const padTableY = yPos + padRowMaxHeight + 10;
 
     const padTableBody = padTreatmentOutcomes.map(t => {

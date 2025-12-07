@@ -20,7 +20,7 @@ export const useFetchOutcomePageData = () => {
     "Gleason Score": answers.gleason_score || "3+4",
     "T Stage": answers.cancer_stage || "T2",
     "MRI visibility": answers.mri_visibility || "Visible (Score 4-5)",
-    "Maximal Cancer Core Length": "8mm", // Not in questionnaire
+    "Maximal Cancer Core Length": answers.max_cancer_core_length ? `${answers.max_cancer_core_length} mm` : "Unknown",
   };
 
   const baselineGenitoUrinaryBowelFunction: BaselineFunction = {

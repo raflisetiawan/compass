@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartsNonBlocking } from '../utils';
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { ErectileFunctionChartForPdf } from '@/features/results/components/ErectileFunctionChartForPdf';
 
@@ -146,32 +146,25 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }
         };
     });
 
-    const efCanvases = [];
-    for (const treatment of efTreatmentOutcomes) {
-        efCanvases.push(await renderChartToImage(ErectileFunctionChartForPdf, { treatment }));
-    }
+    // Render all charts with non-blocking approach
+    const chartConfigs = efTreatmentOutcomes.map(treatment => ({
+        Component: ErectileFunctionChartForPdf,
+        props: { treatment }
+    }));
+    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-
-    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
-        if (!canvas || !canvas.width) return 0;
-        return (canvas.height * width) / canvas.width;
-    };
-
-    const efImgHeight1 = getSafeHeight(efCanvases[0], fourColWidth);
-    const efImgHeight2 = getSafeHeight(efCanvases[1], fourColWidth);
-    const efImgHeight3 = getSafeHeight(efCanvases[2], fourColWidth);
-    const efImgHeight4 = getSafeHeight(efCanvases[3], fourColWidth);
+    const imgHeight = fourColWidth * 1.5;
 
     const yPos = 45;
 
-    doc.addImage(efCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, efImgHeight1);
-    doc.addImage(efCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, efImgHeight2);
-    doc.addImage(efCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, efImgHeight3);
-    doc.addImage(efCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, efImgHeight4);
+    imageDataUrls.forEach((dataUrl, idx) => {
+        const xPos = margin + (fourColWidth + colGutter) * idx;
+        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+    });
 
-    const efRowMaxHeight = Math.max(efImgHeight1, efImgHeight2, efImgHeight3, efImgHeight4);
+    const efRowMaxHeight = imgHeight;
     const efTableY = yPos + efRowMaxHeight + 10;
 
     const efTableBody = efTreatmentOutcomes.map(t => {

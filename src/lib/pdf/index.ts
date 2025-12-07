@@ -1,6 +1,8 @@
 import jsPDF from 'jspdf';
 import { useQuestionnaireStore } from '@/stores/questionnaireStore';
 import { useUserStore } from '@/stores/userStore';
+import { addIntroductionPage } from './pages/introduction';
+import { addTreatmentOptionsPages } from './pages/treatmentOptions';
 import { addResultsPage } from './pages/results';
 import { addSummaryPage } from './pages/summary';
 import { addSurvivalPage } from './pages/survival';
@@ -11,6 +13,7 @@ import { addErectileFunctionPage } from './pages/erectileFunction';
 import { addSexualBotherPage } from './pages/sexualBother';
 import { addBowelUrgencyPage } from './pages/bowelUrgency';
 import { addBowelBotherPage } from './pages/bowelBother';
+import { yieldToMain } from './utils';
 
 
 export const generatePdf = async (onProgress?: (progress: number) => void) => {
@@ -34,46 +37,71 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
         imgWidth,
     };
 
-    const totalSteps = 10;
+    const totalSteps = 12; // Updated: +2 for Introduction and Treatment Options
     let currentStep = 0;
 
-    const updateProgress = () => {
+    const updateProgress = async () => {
         currentStep++;
         if (onProgress) {
             const percentage = Math.round((currentStep / totalSteps) * 100);
             onProgress(percentage);
         }
+        // Yield to main thread after each page to keep UI responsive
+        await yieldToMain();
     };
 
+    // === A) Introduction of the tool ===
+    // Page 1: Introduction (no heavy processing)
+    addIntroductionPage(pageProps);
+    await updateProgress();
+
+    // === B) Information on treatment options (all four tables) ===
+    // Pages 2-3: Treatment Options tables
+    addTreatmentOptionsPages(pageProps);
+    await updateProgress();
+
+    // === C) Answers to pre-treatment assessment questions ===
+    // Page 4: Results (no heavy processing)
     addResultsPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
-    addSummaryPage(pageProps);
-    updateProgress();
-
+    // === D) Result of predicted outcomes ===
+    // Page 5: Survival - uses html2canvas
     await addSurvivalPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Functional Outcomes:
+    // Page 6: Urinary Leakage - uses html2canvas
     await addUrinaryLeakagePage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 7: Urinary Pad - uses html2canvas
     await addUrinaryPadPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 8: Urinary Bother - uses html2canvas
     await addUrinaryBotherPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 9: Erectile Function - uses html2canvas
     await addErectileFunctionPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 10: Sexual Bother - uses html2canvas
     await addSexualBotherPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 11: Bowel Urgency - uses html2canvas
     await addBowelUrgencyPage(pageProps);
-    updateProgress();
+    await updateProgress();
 
+    // Page 12: Bowel Bother - uses html2canvas
     await addBowelBotherPage(pageProps);
-    updateProgress();
+    await updateProgress();
+
+    // Page 13: Summary table (Functional Outcomes summary)
+    addSummaryPage(pageProps);
+    await updateProgress();
 
     // Add User ID and Timestamp to all pages
     const totalPages = doc.getNumberOfPages();
@@ -97,3 +125,4 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
 
     doc.save('BeSpoke-results.pdf');
 };
+

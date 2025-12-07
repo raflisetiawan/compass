@@ -11,10 +11,27 @@ export const toDataURL = (url: string) => fetch(url)
         reader.readAsDataURL(blob);
     }));
 
+/**
+ * Yields control back to the browser to keep the UI responsive.
+ * Uses requestIdleCallback when available, falls back to setTimeout.
+ */
+export const yieldToMain = (): Promise<void> => {
+    return new Promise(resolve => {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => resolve(), { timeout: 50 });
+        } else {
+            setTimeout(resolve, 0);
+        }
+    });
+};
+
+/**
+ * Original synchronous version - kept for backwards compatibility
+ */
 export const renderChartToImage = async (
     Component: React.ComponentType<any>,
     props: any,
-    scale: number = 1 // Reduced from 2 to 1 for smaller file size
+    scale: number = 1
 ): Promise<HTMLCanvasElement> => {
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'absolute';
@@ -33,9 +50,9 @@ export const renderChartToImage = async (
         useCORS: true,
         allowTaint: false,
         backgroundColor: '#ffffff',
-        logging: false, // Disable logging for performance
-        imageTimeout: 0, // Don't wait for external images
-        removeContainer: false, // We'll handle cleanup
+        logging: false,
+        imageTimeout: 0,
+        removeContainer: false,
         windowWidth: tempContainer.scrollWidth,
         windowHeight: tempContainer.scrollHeight
     });
@@ -44,6 +61,84 @@ export const renderChartToImage = async (
     document.body.removeChild(tempContainer);
 
     return canvas;
+};
+
+/**
+ * Non-blocking version that yields to browser between operations.
+ * Returns a data URL string instead of canvas for easy transfer to worker.
+ */
+export const renderChartToImageNonBlocking = async (
+    Component: React.ComponentType<any>,
+    props: any,
+    scale: number = 1,
+    quality: number = 0.85
+): Promise<string> => {
+    // Yield before starting heavy work
+    await yieldToMain();
+
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    document.body.appendChild(tempContainer);
+
+    const root = ReactDOM.createRoot(tempContainer);
+    root.render(React.createElement(Component, props));
+
+    // Wait for React to render
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Yield again before html2canvas
+    await yieldToMain();
+
+    const canvas = await html2canvas(tempContainer, {
+        scale,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 0,
+        removeContainer: false,
+        windowWidth: tempContainer.scrollWidth,
+        windowHeight: tempContainer.scrollHeight
+    });
+
+    root.unmount();
+    document.body.removeChild(tempContainer);
+
+    // Convert to data URL
+    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+    
+    // Yield after heavy work
+    await yieldToMain();
+
+    return dataUrl;
+};
+
+/**
+ * Renders multiple charts with yielding between each for better responsiveness.
+ */
+export const renderChartsNonBlocking = async (
+    charts: Array<{ Component: React.ComponentType<any>; props: any }>,
+    onProgress?: (completed: number, total: number) => void,
+    scale: number = 1,
+    quality: number = 0.85
+): Promise<string[]> => {
+    const results: string[] = [];
+    
+    for (let i = 0; i < charts.length; i++) {
+        const { Component, props } = charts[i];
+        const dataUrl = await renderChartToImageNonBlocking(Component, props, scale, quality);
+        results.push(dataUrl);
+        
+        if (onProgress) {
+            onProgress(i + 1, charts.length);
+        }
+        
+        // Extra yield between charts
+        await yieldToMain();
+    }
+    
+    return results;
 };
 
 // Convert canvas to compressed JPEG data URL

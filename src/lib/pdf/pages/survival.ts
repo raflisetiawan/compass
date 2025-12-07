@@ -1,6 +1,6 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImage } from '../utils';
+import { renderChartToImageNonBlocking } from '../utils';
 import { getAgeGroup, getPSARange, getGradeGroup } from '@/services/prediction';
 import survivalData from "@/assets/survival_calculation.json";
 import type { SurvivalData } from "@/types";
@@ -70,12 +70,14 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
             { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E" },
         ];
 
-        const canvas = await renderChartToImage(SurvivalChartForPdf, { data: iconArrayData });
+        // Use non-blocking rendering
+        const imageDataUrl = await renderChartToImageNonBlocking(SurvivalChartForPdf, { data: iconArrayData });
 
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgWidth = pdfWidth - 28;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        doc.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 14, 45, imgWidth, imgHeight);
+        // Estimate height (assuming ~2:1 aspect ratio for this chart)
+        const imgHeight = imgWidth * 0.5;
+        doc.addImage(imageDataUrl, 'JPEG', 14, 45, imgWidth, imgHeight);
 
         autoTable(doc, {
             startY: 45 + imgHeight + 10,

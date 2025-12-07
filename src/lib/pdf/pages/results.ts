@@ -2,7 +2,10 @@ import autoTable from 'jspdf-autotable';
 import { type PdfPageProps } from '../types';
 
 export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
-    // Page 1: Answers to pre-treatment assessment questions
+    // Add new page for Results (comes after Treatment Options)
+    doc.addPage();
+    
+    // Page: Answers to pre-treatment assessment questions
     doc.setFontSize(16);
     doc.text('Answers to pre-treatment assessment questions', doc.internal.pageSize.width / 2, 22, { align: 'center' });
     doc.setLineWidth(0.5);
@@ -15,7 +18,7 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
         { id: 'gleason_score', label: 'Gleason score', unit: '' },
         { id: 'cancer_stage', label: 'T stage', unit: '' },
         { id: 'mri_visibility', label: 'MRI visibility', unit: '' },
-        { id: 'maximal_cancer_core_length', label: 'Maximal cancer core length', unit: 'mm' },
+        { id: 'max_cancer_core_length', label: 'Maximal cancer core length', unit: 'mm' },
     ];
     
     // Helper function to format value with unit
