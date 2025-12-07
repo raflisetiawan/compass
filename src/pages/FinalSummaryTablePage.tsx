@@ -48,32 +48,38 @@ const FinalSummaryTablePageContent = () => {
     let leakageLabel = "No leakage";
     if (String(leakage).includes("day")) {
       leakageStatus = "At least once a day";
-      leakageLabel = "1 pad";
+      leakageLabel = "Leaks daily";
     } else if (String(leakage).includes("week")) {
       leakageStatus = "At least once a week";
-      leakageLabel = "1 pad";
+      leakageLabel = "Leaks weekly";
     }
 
     // Urinary Pad Usage
     const padUsage = answers.pad_usage || "No pads";
     let padStatus = "Not using pad";
-    let padLabel = "1 pad";
+    let padLabel = "No pad";
     if (String(padUsage).includes("2 or more")) {
       padStatus = "Using two or more pads a day";
-      padLabel = "1 pad";
+      padLabel = "2+ pads/day";
     } else if (String(padUsage).includes("1 pad")) {
       padStatus = "Using one pad a day";
-      padLabel = "1 pad";
+      padLabel = "1 pad/day";
     }
 
     // Urinary Bother
     const urinaryBother = answers.urine_problem || "Not a problem";
     let urinaryBotherStatus = "No problem";
-    const urinaryBotherLabel = "Small bother";
-    if (String(urinaryBother).includes("Moderate") || String(urinaryBother).includes("big"))
+    let urinaryBotherLabel = "No problem";
+    if (String(urinaryBother).includes("Moderate") || String(urinaryBother).includes("big")) {
       urinaryBotherStatus = "Moderate/big problem";
-    else if (String(urinaryBother).includes("Very") || String(urinaryBother).includes("small"))
+      urinaryBotherLabel = "Moderate/big problem";
+    } else if (String(urinaryBother).includes("small")) {
       urinaryBotherStatus = "Very/small problem";
+      urinaryBotherLabel = "Small problem";
+    } else if (String(urinaryBother).includes("Very")) {
+      urinaryBotherStatus = "Very/small problem";
+      urinaryBotherLabel = "Very small problem";
+    }
 
     // Erectile Function
     const quality = answers.erection_quality || "Firm enough for intercourse";
@@ -83,42 +89,68 @@ const FinalSummaryTablePageContent = () => {
 
     if (quality === "Firm enough for intercourse") {
       erectileStatus = useMedication ? "Firm for intercourse - with assist" : "Firm for intercourse - no assist";
+      erectileLabel = "Firm for intercourse";
     } else if (quality === "Firm enough for masturbation and foreplay only") {
       erectileStatus = useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
-      erectileLabel = "Good erections";
+      erectileLabel = "Firm for masturbation only";
     } else if (quality === "Not firm enough for any sexual activity") {
       erectileStatus = useMedication ? "Not firm - with assist" : "Not firm - no assist";
-      erectileLabel = "Good erections";
+      erectileLabel = "Not firm enough";
     } else {
       erectileStatus = useMedication ? "None at all - with assist" : "None at all - no assist";
-      erectileLabel = "Good erections";
+      erectileLabel = "No erections";
     }
 
     // Erectile Bother (Sexual Bother)
     const erectileBother = answers.erection_bother || "Not a problem";
     let erectileBotherStatus = "No problem";
-    const erectileBotherLabel = "No problem";
-    if (String(erectileBother).includes("Moderate") || String(erectileBother).includes("big"))
+    let erectileBotherLabel = "No problem";
+    if (String(erectileBother).includes("Moderate") || String(erectileBother).includes("big")) {
       erectileBotherStatus = "Moderate/big problem";
-    else if (String(erectileBother).includes("Very") || String(erectileBother).includes("small"))
+      erectileBotherLabel = "Moderate/big problem";
+    } else if (String(erectileBother).includes("small")) {
       erectileBotherStatus = "Very/small problem";
+      erectileBotherLabel = "Small problem";
+    } else if (String(erectileBother).includes("Very")) {
+      erectileBotherStatus = "Very/small problem";
+      erectileBotherLabel = "Very small problem";
+    }
 
     // Bowel Urgency
     const urgency = answers.bowel_urgency || "No problem";
     let urgencyStatus = "No_problem";
-    const urgencyLabel = "No problem";
-    if (urgency === "No problem") urgencyStatus = "No_problem";
-    else if (urgency === "Very small" || urgency === "Small") urgencyStatus = "Very_small_problem";
-    else if (urgency === "Moderate" || urgency === "Big problem") urgencyStatus = "Moderate_big_problem";
+    let urgencyLabel = "No problem";
+    if (urgency === "No problem") {
+      urgencyStatus = "No_problem";
+      urgencyLabel = "No problem";
+    } else if (urgency === "Very small") {
+      urgencyStatus = "Very_small_problem";
+      urgencyLabel = "Very small problem";
+    } else if (urgency === "Small") {
+      urgencyStatus = "Very_small_problem";
+      urgencyLabel = "Small problem";
+    } else if (urgency === "Moderate") {
+      urgencyStatus = "Moderate_big_problem";
+      urgencyLabel = "Moderate problem";
+    } else if (urgency === "Big problem") {
+      urgencyStatus = "Moderate_big_problem";
+      urgencyLabel = "Big problem";
+    }
 
     // Bowel Bother
     const bowelBother = answers.bowel_bother || "Not a problem";
     let bowelBotherStatus = "No problem";
-    const bowelBotherLabel = "No problem";
-    if (String(bowelBother).includes("Moderate") || String(bowelBother).includes("big"))
+    let bowelBotherLabel = "No problem";
+    if (String(bowelBother).includes("Moderate") || String(bowelBother).includes("big")) {
       bowelBotherStatus = "Moderate/big problem";
-    else if (String(bowelBother).includes("Very") || String(bowelBother).includes("small"))
+      bowelBotherLabel = "Moderate/big problem";
+    } else if (String(bowelBother).includes("small")) {
       bowelBotherStatus = "Very/small problem";
+      bowelBotherLabel = "Small problem";
+    } else if (String(bowelBother).includes("Very")) {
+      bowelBotherStatus = "Very/small problem";
+      bowelBotherLabel = "Very small problem";
+    }
 
     return {
       leakageStatus,
