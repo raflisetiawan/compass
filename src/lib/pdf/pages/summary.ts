@@ -195,58 +195,35 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     
     const lineHeight = 5;
     const margin = 14;
-    const maxWidth = doc.internal.pageSize.getWidth() - (margin * 2);
+    const bulletIndent = 20; // Indent for text after dash
+    const maxWidth = doc.internal.pageSize.getWidth() - bulletIndent - margin;
 
-    // Leak-free definition
-    const leakFreeText = 'Leak free: % of men who rarely or never leak';
-    doc.text(leakFreeText, margin, currentY);
-    currentY += lineHeight;
+    const definitions = [
+        'No leakage: % of men who rarely or never leak',
+        'No Pad used: % of men who do not wear any pad for urinary leakage',
+        'No problem with urinary function: % of men who do not consider their current urinary function to be a problem.',
+        'Erections sufficient for intercourse: % of men whose erections are sufficient for intercourse (whether or not they are using any tablets or other medical devices to help).',
+        'No problem with erectile function: % of men who do not consider their current degree of erectile function to be a problem.',
+        'No problem with bowel urgency: % of men who do not consider their current degree of bowel urgency to be a problem.',
+        'No problem with bowel function: % of men who do not consider their bowel function to be a problem.',
+    ];
 
-    // Pad-free definition
-    const padFreeText = 'Pad-Free: % of men who wear no pad';
-    doc.text(padFreeText, margin, currentY);
-    currentY += lineHeight;
-
-    // Urinary bother definition
-    const urinaryBotherText = 'Urinary Bother: % of men for whom their urinary function is not considered to be a problem';
-    const urinaryBotherLines = doc.splitTextToSize(urinaryBotherText, maxWidth);
-    doc.text(urinaryBotherLines, margin, currentY);
-    currentY += lineHeight * urinaryBotherLines.length;
-
-    currentY += 2; // Extra spacing
-
-    // Erectile function definition
-    const erectileText = 'Sufficient erections for intercourse: % of men whose erections are sufficient for intercourse with or without use of medications or sexual devices';
-    const erectileLines = doc.splitTextToSize(erectileText, maxWidth);
-    doc.text(erectileLines, margin, currentY);
-    currentY += lineHeight * erectileLines.length;
-
-    // Sexual bother definition
-    const sexualBotherText = 'Sexual bother: % of men for whom their sexual function is not considered to be a problem';
-    const sexualBotherLines = doc.splitTextToSize(sexualBotherText, maxWidth);
-    doc.text(sexualBotherLines, margin, currentY);
-    currentY += lineHeight * sexualBotherLines.length;
-
-    currentY += 2; // Extra spacing
-
-    // Bowel urgency definition
-    const bowelUrgencyText = 'Problem with urgency: % of men for whom their urgency to have a bowel movement is not considered to be a problem';
-    const bowelUrgencyLines = doc.splitTextToSize(bowelUrgencyText, maxWidth);
-    doc.text(bowelUrgencyLines, margin, currentY);
-    currentY += lineHeight * bowelUrgencyLines.length;
-
-    // Bowel bother definition
-    const bowelBotherText = 'Bowel bother: % of men for whom their bowel function is not considered to be a problem';
-    const bowelBotherLines = doc.splitTextToSize(bowelBotherText, maxWidth);
-    doc.text(bowelBotherLines, margin, currentY);
-    currentY += lineHeight * bowelBotherLines.length;
+    definitions.forEach((definition) => {
+        // Draw the dash bullet
+        doc.text('-', margin, currentY);
+        
+        // Draw the definition text with wrapping
+        const lines = doc.splitTextToSize(definition, maxWidth);
+        doc.text(lines, bulletIndent, currentY);
+        currentY += lineHeight * lines.length;
+    });
 
     currentY += 4; // Extra spacing before final note
 
     // Add EPIC-26 note
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
     const epicNoteText = 'These definitions correspond to the lowest score (1 out of 5) of their corresponding EPIC-26 questions.';
-    const epicNoteLines = doc.splitTextToSize(epicNoteText, maxWidth);
+    const epicNoteLines = doc.splitTextToSize(epicNoteText, doc.internal.pageSize.getWidth() - (margin * 2));
     doc.text(epicNoteLines, margin, currentY);
 };

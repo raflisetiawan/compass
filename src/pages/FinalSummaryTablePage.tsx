@@ -1,14 +1,6 @@
 import { useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 // Import all data files
 import urinaryLeakageData from "@/assets/leaking_urine_at_one_year.json";
@@ -20,52 +12,20 @@ import bowelUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import bowelBotherData from "@/assets/bowel_bother.json";
 
 const treatments = [
-  { key: "Active Surveillance", urgencyKey: "Active_Surveillance" },
-  { key: "Focal Therapy", urgencyKey: "Focal" },
-  { key: "Surgery", urgencyKey: "Surgery" },
-  { key: "Radiotherapy", urgencyKey: "EBRT" },
-];
-
-const columns = [
-  { key: "treatment", label: "Treatment" },
-  { key: "noLeaking", label: "No Leaking" },
-  { key: "noPadUsed", label: "No Pad Used" },
-  { key: "noUrinaryProblem", label: "No Problem (Urinary)" },
-  { key: "erectionsSufficient", label: "Erections Sufficient" },
-  { key: "noErectileProblem", label: "No Problem (Erectile)" },
-  { key: "noBowelUrgency", label: "No Bowel Urgency" },
-  { key: "noBowelProblem", label: "No Problem (Bowel)" },
+  { key: "Active Surveillance", urgencyKey: "Active_Surveillance", color: "bg-sky-100" },
+  { key: "Focal Therapy", urgencyKey: "Focal", color: "bg-green-100" },
+  { key: "Surgery", urgencyKey: "Surgery", color: "bg-orange-100" },
+  { key: "Radiotherapy", urgencyKey: "EBRT", color: "bg-red-100" },
 ];
 
 const definitions = [
-  {
-    term: "No Leaking",
-    definition: "EPIC-26 Q1: 'Rarely or never' leaking urine.",
-  },
-  {
-    term: "No Pad Used",
-    definition: "EPIC-26 Q2: Using no pads or adult diapers per day.",
-  },
-  {
-    term: "No Problem (Urinary)",
-    definition: "EPIC-26 Q4: Overall urinary function rated as 'No problem'.",
-  },
-  {
-    term: "Erections Sufficient",
-    definition: "EPIC-26 Q5: Ability to have erections 'Firm enough for intercourse' (with or without assist).",
-  },
-  {
-    term: "No Problem (Erectile)",
-    definition: "EPIC-26 Q10: Overall sexual function rated as 'No problem'.",
-  },
-  {
-    term: "No Bowel Urgency",
-    definition: "EPIC-26 Q12: Urgency to have bowel movements rated as 'No problem'.",
-  },
-  {
-    term: "No Problem (Bowel)",
-    definition: "EPIC-26 Q14: Overall bowel function rated as 'No problem'.",
-  },
+  "No leakage: % of men who rarely or never leak",
+  "No Pad used: % of men who do not wear any pad for urinary leakage",
+  "No problem with urinary function: % of men who do not consider their current urinary function to be a problem",
+  "Erections sufficient for intercourse: % of men whose erections are sufficient for intercourse (whether or not they are using any tablets or other medical devices to help)",
+  "No problem with erectile function: % of men who do not consider their current degree of erectile function to be a problem",
+  "No problem with bowel urgency: % of men who do not consider their current degree of bowel urgency to be a problem",
+  "No problem with bowel function: % of men who do not consider their bowel function to be a problem",
 ];
 
 // Type definitions for data files
@@ -85,18 +45,31 @@ const FinalSummaryTablePageContent = () => {
     // Urinary Leakage
     const leakage = answers.urine_leak || "Rarely or never";
     let leakageStatus = "Rarely or never";
-    if (String(leakage).includes("day")) leakageStatus = "At least once a day";
-    else if (String(leakage).includes("week")) leakageStatus = "At least once a week";
+    let leakageLabel = "No leakage";
+    if (String(leakage).includes("day")) {
+      leakageStatus = "At least once a day";
+      leakageLabel = "1 pad";
+    } else if (String(leakage).includes("week")) {
+      leakageStatus = "At least once a week";
+      leakageLabel = "1 pad";
+    }
 
     // Urinary Pad Usage
     const padUsage = answers.pad_usage || "No pads";
     let padStatus = "Not using pad";
-    if (String(padUsage).includes("2 or more")) padStatus = "Using two or more pads a day";
-    else if (String(padUsage).includes("1 pad")) padStatus = "Using one pad a day";
+    let padLabel = "1 pad";
+    if (String(padUsage).includes("2 or more")) {
+      padStatus = "Using two or more pads a day";
+      padLabel = "1 pad";
+    } else if (String(padUsage).includes("1 pad")) {
+      padStatus = "Using one pad a day";
+      padLabel = "1 pad";
+    }
 
     // Urinary Bother
     const urinaryBother = answers.urine_problem || "Not a problem";
     let urinaryBotherStatus = "No problem";
+    const urinaryBotherLabel = "Small bother";
     if (String(urinaryBother).includes("Moderate") || String(urinaryBother).includes("big"))
       urinaryBotherStatus = "Moderate/big problem";
     else if (String(urinaryBother).includes("Very") || String(urinaryBother).includes("small"))
@@ -106,20 +79,25 @@ const FinalSummaryTablePageContent = () => {
     const quality = answers.erection_quality || "Firm enough for intercourse";
     const useMedication = answers.sex_medication === "Yes";
     let erectileStatus: string;
+    let erectileLabel = "Good erections";
 
     if (quality === "Firm enough for intercourse") {
       erectileStatus = useMedication ? "Firm for intercourse - with assist" : "Firm for intercourse - no assist";
     } else if (quality === "Firm enough for masturbation and foreplay only") {
       erectileStatus = useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
+      erectileLabel = "Good erections";
     } else if (quality === "Not firm enough for any sexual activity") {
       erectileStatus = useMedication ? "Not firm - with assist" : "Not firm - no assist";
+      erectileLabel = "Good erections";
     } else {
       erectileStatus = useMedication ? "None at all - with assist" : "None at all - no assist";
+      erectileLabel = "Good erections";
     }
 
     // Erectile Bother (Sexual Bother)
     const erectileBother = answers.erection_bother || "Not a problem";
     let erectileBotherStatus = "No problem";
+    const erectileBotherLabel = "No problem";
     if (String(erectileBother).includes("Moderate") || String(erectileBother).includes("big"))
       erectileBotherStatus = "Moderate/big problem";
     else if (String(erectileBother).includes("Very") || String(erectileBother).includes("small"))
@@ -128,6 +106,7 @@ const FinalSummaryTablePageContent = () => {
     // Bowel Urgency
     const urgency = answers.bowel_urgency || "No problem";
     let urgencyStatus = "No_problem";
+    const urgencyLabel = "No problem";
     if (urgency === "No problem") urgencyStatus = "No_problem";
     else if (urgency === "Very small" || urgency === "Small") urgencyStatus = "Very_small_problem";
     else if (urgency === "Moderate" || urgency === "Big problem") urgencyStatus = "Moderate_big_problem";
@@ -135,6 +114,7 @@ const FinalSummaryTablePageContent = () => {
     // Bowel Bother
     const bowelBother = answers.bowel_bother || "Not a problem";
     let bowelBotherStatus = "No problem";
+    const bowelBotherLabel = "No problem";
     if (String(bowelBother).includes("Moderate") || String(bowelBother).includes("big"))
       bowelBotherStatus = "Moderate/big problem";
     else if (String(bowelBother).includes("Very") || String(bowelBother).includes("small"))
@@ -142,12 +122,19 @@ const FinalSummaryTablePageContent = () => {
 
     return {
       leakageStatus,
+      leakageLabel,
       padStatus,
+      padLabel,
       urinaryBotherStatus,
+      urinaryBotherLabel,
       erectileStatus,
+      erectileLabel,
       erectileBotherStatus,
+      erectileBotherLabel,
       urgencyStatus,
+      urgencyLabel,
       bowelBotherStatus,
+      bowelBotherLabel,
     };
   }, [answers]);
 
@@ -155,7 +142,7 @@ const FinalSummaryTablePageContent = () => {
   const tableData = useMemo(() => {
     const { leakageStatus, padStatus, urinaryBotherStatus, erectileStatus, erectileBotherStatus, urgencyStatus, bowelBotherStatus } = baselineStatuses;
 
-    return treatments.map(({ key: treatmentName, urgencyKey }) => {
+    return treatments.map(({ key: treatmentName, urgencyKey, color }) => {
       // No Leaking (Rarely or never)
       const leakageResult = (urinaryLeakageData as LeakageData)[treatmentName as keyof LeakageData];
       const noLeaking = leakageResult?.["Baseline urine leakage"]?.[leakageStatus as keyof typeof leakageResult["Baseline urine leakage"]]?.["Rarely or never"] ?? null;
@@ -190,6 +177,7 @@ const FinalSummaryTablePageContent = () => {
 
       return {
         treatment: treatmentName,
+        color,
         noLeaking,
         noPadUsed,
         noUrinaryProblem,
@@ -207,48 +195,124 @@ const FinalSummaryTablePageContent = () => {
 
   return (
     <>
-      <div className="text-sm text-gray-600 mb-4 space-y-2">
-        <p>
-          This table summarizes the percentage of men with functional outcomes at
-          1 year after treatment for each treatment option, based on your current
-          baseline function.
-        </p>
-      </div>
-
       {/* Desktop Table - hidden on mobile */}
       <div className="hidden md:block overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map((col) => (
-                <TableHead
-                  key={col.key}
-                  className={
-                    col.key === "treatment"
-                      ? "font-bold bg-gray-100"
-                      : "text-center bg-gray-100"
-                  }
-                >
-                  {col.label}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <table className="w-full border-collapse text-sm">
+          {/* Main Header */}
+          <thead>
+            <tr>
+              <th colSpan={8} className="bg-blue-600 text-white py-3 px-4 text-center font-bold">
+                Functional Outcomes at 1 year after treatment
+              </th>
+            </tr>
+            {/* Category Headers */}
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-2"></th>
+              <th colSpan={3} className="border border-gray-300 p-2 text-center font-bold">
+                URINARY
+              </th>
+              <th colSpan={2} className="border border-gray-300 p-2 text-center font-bold">
+                SEXUAL
+              </th>
+              <th colSpan={2} className="border border-gray-300 p-2 text-center font-bold">
+                BOWEL
+              </th>
+            </tr>
+            {/* Current Status Row */}
+            <tr className="bg-gray-50 text-xs">
+              <td className="border border-gray-300 p-2 font-medium">Current status*</td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.leakageLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.padLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.urinaryBotherLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.erectileLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.erectileBotherLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.urgencyLabel}
+              </td>
+              <td className="border border-gray-300 p-2 text-center">
+                {baselineStatuses.bowelBotherLabel}
+              </td>
+            </tr>
+            {/* Column Headers */}
+            <tr className="bg-gray-100 text-xs">
+              <th className="border border-gray-300 p-2 font-bold">TREATMENT</th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No<br />Leaking
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No<br />Pad used
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No problem<br />with urinary<br />function
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                Erections<br />sufficient for<br />intercourse
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No problem<br />with erectile<br />function
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No bowel<br />urgency
+              </th>
+              <th className="border border-gray-300 p-2 text-center font-medium">
+                No problem<br />with bowel<br />function
+              </th>
+            </tr>
+          </thead>
+          <tbody>
             {tableData.map((row) => (
-              <TableRow key={row.treatment}>
-                <TableCell className="font-medium">{row.treatment}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noLeaking)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noPadUsed)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noUrinaryProblem)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.erectionsSufficient)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noErectileProblem)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noBowelUrgency)}</TableCell>
-                <TableCell className="text-center">{formatValue(row.noBowelProblem)}</TableCell>
-              </TableRow>
+              <tr key={row.treatment}>
+                <td className={`border border-gray-300 p-2 font-bold ${row.color}`}>
+                  {row.treatment.toUpperCase()}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noLeaking)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noPadUsed)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noUrinaryProblem)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.erectionsSufficient)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noErectileProblem)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noBowelUrgency)}
+                </td>
+                <td className="border border-gray-300 p-2 text-center font-medium">
+                  {formatValue(row.noBowelProblem)}
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
+
+        {/* Definitions */}
+        <div className="mt-6">
+          <h3 className="font-bold mb-3">Definitions:</h3>
+          <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
+            {definitions.map((def, index) => (
+              <li key={index}>{def}</li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-gray-600 italic">
+            These definitions correspond to the lowest score (1 out of 5) of their corresponding EPIC-26 questions.
+          </p>
+        </div>
       </div>
 
       {/* Mobile Cards - shown only on mobile */}
@@ -258,8 +322,8 @@ const FinalSummaryTablePageContent = () => {
             key={row.treatment}
             className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
           >
-            <div className="bg-blue-600 text-white px-4 py-3 font-bold">
-              {row.treatment}
+            <div className={`${row.color} px-4 py-3 font-bold border-b`}>
+              {row.treatment.toUpperCase()}
             </div>
             <div className="p-4 space-y-3">
               {/* Urinary Section */}
@@ -313,20 +377,21 @@ const FinalSummaryTablePageContent = () => {
             </div>
           </div>
         ))}
-      </div>
 
-      <div className="mt-8">
-        <h3 className="font-bold text-lg mb-4">Column Definitions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {definitions.map((def) => (
-            <div
-              key={def.term}
-              className="bg-blue-50 border border-blue-100 rounded-lg p-3"
-            >
-              <p className="font-semibold text-blue-900">{def.term}</p>
-              <p className="text-sm text-blue-700">{def.definition}</p>
-            </div>
-          ))}
+        {/* Mobile Definitions */}
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <h3 className="font-bold mb-3">Definitions:</h3>
+          <ul className="text-sm text-gray-700 space-y-2">
+            {definitions.map((def, index) => (
+              <li key={index} className="flex gap-2">
+                <span>-</span>
+                <span>{def}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-gray-600 italic">
+            These definitions correspond to the lowest score (1 out of 5) of their corresponding EPIC-26 questions.
+          </p>
         </div>
       </div>
     </>

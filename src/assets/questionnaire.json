@@ -39,7 +39,7 @@
           "id": "cancer_stage",
           "text": "What stage prostate cancer do you have?",
           "type": "radio",
-          "options": ["T2", "T3a", "T3b", "T4", "Unknown"],
+          "options": ["T1 or T2", "T3a", "T3b", "T4", "Unknown"],
           "helpText": "'Stage' means whether your prostate cancer is in one or more areas of the prostate... The stage of the cancer helps predict how effective different treatments are likely to be",
           "required": true
         },
