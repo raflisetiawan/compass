@@ -6,7 +6,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-  import PillIcon from "./PillIcon";
+
   
   interface OutcomeData {
     name: string;
@@ -35,9 +35,6 @@ import {
                 <TableHead key={idx} className="text-center min-w-[150px]">
                   <div className="flex flex-col items-center gap-1">
                     <span>{header.name}</span>
-                    {header.showPill && (
-                      <PillIcon size={12} />
-                    )}
                   </div>
                 </TableHead>
               ))}

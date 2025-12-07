@@ -29,13 +29,34 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
 
-    const survivalOutcome = (survivalData.Survival as SurvivalData[]).find(
+    let survivalOutcome = (survivalData.Survival as SurvivalData[]).find(
         (item) =>
             item["Age Group"] === ageGroup &&
             String(item["T Stage"]) === tStage &&
             item["Grade Group"] === gradeGroup &&
             item["PSA"] === psaRange
     );
+
+    // Fallback mechanisms for missing data
+    const hasValidData = (data: SurvivalData | undefined) => {
+        return data && data["Alive (%)"] !== "" && data["Alive (%)"] != null;
+    };
+
+    if (!hasValidData(survivalOutcome)) {
+        // Fallback 1: If Grade Group is 1, try using Grade Group 2
+        if (gradeGroup === 1) {
+            const fallbackResult = (survivalData.Survival as SurvivalData[]).find(
+                (item) =>
+                    item["Age Group"] === ageGroup &&
+                    String(item["T Stage"]) === tStage &&
+                    item["Grade Group"] === 2 &&
+                    item["PSA"] === psaRange
+            );
+            if (hasValidData(fallbackResult)) {
+                survivalOutcome = fallbackResult;
+            }
+        }
+    }
 
     doc.setFontSize(16);
     doc.text('Survival after prostate cancer treatment', 14, 22);
@@ -60,9 +81,9 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
             startY: 45 + imgHeight + 10,
             head: [['', 'Percentage']],
             body: [
-                ['Alive', `${survivalOutcome['Alive (%)']}%`],
-                ['Death (from prostate cancer)', `${survivalOutcome['PCa Death (%)']}%`],
-                ['Death (from other causes)', `${survivalOutcome['Other Death (%)']}%`],
+                ['Alive', `${Number(survivalOutcome['Alive (%)']).toFixed(1)}%`],
+                ['Death (from prostate cancer)', `${Number(survivalOutcome['PCa Death (%)']).toFixed(1)}%`],
+                ['Death (from other causes)', `${Number(survivalOutcome['Other Death (%)']).toFixed(1)}%`],
             ],
             theme: 'grid',
         });

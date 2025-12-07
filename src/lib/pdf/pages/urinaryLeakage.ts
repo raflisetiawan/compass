@@ -3,9 +3,10 @@ import type { PdfPageProps } from '../types';
 import { renderChartToImage } from '../utils';
 import urinaryLeakageData from "@/assets/leaking_urine_at_one_year.json";
 import { UrinaryLeakageChartForPdf } from '@/features/results/components/UrinaryLeakageChartForPdf';
-import { Sun, Droplet } from "lucide-react";
+import FilledSun from "@/features/results/components/FilledSun";
+import FilledDroplet from "@/features/results/components/FilledDroplet";
 
-export const addUrinaryLeakagePage = async ({ doc, answers, margin, gutter, imgWidth }: PdfPageProps) => {
+export const addUrinaryLeakagePage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 3: Leaking urine at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -36,34 +37,40 @@ export const addUrinaryLeakagePage = async ({ doc, answers, margin, gutter, imgW
         return {
             name: treatment,
             data: [
-                { name: "Rarely or never leaking", value: rarely, color: "#FFC107", Icon: Sun },
-                { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", Icon: Droplet },
-                { name: "Leaking once a day or more", value: daily, color: "#1976D2", Icon: Droplet },
+                { name: "Rarely or never leaking", value: rarely, color: "#FFC107", Icon: FilledSun },
+                { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", Icon: FilledDroplet },
+                { name: "Leaking once a day or more", value: daily, color: "#1976D2", Icon: FilledDroplet },
             ],
         };
     });
 
-    const canvases = await Promise.all(treatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(UrinaryLeakageChartForPdf, { treatment });
-    }));
+    const canvases = [];
+    for (const treatment of treatmentOutcomes) {
+        canvases.push(await renderChartToImage(UrinaryLeakageChartForPdf, { treatment }));
+    }
 
-    const imgHeight1 = (canvases[0].height * imgWidth) / canvases[0].width;
-    const imgHeight2 = (canvases[1].height * imgWidth) / canvases[1].width;
+    const colGutter = 5; // Reduced gutter for 4 columns
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(canvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, imgHeight1);
-    doc.addImage(canvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, imgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const row1MaxHeight = Math.max(imgHeight1, imgHeight2);
-    const yPosRow2 = 45 + row1MaxHeight + 10;
+    const imgHeight1 = getSafeHeight(canvases[0], fourColWidth);
+    const imgHeight2 = getSafeHeight(canvases[1], fourColWidth);
+    const imgHeight3 = getSafeHeight(canvases[2], fourColWidth);
+    const imgHeight4 = getSafeHeight(canvases[3], fourColWidth);
 
-    const imgHeight3 = (canvases[2].height * imgWidth) / canvases[2].width;
-    const imgHeight4 = (canvases[3].height * imgWidth) / canvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(canvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPosRow2, imgWidth, imgHeight3);
-    doc.addImage(canvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, yPosRow2, imgWidth, imgHeight4);
+    doc.addImage(canvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, imgHeight1);
+    doc.addImage(canvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, imgHeight2);
+    doc.addImage(canvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, imgHeight3);
+    doc.addImage(canvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, imgHeight4);
 
-    const row2MaxHeight = Math.max(imgHeight3, imgHeight4);
-    const tableY = yPosRow2 + row2MaxHeight + 10;
+    const rowMaxHeight = Math.max(imgHeight1, imgHeight2, imgHeight3, imgHeight4);
+    const tableY = yPos + rowMaxHeight + 10;
 
     const tableBody = treatmentOutcomes.map(t => {
         return [

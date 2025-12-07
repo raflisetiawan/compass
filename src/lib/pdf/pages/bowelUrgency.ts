@@ -4,7 +4,7 @@ import { renderChartToImage } from '../utils';
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { ProblemWithUrgencyChartForPdf } from '@/features/results/components/ProblemWithUrgencyChartForPdf';
 
-export const addBowelUrgencyPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
+export const addBowelUrgencyPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 8: Problem with bowel urgency at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -44,37 +44,43 @@ export const addBowelUrgencyPage = async ({ doc, answers, margin, gutter, imgWid
         return {
             name: treatment,
             data: [
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                 { name: "No problem", value: noProblem, color: "#1B5E20" },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                 { name: "Very small or small problem", value: smallProblem, color: "#FBC02D" },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                 { name: "Moderate or big problem", value: bigProblem, color: "#D32F2F" },
             ],
         };
     });
 
-    const urgencyCanvases = await Promise.all(urgencyTreatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(ProblemWithUrgencyChartForPdf, { treatment });
-    }));
+    const urgencyCanvases = [];
+    for (const treatment of urgencyTreatmentOutcomes) {
+        urgencyCanvases.push(await renderChartToImage(ProblemWithUrgencyChartForPdf, { treatment }));
+    }
 
-    const urgencyImgHeight1 = (urgencyCanvases[0].height * imgWidth) / urgencyCanvases[0].width;
-    const urgencyImgHeight2 = (urgencyCanvases[1].height * imgWidth) / urgencyCanvases[1].width;
+    const colGutter = 5;
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(urgencyCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, urgencyImgHeight1);
-    doc.addImage(urgencyCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, urgencyImgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const urgencyRow1MaxHeight = Math.max(urgencyImgHeight1, urgencyImgHeight2);
-    const urgencyYPosRow2 = 45 + urgencyRow1MaxHeight + 10;
+    const urgencyImgHeight1 = getSafeHeight(urgencyCanvases[0], fourColWidth);
+    const urgencyImgHeight2 = getSafeHeight(urgencyCanvases[1], fourColWidth);
+    const urgencyImgHeight3 = getSafeHeight(urgencyCanvases[2], fourColWidth);
+    const urgencyImgHeight4 = getSafeHeight(urgencyCanvases[3], fourColWidth);
 
-    const urgencyImgHeight3 = (urgencyCanvases[2].height * imgWidth) / urgencyCanvases[2].width;
-    const urgencyImgHeight4 = (urgencyCanvases[3].height * imgWidth) / urgencyCanvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(urgencyCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, urgencyYPosRow2, imgWidth, urgencyImgHeight3);
-    doc.addImage(urgencyCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, urgencyYPosRow2, imgWidth, urgencyImgHeight4);
+    doc.addImage(urgencyCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, urgencyImgHeight1);
+    doc.addImage(urgencyCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, urgencyImgHeight2);
+    doc.addImage(urgencyCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, urgencyImgHeight3);
+    doc.addImage(urgencyCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, urgencyImgHeight4);
 
-    const urgencyRow2MaxHeight = Math.max(urgencyImgHeight3, urgencyImgHeight4);
-    const urgencyTableY = urgencyYPosRow2 + urgencyRow2MaxHeight + 10;
+    const urgencyRowMaxHeight = Math.max(urgencyImgHeight1, urgencyImgHeight2, urgencyImgHeight3, urgencyImgHeight4);
+    const urgencyTableY = yPos + urgencyRowMaxHeight + 10;
 
     const urgencyTableBody = urgencyTreatmentOutcomes.map(t => {
         return [

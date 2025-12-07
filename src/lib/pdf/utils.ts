@@ -24,8 +24,8 @@ export const renderChartToImage = async (
     const root = ReactDOM.createRoot(tempContainer);
     root.render(React.createElement(Component, props));
 
-    // 200ms wait time - balanced for speed and reliability
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // 50ms wait time - optimized for speed while maintaining reliability
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Optimized html2canvas settings for faster PDF generation
     const canvas = await html2canvas(tempContainer, {

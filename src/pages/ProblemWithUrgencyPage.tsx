@@ -77,7 +77,7 @@ const ProblemWithUrgencyPageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No problem", value: noProblem, color: "#28a745" },
+          { name: "No problem", value: noProblem, color: "#1b5e20" },
           { name: "Very small or small problem", value: smallProblem, color: "#ffc107" },
           { name: "Moderate or big problem", value: bigProblem, color: "#dc3545" },
         ],
@@ -89,7 +89,7 @@ const ProblemWithUrgencyPageContent = () => {
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><LegendIcon color="#28a745" name="No problem" /><span className="ml-2">No problem</span></div>
+        <div className="flex items-center"><LegendIcon color="#1b5e20" name="No problem" /><span className="ml-2">No problem</span></div>
         <div className="flex items-center"><LegendIcon color="#ffc107" name="Small problem" /><span className="ml-2">Very small or small problem</span></div>
         <div className="flex items-center"><LegendIcon color="#dc3545" name="Big problem" /><span className="ml-2">Moderate or big problem</span></div>
       </div>
@@ -111,7 +111,7 @@ const ProblemWithUrgencyPageContent = () => {
         <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
-              baselineStatus === "No_problem" ? "#28a745" :
+              baselineStatus === "No_problem" ? "#1b5e20" :
                 baselineStatus === "Very_small_problem" ? "#ffc107" :
                   "#dc3545"
             }

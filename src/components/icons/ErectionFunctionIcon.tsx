@@ -8,7 +8,7 @@ interface ErectionFunctionIconProps {
 
 const ErectionFunctionIcon: React.FC<ErectionFunctionIconProps> = ({
   size = 24,
-  color = "#28a745", // green default
+  color = "#1b5e20", // green default
   withAssist = false,
 }) => {
   return (

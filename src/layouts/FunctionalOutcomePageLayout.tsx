@@ -53,7 +53,7 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
         <div className="flex flex-col min-h-screen">
           <main className="flex-grow p-4 md:p-8 bg-gray-50">
             <ResultsMobileHeader onModalOpen={setModalContent} onStartOver={handleStartOver} />
-            <ResultsDesktopHeader onStartOver={handleStartOver} />
+            <ResultsDesktopHeader />
             <div className="flex md:gap-8">
               <ResultsSidebar
                 isExpanded={isSidebarExpanded}

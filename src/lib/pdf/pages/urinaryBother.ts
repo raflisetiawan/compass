@@ -4,7 +4,7 @@ import { renderChartToImage } from '../utils';
 import urinaryBotherData from "@/assets/urinary_bother.json";
 import { UrinaryBotherChartForPdf } from '@/features/results/components/UrinaryBotherChartForPdf';
 
-export const addUrinaryBotherPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
+export const addUrinaryBotherPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 5: Bother with urinary function at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -42,27 +42,33 @@ export const addUrinaryBotherPage = async ({ doc, answers, margin, gutter, imgWi
         };
     });
 
-    const botherCanvases = await Promise.all(botherTreatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(UrinaryBotherChartForPdf, { treatment });
-    }));
+    const botherCanvases = [];
+    for (const treatment of botherTreatmentOutcomes) {
+        botherCanvases.push(await renderChartToImage(UrinaryBotherChartForPdf, { treatment }));
+    }
 
-    const botherImgHeight1 = (botherCanvases[0].height * imgWidth) / botherCanvases[0].width;
-    const botherImgHeight2 = (botherCanvases[1].height * imgWidth) / botherCanvases[1].width;
+    const colGutter = 5;
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(botherCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, botherImgHeight1);
-    doc.addImage(botherCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, botherImgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const botherRow1MaxHeight = Math.max(botherImgHeight1, botherImgHeight2);
-    const botherYPosRow2 = 45 + botherRow1MaxHeight + 10;
+    const botherImgHeight1 = getSafeHeight(botherCanvases[0], fourColWidth);
+    const botherImgHeight2 = getSafeHeight(botherCanvases[1], fourColWidth);
+    const botherImgHeight3 = getSafeHeight(botherCanvases[2], fourColWidth);
+    const botherImgHeight4 = getSafeHeight(botherCanvases[3], fourColWidth);
 
-    const botherImgHeight3 = (botherCanvases[2].height * imgWidth) / botherCanvases[2].width;
-    const botherImgHeight4 = (botherCanvases[3].height * imgWidth) / botherCanvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(botherCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, botherYPosRow2, imgWidth, botherImgHeight3);
-    doc.addImage(botherCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, botherYPosRow2, imgWidth, botherImgHeight4);
+    doc.addImage(botherCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, botherImgHeight1);
+    doc.addImage(botherCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, botherImgHeight2);
+    doc.addImage(botherCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, botherImgHeight3);
+    doc.addImage(botherCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, botherImgHeight4);
 
-    const botherRow2MaxHeight = Math.max(botherImgHeight3, botherImgHeight4);
-    const botherTableY = botherYPosRow2 + botherRow2MaxHeight + 10;
+    const botherRowMaxHeight = Math.max(botherImgHeight1, botherImgHeight2, botherImgHeight3, botherImgHeight4);
+    const botherTableY = yPos + botherRowMaxHeight + 10;
 
     const botherTableBody = botherTreatmentOutcomes.map(t => {
         return [

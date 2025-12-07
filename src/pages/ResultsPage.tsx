@@ -97,7 +97,7 @@ const ResultsPage = () => {
             onModalOpen={setModalContent}
             onStartOver={handleStartOver}
           />
-          <ResultsDesktopHeader onStartOver={handleStartOver} />
+          <ResultsDesktopHeader />
 
           <div className="flex md:gap-8">
             <ResultsSidebar

@@ -40,13 +40,37 @@ const SurvivalAfterTreatmentPageContent = () => {
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
 
-    const result = (survivalData.Survival as SurvivalData[]).find(
+    let result = (survivalData.Survival as SurvivalData[]).find(
       (item) =>
         item["Age Group"] === ageGroup &&
         String(item["T Stage"]) === tStage &&
         item["Grade Group"] === gradeGroup &&
         item["PSA"] === psaRange
     );
+
+    // Fallback mechanisms for missing data (specifically for rare combinations like Grade 1, T3a, PSA > 20)
+    const hasValidData = (data: SurvivalData | undefined) => {
+      // Check if data exists and 'Alive (%)' is not an empty string or null/undefined
+      return data && data["Alive (%)"] !== "" && data["Alive (%)"] != null;
+    };
+
+    if (!hasValidData(result)) {
+      // Fallback 1: If Grade Group is 1, try using Grade Group 2 (assumption: behaves like higher risk if T3a/High PSA)
+      if (gradeGroup === 1) {
+        const fallbackResult = (survivalData.Survival as SurvivalData[]).find(
+          (item) =>
+            item["Age Group"] === ageGroup &&
+            String(item["T Stage"]) === tStage &&
+            item["Grade Group"] === 2 &&
+            item["PSA"] === psaRange
+        );
+        if (hasValidData(fallbackResult)) {
+          result = fallbackResult;
+        }
+      }
+    }
+    
+    // Add additional fallbacks here if necessary
 
     return result;
   }, [answers]);

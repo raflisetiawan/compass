@@ -4,7 +4,7 @@ import { renderChartToImage } from '../utils';
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { ErectileFunctionChartForPdf } from '@/features/results/components/ErectileFunctionChartForPdf';
 
-export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
+export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 6: Erectile function at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -45,85 +45,156 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, gutter, im
             return {
                 name: treatment,
                 data: [
-                    { name: "Firm enough for intercourse", value: 0, color: '#28a745' },
-                    { name: "Firm enough for masturbation only", value: 0, color: '#ffc107' },
-                    { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545' },
+                    { name: "Firm enough for intercourse", value: 0, color: '#1b5e20', showPill: false },
+                    { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
+                    { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545', showPill: false },
+                    { name: "Using sexual medication or device", value: 0, color: '#007bff', showPill: false },
                 ]
             };
         }
 
-        // Aggregate all categories
-        const firmIntercourse = Math.round(
-            (treatmentData["Firm for intercourse - no assist"] || 0) +
-            (treatmentData["Firm for intercourse - with assist"] || 0)
-        );
-        const firmMasturbation = Math.round(
-            (treatmentData["Firm for masturbation - no assist"] || 0) +
-            (treatmentData["Firm for masturbation - with assist"] || 0)
-        );
-        const notFirmOrNone = Math.round(
-            (treatmentData["Not firm - no assist"] || 0) +
-            (treatmentData["Not firm - with assist"] || 0) +
-            (treatmentData["None at all - no assist"] || 0) +
-            (treatmentData["None at all - with assist"] || 0)
-        );
-
-        // Adjust to ensure total is 100
-        const total = firmIntercourse + firmMasturbation + notFirmOrNone;
-        let adjustedFirmIntercourse = firmIntercourse;
-        let adjustedFirmMasturbation = firmMasturbation;
-        let adjustedNotFirmOrNone = notFirmOrNone;
-
-        if (total !== 100) {
-            const diff = total - 100;
-            // Adjust the largest value
-            if (firmIntercourse >= firmMasturbation && firmIntercourse >= notFirmOrNone) {
-                adjustedFirmIntercourse -= diff;
-            } else if (firmMasturbation >= notFirmOrNone) {
-                adjustedFirmMasturbation -= diff;
-            } else {
-                adjustedNotFirmOrNone -= diff;
+        // Detailed categories matching Web logic
+        const categories = [
+            {
+                name: "Firm for intercourse - no assist",
+                displayName: "Firm enough for intercourse",
+                value: treatmentData["Firm for intercourse - no assist"],
+                color: "#1b5e20",
+                showPill: false
+            },
+            {
+                name: "Firm for intercourse - with assist",
+                displayName: "Firm enough for intercourse (with assist)",
+                value: treatmentData["Firm for intercourse - with assist"],
+                color: "#1b5e20",
+                showPill: true
+            },
+            {
+                name: "Firm for masturbation - no assist",
+                displayName: "Firm enough for masturbation only",
+                value: treatmentData["Firm for masturbation - no assist"],
+                color: "#ffc107",
+                showPill: false
+            },
+            {
+                name: "Firm for masturbation - with assist",
+                displayName: "Firm enough for masturbation only (with assist)",
+                value: treatmentData["Firm for masturbation - with assist"],
+                color: "#ffc107",
+                showPill: true
+            },
+            {
+                name: "Not firm - no assist",
+                displayName: "Not firm enough for any sexual activity",
+                value: treatmentData["Not firm - no assist"],
+                color: "#dc3545",
+                showPill: false
+            },
+            {
+                name: "Not firm - with assist",
+                displayName: "Not firm enough for any sexual activity (with assist)",
+                value: treatmentData["Not firm - with assist"],
+                color: "#dc3545",
+                showPill: true
+            },
+            {
+                name: "None at all - no assist",
+                displayName: "None at all",
+                value: treatmentData["None at all - no assist"],
+                color: "#dc3545",
+                showPill: false
+            },
+            {
+                name: "None at all - with assist",
+                displayName: "None at all (with assist)",
+                value: treatmentData["None at all - with assist"],
+                color: "#dc3545",
+                showPill: true
             }
+        ];
+
+        // Round each value
+        const roundedData = categories.map(item => ({
+            ...item,
+            value: Math.round(item.value)
+        }));
+
+        // Adjust total to ensure it equals 100%
+        const total = roundedData.reduce((sum, item) => sum + item.value, 0);
+        const diff = total - 100;
+
+        if (diff !== 0) {
+            // Find the item with the highest value to adjust
+            const maxIndex = roundedData.reduce((maxIdx, item, idx, arr) =>
+                item.value > arr[maxIdx].value ? idx : maxIdx, 0);
+            roundedData[maxIndex].value -= diff;
         }
+
+        // Filter out items with 0 value and create final display data
+        const displayData = roundedData
+            .filter(item => item.value > 0)
+            .map(item => ({
+                name: item.displayName,
+                value: item.value,
+                color: item.color,
+                showPill: item.showPill
+            }));
 
         return {
             name: treatment,
-            data: [
-                { name: "Firm enough for intercourse", value: adjustedFirmIntercourse, color: "#28a745" },
-                { name: "Firm enough for masturbation only", value: adjustedFirmMasturbation, color: "#ffc107" },
-                { name: "Not firm enough for any sexual activity or none at all", value: adjustedNotFirmOrNone, color: "#dc3545" },
-            ],
+            data: displayData,
         };
     });
 
-    const efCanvases = await Promise.all(efTreatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(ErectileFunctionChartForPdf, { treatment });
-    }));
+    const efCanvases = [];
+    for (const treatment of efTreatmentOutcomes) {
+        efCanvases.push(await renderChartToImage(ErectileFunctionChartForPdf, { treatment }));
+    }
 
-    const efImgHeight1 = (efCanvases[0].height * imgWidth) / efCanvases[0].width;
-    const efImgHeight2 = (efCanvases[1].height * imgWidth) / efCanvases[1].width;
+    const colGutter = 5;
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(efCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, efImgHeight1);
-    doc.addImage(efCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, efImgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const efRow1MaxHeight = Math.max(efImgHeight1, efImgHeight2);
-    const efYPosRow2 = 45 + efRow1MaxHeight + 10;
+    const efImgHeight1 = getSafeHeight(efCanvases[0], fourColWidth);
+    const efImgHeight2 = getSafeHeight(efCanvases[1], fourColWidth);
+    const efImgHeight3 = getSafeHeight(efCanvases[2], fourColWidth);
+    const efImgHeight4 = getSafeHeight(efCanvases[3], fourColWidth);
 
-    const efImgHeight3 = (efCanvases[2].height * imgWidth) / efCanvases[2].width;
-    const efImgHeight4 = (efCanvases[3].height * imgWidth) / efCanvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(efCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, efYPosRow2, imgWidth, efImgHeight3);
-    doc.addImage(efCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, efYPosRow2, imgWidth, efImgHeight4);
+    doc.addImage(efCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, efImgHeight1);
+    doc.addImage(efCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, efImgHeight2);
+    doc.addImage(efCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, efImgHeight3);
+    doc.addImage(efCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, efImgHeight4);
 
-    const efRow2MaxHeight = Math.max(efImgHeight3, efImgHeight4);
-    const efTableY = efYPosRow2 + efRow2MaxHeight + 10;
+    const efRowMaxHeight = Math.max(efImgHeight1, efImgHeight2, efImgHeight3, efImgHeight4);
+    const efTableY = yPos + efRowMaxHeight + 10;
 
     const efTableBody = efTreatmentOutcomes.map(t => {
+        // Aggregate back to 3 categories for the table
+        let firmIntercourse = 0;
+        let firmMasturbation = 0;
+        let notFirm = 0;
+
+        t.data.forEach(d => {
+            if (d.name.includes("intercourse")) {
+                firmIntercourse += d.value;
+            } else if (d.name.includes("masturbation")) {
+                firmMasturbation += d.value;
+            } else {
+                notFirm += d.value;
+            }
+        });
+
         return [
             t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            `${firmIntercourse}%`,
+            `${firmMasturbation}%`,
+            `${notFirm}%`,
         ];
     });
 

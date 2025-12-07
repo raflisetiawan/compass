@@ -5,6 +5,7 @@ interface OutcomeData {
     name: string;
     value: number;
     color: string;
+    showPill?: boolean;
     Icon?: React.ElementType;
 }
 

@@ -1,4 +1,4 @@
-const HappyFace = ({ color = "#28a745", size = 24 }) => (
+const HappyFace = ({ color = "#1b5e20", size = 24 }) => (
   <svg
     width={size}
     height={size}

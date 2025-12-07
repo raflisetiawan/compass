@@ -55,6 +55,7 @@ type Actions = {
   loadInitialData: () => Promise<void>;
   setPatientId: (patientId: string) => void;
   saveFinalAnswers: () => Promise<void>;
+  startNewSession: () => Promise<void>;
   reset: () => void;
 };
 
@@ -224,6 +225,38 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
         completedAt: Timestamp.now(),
         clinicalOutcomes,
       });
+    }
+  },
+
+  startNewSession: async () => {
+    if (isLoadingSessionData) return;
+    isLoadingSessionData = true;
+    try {
+      set({ isLoading: true });
+      const accessCode = getActiveAccessCode();
+      if (!accessCode) {
+        set({ ...initialState, isLoading: false });
+        return;
+      }
+      const now = Timestamp.now();
+      const newSessionData = {
+        answers: {},
+        currentSectionIndex: 0,
+        currentQuestionIndex: 0,
+        createdAt: now,
+        updatedAt: now,
+        userAgent: navigator.userAgent,
+      };
+      const newSessionId = await createNewQuestionnaireSession(accessCode, newSessionData);
+      const currentPatientId = get().patientId;
+      set({
+        ...initialState,
+        patientId: currentPatientId,
+        sessionId: newSessionId,
+        isLoading: false,
+      });
+    } finally {
+      isLoadingSessionData = false;
     }
   },
 

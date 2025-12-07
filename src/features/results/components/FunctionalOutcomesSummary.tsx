@@ -32,7 +32,7 @@ export const FunctionalOutcomesSummary = ({
     <Card>
       <CardHeader className="text-center p-4">
         <CardTitle className="text-xl font-bold mt-4">
-          Summary Table of Functional Outcomes
+          Prediction Results of Functional Outcomes
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Loader2, ClipboardList } from "lucide-react";
+import { Download, RefreshCw, Loader2, ClipboardList, TableProperties } from "lucide-react";
 import { generatePdf } from "@/lib/pdf";
 import type { ModalContentType } from "@/types";
 import { PdfGenerationWarningDialog } from "@/components/PdfGenerationWarningDialog";
@@ -22,6 +22,10 @@ export const ResultsMobileHeader = ({
 
     const handleQuestionnaireClick = () => {
         navigate("/questionnaire");
+    };
+
+    const handleSummaryClick = () => {
+        navigate("/functional-outcome/final-summary-table");
     };
 
     const handleDownloadClick = () => {
@@ -50,6 +54,9 @@ export const ResultsMobileHeader = ({
                     <div className="flex gap-2">
                         <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating}>
                             <RefreshCw className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleSummaryClick} disabled={isGenerating}>
+                            <TableProperties className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" size="icon" onClick={handleQuestionnaireClick} disabled={isGenerating}>
                             <ClipboardList className="h-4 w-4" />

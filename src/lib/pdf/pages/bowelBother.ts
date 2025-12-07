@@ -4,7 +4,7 @@ import { renderChartToImage } from '../utils';
 import bowelBotherData from "@/assets/bowel_bother.json";
 import { BowelBotherChartForPdf } from '@/features/results/components/BowelBotherChartForPdf';
 
-export const addBowelBotherPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
+export const addBowelBotherPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 9: Bowel bother at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -44,27 +44,33 @@ export const addBowelBotherPage = async ({ doc, answers, margin, gutter, imgWidt
         };
     });
 
-    const bbCanvases = await Promise.all(bbTreatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(BowelBotherChartForPdf, { treatment });
-    }));
+    const bbCanvases = [];
+    for (const treatment of bbTreatmentOutcomes) {
+        bbCanvases.push(await renderChartToImage(BowelBotherChartForPdf, { treatment }));
+    }
 
-    const bbImgHeight1 = (bbCanvases[0].height * imgWidth) / bbCanvases[0].width;
-    const bbImgHeight2 = (bbCanvases[1].height * imgWidth) / bbCanvases[1].width;
+    const colGutter = 5;
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(bbCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, bbImgHeight1);
-    doc.addImage(bbCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, bbImgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const bbRow1MaxHeight = Math.max(bbImgHeight1, bbImgHeight2);
-    const bbYPosRow2 = 45 + bbRow1MaxHeight + 10;
+    const bbImgHeight1 = getSafeHeight(bbCanvases[0], fourColWidth);
+    const bbImgHeight2 = getSafeHeight(bbCanvases[1], fourColWidth);
+    const bbImgHeight3 = getSafeHeight(bbCanvases[2], fourColWidth);
+    const bbImgHeight4 = getSafeHeight(bbCanvases[3], fourColWidth);
 
-    const bbImgHeight3 = (bbCanvases[2].height * imgWidth) / bbCanvases[2].width;
-    const bbImgHeight4 = (bbCanvases[3].height * imgWidth) / bbCanvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(bbCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, bbYPosRow2, imgWidth, bbImgHeight3);
-    doc.addImage(bbCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, bbYPosRow2, imgWidth, bbImgHeight4);
+    doc.addImage(bbCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, bbImgHeight1);
+    doc.addImage(bbCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, bbImgHeight2);
+    doc.addImage(bbCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, bbImgHeight3);
+    doc.addImage(bbCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, bbImgHeight4);
 
-    const bbRow2MaxHeight = Math.max(bbImgHeight3, bbImgHeight4);
-    const bbTableY = bbYPosRow2 + bbRow2MaxHeight + 10;
+    const bbRowMaxHeight = Math.max(bbImgHeight1, bbImgHeight2, bbImgHeight3, bbImgHeight4);
+    const bbTableY = yPos + bbRowMaxHeight + 10;
 
     const bbTableBody = bbTreatmentOutcomes.map(t => {
         return [

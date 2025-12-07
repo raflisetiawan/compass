@@ -106,123 +106,146 @@ const ErectileFunctionPageContent = () => {
     const jsonData: TreatmentData = erectileFunctionData as TreatmentData;
     const treatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
 
-    return treatments.map((treatment) => {
+    // First, process all treatments to get their full dataset with rounding/adjustments
+    const allTreatmentsData = treatments.map((treatment) => {
       const treatmentData = jsonData[treatment]["Baseline quality of erection"][baselineStatus];
       const N = treatmentData.N;
+      
+      let categories: CategoryData[];
+
       if (N === 0) {
-        return {
-          name: treatment,
-          data: [
-            { name: "Firm enough for intercourse", value: 0, color: '#28a745', showPill: false },
-            { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
-            { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545', showPill: false },
-            { name: "Using sexual medication or device", value: 0, color: '#007bff', showPill: false },
-          ]
-        };
-      }
+        categories = [
+            { name: "Firm for intercourse - no assist", displayName: "Firm enough for intercourse", value: 0, color: '#1b5e20', showPill: false },
+            { name: "Firm for intercourse - with assist", displayName: "Firm enough for intercourse (with assist)", value: 0, color: '#1b5e20', showPill: true },
+            { name: "Firm for masturbation - no assist", displayName: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
+            { name: "Firm for masturbation - with assist", displayName: "Firm enough for masturbation only (with assist)", value: 0, color: '#ffc107', showPill: true },
+            { name: "Not firm - no assist", displayName: "Not firm enough for any sexual activity", value: 0, color: '#dc3545', showPill: false },
+            { name: "Not firm - with assist", displayName: "Not firm enough for any sexual activity (with assist)", value: 0, color: '#dc3545', showPill: true },
+            { name: "None at all - no assist", displayName: "None at all", value: 0, color: '#dc3545', showPill: false },
+            { name: "None at all - with assist", displayName: "None at all (with assist)", value: 0, color: '#dc3545', showPill: true }
+        ];
+      } else {
+        categories = [
+          {
+            name: "Firm for intercourse - no assist",
+            displayName: "Firm enough for intercourse",
+            value: treatmentData["Firm for intercourse - no assist"],
+            color: "#1b5e20",
+            showPill: false
+          },
+          {
+            name: "Firm for intercourse - with assist",
+            displayName: "Firm enough for intercourse (with assist)",
+            value: treatmentData["Firm for intercourse - with assist"],
+            color: "#1b5e20",
+            showPill: true
+          },
+          {
+            name: "Firm for masturbation - no assist",
+            displayName: "Firm enough for masturbation only",
+            value: treatmentData["Firm for masturbation - no assist"],
+            color: "#ffc107",
+            showPill: false
+          },
+          {
+            name: "Firm for masturbation - with assist",
+            displayName: "Firm enough for masturbation only (with assist)",
+            value: treatmentData["Firm for masturbation - with assist"],
+            color: "#ffc107",
+            showPill: true
+          },
+          {
+            name: "Not firm - no assist",
+            displayName: "Not firm enough for any sexual activity",
+            value: treatmentData["Not firm - no assist"],
+            color: "#dc3545",
+            showPill: false
+          },
+          {
+            name: "Not firm - with assist",
+            displayName: "Not firm enough for any sexual activity (with assist)",
+            value: treatmentData["Not firm - with assist"],
+            color: "#dc3545",
+            showPill: true
+          },
+          {
+            name: "None at all - no assist",
+            displayName: "None at all",
+            value: treatmentData["None at all - no assist"],
+            color: "#dc3545",
+            showPill: false
+          },
+          {
+            name: "None at all - with assist",
+            displayName: "None at all (with assist)",
+            value: treatmentData["None at all - with assist"],
+            color: "#dc3545",
+            showPill: true
+          }
+        ];
 
-      // The values in JSON are already percentages out of 100
-      // We need to show each category with its appropriate color, and add pill for "with assist"
-      const categories: CategoryData[] = [
-        {
-          name: "Firm for intercourse - no assist",
-          displayName: "Firm enough for intercourse",
-          value: treatmentData["Firm for intercourse - no assist"],
-          color: "#28a745",
-          showPill: false
-        },
-        {
-          name: "Firm for intercourse - with assist",
-          displayName: "Firm enough for intercourse (with assist)",
-          value: treatmentData["Firm for intercourse - with assist"],
-          color: "#28a745",
-          showPill: true
-        },
-        {
-          name: "Firm for masturbation - no assist",
-          displayName: "Firm enough for masturbation only",
-          value: treatmentData["Firm for masturbation - no assist"],
-          color: "#ffc107",
-          showPill: false
-        },
-        {
-          name: "Firm for masturbation - with assist",
-          displayName: "Firm enough for masturbation only (with assist)",
-          value: treatmentData["Firm for masturbation - with assist"],
-          color: "#ffc107",
-          showPill: true
-        },
-        {
-          name: "Not firm - no assist",
-          displayName: "Not firm enough for any sexual activity",
-          value: treatmentData["Not firm - no assist"],
-          color: "#dc3545",
-          showPill: false
-        },
-        {
-          name: "Not firm - with assist",
-          displayName: "Not firm enough for any sexual activity (with assist)",
-          value: treatmentData["Not firm - with assist"],
-          color: "#dc3545",
-          showPill: true
-        },
-        {
-          name: "None at all - no assist",
-          displayName: "None at all",
-          value: treatmentData["None at all - no assist"],
-          color: "#dc3545",
-          showPill: false
-        },
-        {
-          name: "None at all - with assist",
-          displayName: "None at all (with assist)",
-          value: treatmentData["None at all - with assist"],
-          color: "#dc3545",
-          showPill: true
-        }
-      ];
-
-      // Round each value
-      const roundedData = categories.map(item => ({
-        ...item,
-        value: Math.round(item.value)
-      }));
-
-      // Adjust total to ensure it equals 100%
-      const total = roundedData.reduce((sum, item) => sum + item.value, 0);
-      const diff = total - 100;
-
-      if (diff !== 0) {
-        // Find the item with the highest original percentage to adjust
-        const maxIndex = categories.reduce((maxIdx, item, idx, arr) => 
-          item.value > arr[maxIdx].value ? idx : maxIdx, 0);
-        roundedData[maxIndex].value -= diff;
-      }
-
-      // Filter out items with 0 value and create final display data
-      const displayData = roundedData
-        .filter(item => item.value > 0)
-        .map(item => ({
-          name: item.displayName,
-          value: item.value,
-          color: item.color,
-          showPill: item.showPill
+        // Round each value
+        categories = categories.map(item => ({
+          ...item,
+          value: Math.round(item.value)
         }));
 
-      console.log(`${treatment} displayData:`, displayData);
+        // Adjust total to ensure it equals 100%
+        const total = categories.reduce((sum, item) => sum + item.value, 0);
+        const diff = total - 100;
+
+        if (diff !== 0) {
+          // Find the item with the highest original percentage to adjust
+          // We look at the processed categories since we don't have original indices easily, 
+          // but strictly speaking we should look at original values. 
+          // However, for this fix, finding max value in current array is sufficient heuristic.
+          const maxIndex = categories.reduce((maxIdx, item, idx, arr) => 
+            item.value > arr[maxIdx].value ? idx : maxIdx, 0);
+          categories[maxIndex].value -= diff;
+        }
+      }
 
       return {
         name: treatment,
-        data: displayData,
+        data: categories
       };
     });
+
+    // Determine which categories are active (value > 0) in at least one treatment
+    const activeCategoryNames = new Set<string>();
+    allTreatmentsData.forEach(treatment => {
+      treatment.data.forEach(item => {
+        if (item.value > 0) {
+          activeCategoryNames.add(item.name);
+        }
+      });
+    });
+
+    // Setup active categories list to preserve order
+    const templateData = allTreatmentsData[0].data;
+    const finalOrderedCategories = templateData
+      .filter(item => activeCategoryNames.has(item.name))
+      .map(item => item.name);
+
+    // Map the data to only include active categories, preserving 0s for alignment
+    const finalTreatments = allTreatmentsData.map(treatment => {
+      const filteredData = treatment.data.filter(item => finalOrderedCategories.includes(item.name));
+      return {
+        ...treatment,
+        data: filteredData
+      };
+    });
+
+    console.log("Renormalized displayData:", finalTreatments);
+    return finalTreatments;
+
   }, [baselineStatus]);
 
   const Legend = () => (
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><LegendIcon color="#28a745" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
+        <div className="flex items-center"><LegendIcon color="#1b5e20" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
         <div className="flex items-center"><LegendIcon color="#ffc107" name="Firm masturbation" /><span className="ml-2">Firm enough for masturbation only</span></div>
         <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity or none at all</span></div>
         <div className="flex items-center">
@@ -248,7 +271,7 @@ const ErectileFunctionPageContent = () => {
         <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
-              baselineStatus.includes("Firm for intercourse") ? "#28a745" :
+              baselineStatus.includes("Firm for intercourse") ? "#1b5e20" :
                 baselineStatus.includes("Firm for masturbation") ? "#ffc107" :
                   "#dc3545"
             }
@@ -286,6 +309,10 @@ const ErectileFunctionPageContent = () => {
                   <ul className="list-disc list-inside pl-4">
                     {treatment.data.map((outcome) => {
                       const roundedValue = Math.round(outcome.value);
+                      
+                      // Skip if value is 0
+                      if (roundedValue === 0) return null;
+
                       let description = outcome.name.toLowerCase();
                       
                       // Special formatting for each category

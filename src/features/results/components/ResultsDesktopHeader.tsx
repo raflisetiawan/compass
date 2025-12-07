@@ -4,16 +4,14 @@ import { Button } from "@/components/ui/button";
 import { generatePdf } from "@/lib/pdf";
 import { Loader2 } from "lucide-react";
 import { PdfGenerationWarningDialog } from "@/components/PdfGenerationWarningDialog";
+import { useQuestionnaireStore } from "@/stores/questionnaireStore";
 
-interface ResultsDesktopHeaderProps {
-  onStartOver: () => void;
-}
-
-export const ResultsDesktopHeader = ({ onStartOver }: ResultsDesktopHeaderProps) => {
+export const ResultsDesktopHeader = () => {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
+  const startNewSession = useQuestionnaireStore((state) => state.startNewSession);
 
   const handleQuestionnaireClick = () => {
     navigate("/questionnaire");
@@ -37,6 +35,11 @@ export const ResultsDesktopHeader = ({ onStartOver }: ResultsDesktopHeaderProps)
     }
   };
 
+  const handleStartOver = async () => {
+    await startNewSession();
+    navigate("/questionnaire");
+  };
+
   return (
     <>
       <div className="hidden md:flex justify-between items-center mb-6">
@@ -44,11 +47,14 @@ export const ResultsDesktopHeader = ({ onStartOver }: ResultsDesktopHeaderProps)
         <div className="flex flex-col gap-2 flex-1 ml-8">
           <div className="flex justify-between items-center w-full">
             <Button variant="outline" onClick={handleQuestionnaireClick} disabled={isGenerating}>
-              QUESTIONNAIRE
+              Back to Questionnaire
             </Button>
             <div className="flex gap-4">
-              <Button variant="outline" onClick={onStartOver} disabled={isGenerating}>
+              <Button variant="outline" onClick={handleStartOver} disabled={isGenerating}>
                 START OVER
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/functional-outcome/final-summary-table")} disabled={isGenerating}>
+                VIEW SUMMARY
               </Button>
               <Button variant="default" onClick={handleDownloadClick} disabled={isGenerating}>
                 {isGenerating ? (

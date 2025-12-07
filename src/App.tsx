@@ -6,6 +6,7 @@ import SexualBotherPage from "./pages/SexualBotherPage";
 import BowelBotherPage from "./pages/BowelBotherPage";
 import ErectileFunctionPage from "./pages/ErectileFunctionPage";
 import ProblemWithUrgencyPage from "./pages/ProblemWithUrgencyPage";
+import FinalSummaryTablePage from "./pages/FinalSummaryTablePage";
 import { Toaster } from "@/components/ui/sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AnimatedPage from "./components/AnimatedPage";
@@ -287,6 +288,16 @@ function App() {
               <ProtectedRoute>
                 <AnimatedPage>
                   <SurvivalAfterTreatmentPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/functional-outcome/final-summary-table"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <FinalSummaryTablePage />
                 </AnimatedPage>
               </ProtectedRoute>
             }

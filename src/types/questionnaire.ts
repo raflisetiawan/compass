@@ -45,5 +45,9 @@ export interface ClinicalOutcomes {
     bowel?: OutcomeProbabilities;
     urinary?: OutcomeProbabilities;
     erectile?: OutcomeProbabilities;
+    urinaryLeakage?: { [treatment: string]: { [status: string]: number } };
+    urinaryPad?: { [treatment: string]: { [status: string]: number } };
+    erectileFunction?: { [treatment: string]: { [status: string]: number } };
+    bowelUrgency?: { [treatment: string]: { [status: string]: number } };
     survival?: SurvivalOutcome;
 }

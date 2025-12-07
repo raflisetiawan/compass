@@ -4,7 +4,7 @@ import { renderChartToImage } from '../utils';
 import urinaryPadData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { UrinaryPadUsageChartForPdf } from '@/features/results/components/UrinaryPadUsageChartForPdf';
 
-export const addUrinaryPadPage = async ({ doc, answers, margin, gutter, imgWidth, pdfWidth }: PdfPageProps) => {
+export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 4: Use of urinary pads at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -44,27 +44,33 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, gutter, imgWidth
         };
     });
 
-    const padCanvases = await Promise.all(padTreatmentOutcomes.map(async (treatment) => {
-        return renderChartToImage(UrinaryPadUsageChartForPdf, { treatment });
-    }));
+    const padCanvases = [];
+    for (const treatment of padTreatmentOutcomes) {
+        padCanvases.push(await renderChartToImage(UrinaryPadUsageChartForPdf, { treatment }));
+    }
 
-    const padImgHeight1 = (padCanvases[0].height * imgWidth) / padCanvases[0].width;
-    const padImgHeight2 = (padCanvases[1].height * imgWidth) / padCanvases[1].width;
+    const colGutter = 5;
+    const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
 
-    doc.addImage(padCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, 45, imgWidth, padImgHeight1);
-    doc.addImage(padCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, 45, imgWidth, padImgHeight2);
+    const getSafeHeight = (canvas: HTMLCanvasElement, width: number) => {
+        if (!canvas || !canvas.width) return 0;
+        return (canvas.height * width) / canvas.width;
+    };
 
-    const padRow1MaxHeight = Math.max(padImgHeight1, padImgHeight2);
-    const padYPosRow2 = 45 + padRow1MaxHeight + 10;
+    const padImgHeight1 = getSafeHeight(padCanvases[0], fourColWidth);
+    const padImgHeight2 = getSafeHeight(padCanvases[1], fourColWidth);
+    const padImgHeight3 = getSafeHeight(padCanvases[2], fourColWidth);
+    const padImgHeight4 = getSafeHeight(padCanvases[3], fourColWidth);
 
-    const padImgHeight3 = (padCanvases[2].height * imgWidth) / padCanvases[2].width;
-    const padImgHeight4 = (padCanvases[3].height * imgWidth) / padCanvases[3].width;
+    const yPos = 45;
 
-    doc.addImage(padCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin, padYPosRow2, imgWidth, padImgHeight3);
-    doc.addImage(padCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + imgWidth + gutter, padYPosRow2, imgWidth, padImgHeight4);
+    doc.addImage(padCanvases[0].toDataURL('image/jpeg', 0.85), 'JPEG', margin, yPos, fourColWidth, padImgHeight1);
+    doc.addImage(padCanvases[1].toDataURL('image/jpeg', 0.85), 'JPEG', margin + fourColWidth + colGutter, yPos, fourColWidth, padImgHeight2);
+    doc.addImage(padCanvases[2].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 2, yPos, fourColWidth, padImgHeight3);
+    doc.addImage(padCanvases[3].toDataURL('image/jpeg', 0.85), 'JPEG', margin + (fourColWidth + colGutter) * 3, yPos, fourColWidth, padImgHeight4);
 
-    const padRow2MaxHeight = Math.max(padImgHeight3, padImgHeight4);
-    const padTableY = padYPosRow2 + padRow2MaxHeight + 10;
+    const padRowMaxHeight = Math.max(padImgHeight1, padImgHeight2, padImgHeight3, padImgHeight4);
+    const padTableY = yPos + padRowMaxHeight + 10;
 
     const padTableBody = padTreatmentOutcomes.map(t => {
         return [
