@@ -65,14 +65,14 @@ export const renderChartToImage = async (
 
 /**
  * Non-blocking version that yields to browser between operations.
- * Returns a data URL string instead of canvas for easy transfer to worker.
+ * Returns a data URL string along with actual dimensions for correct aspect ratio.
  */
 export const renderChartToImageNonBlocking = async (
     Component: React.ComponentType<any>,
     props: any,
     scale: number = 1,
     quality: number = 0.85
-): Promise<string> => {
+): Promise<{ dataUrl: string; width: number; height: number }> => {
     // Yield before starting heavy work
     await yieldToMain();
 
@@ -105,30 +105,33 @@ export const renderChartToImageNonBlocking = async (
     root.unmount();
     document.body.removeChild(tempContainer);
 
-    // Convert to data URL
+    // Convert to data URL and capture dimensions
     const dataUrl = canvas.toDataURL('image/jpeg', quality);
+    const width = canvas.width / scale;
+    const height = canvas.height / scale;
     
     // Yield after heavy work
     await yieldToMain();
 
-    return dataUrl;
+    return { dataUrl, width, height };
 };
 
 /**
  * Renders multiple charts with yielding between each for better responsiveness.
+ * Returns array of objects with dataUrl and dimensions for each chart.
  */
 export const renderChartsNonBlocking = async (
     charts: Array<{ Component: React.ComponentType<any>; props: any }>,
     onProgress?: (completed: number, total: number) => void,
     scale: number = 1,
     quality: number = 0.85
-): Promise<string[]> => {
-    const results: string[] = [];
+): Promise<Array<{ dataUrl: string; width: number; height: number }>> => {
+    const results: Array<{ dataUrl: string; width: number; height: number }> = [];
     
     for (let i = 0; i < charts.length; i++) {
         const { Component, props } = charts[i];
-        const dataUrl = await renderChartToImageNonBlocking(Component, props, scale, quality);
-        results.push(dataUrl);
+        const result = await renderChartToImageNonBlocking(Component, props, scale, quality);
+        results.push(result);
         
         if (onProgress) {
             onProgress(i + 1, charts.length);

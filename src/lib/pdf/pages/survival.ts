@@ -70,13 +70,14 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
             { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E" },
         ];
 
-        // Use non-blocking rendering
-        const imageDataUrl = await renderChartToImageNonBlocking(SurvivalChartForPdf, { data: iconArrayData });
+        // Use non-blocking rendering - returns dataUrl and dimensions
+        const { dataUrl: imageDataUrl, width: chartWidth, height: chartHeight } = await renderChartToImageNonBlocking(SurvivalChartForPdf, { data: iconArrayData });
 
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgWidth = pdfWidth - 28;
-        // Estimate height (assuming ~2:1 aspect ratio for this chart)
-        const imgHeight = imgWidth * 0.5;
+        // Calculate height based on actual aspect ratio to preserve circle shapes
+        const aspectRatio = chartHeight / chartWidth;
+        const imgHeight = imgWidth * aspectRatio;
         doc.addImage(imageDataUrl, 'JPEG', 14, 45, imgWidth, imgHeight);
 
         autoTable(doc, {

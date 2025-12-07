@@ -49,18 +49,21 @@ export const addUrinaryLeakagePage = async ({ doc, answers, margin, pdfWidth }: 
         Component: UrinaryLeakageChartForPdf,
         props: { treatment }
     }));
-    const imageDataUrls = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = await renderChartsNonBlocking(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
-    // Estimate height based on typical chart aspect ratio
-    const imgHeight = fourColWidth * 1.5;
+    
+    // Calculate height based on actual aspect ratio from first chart to preserve circle shapes
+    const firstChart = chartResults[0];
+    const aspectRatio = firstChart ? firstChart.height / firstChart.width : 1.5;
+    const imgHeight = fourColWidth * aspectRatio;
 
     const yPos = 45;
 
-    imageDataUrls.forEach((dataUrl, idx) => {
+    chartResults.forEach((chartResult, idx) => {
         const xPos = margin + (fourColWidth + colGutter) * idx;
-        doc.addImage(dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
+        doc.addImage(chartResult.dataUrl, 'JPEG', xPos, yPos, fourColWidth, imgHeight);
     });
 
     const rowMaxHeight = imgHeight;
