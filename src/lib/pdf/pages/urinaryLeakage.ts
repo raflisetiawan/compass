@@ -1,12 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl, type IconData } from '../canvas';
 import urinaryLeakageData from "@/assets/leaking_urine_at_one_year.json";
-import { UrinaryLeakageChartForPdf } from '@/features/results/components/UrinaryLeakageChartForPdf';
-import FilledSun from "@/features/results/components/FilledSun";
-import FilledDroplet from "@/features/results/components/FilledDroplet";
 
-export const addUrinaryLeakagePage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 3: Leaking urine at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -37,19 +34,19 @@ export const addUrinaryLeakagePage = async ({ doc, answers, margin, pdfWidth }: 
         return {
             name: treatment,
             data: [
-                { name: "Rarely or never leaking", value: rarely, color: "#FFC107", Icon: FilledSun },
-                { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", Icon: FilledDroplet },
-                { name: "Leaking once a day or more", value: daily, color: "#1976D2", Icon: FilledDroplet },
-            ],
+                { name: "Rarely or never leaking", value: rarely, color: "#FFC107", iconType: 'sun' as const },
+                { name: "Leaking once a week or more", value: weekly, color: "#64B5F6", iconType: 'droplet' as const },
+                { name: "Leaking once a day or more", value: daily, color: "#1976D2", iconType: 'droplet' as const },
+            ] as IconData[],
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = treatmentOutcomes.map(treatment => ({
-        Component: UrinaryLeakageChartForPdf,
-        props: { treatment }
+        title: treatment.name === "RadioTherapy" ? "Radiotherapy" : treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

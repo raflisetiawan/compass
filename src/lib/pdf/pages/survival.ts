@@ -1,12 +1,11 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartToImageNonBlocking } from '../utils';
+import { renderIconArrayToDataUrl } from '../canvas';
 import { getAgeGroup, getPSARange, getGradeGroup } from '@/services/prediction';
 import survivalData from "@/assets/survival_calculation.json";
 import type { SurvivalData } from "@/types";
-import { SurvivalChartForPdf } from '@/features/results/components/SurvivalChartForPdf';
 
-export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
+export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
     // Page 2: Survival After Treatment
     doc.addPage();
 
@@ -18,6 +17,10 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
     }
     if (tStage === "Unknown") {
         tStage = "2"; // Default to T2 if unknown
+    }
+    // Handle "T1 or T2" option - use T2 data
+    if (tStage === "1 or 2" || tStage.toLowerCase().includes("1 or t2")) {
+        tStage = "2";
     }
     const gleasonScore = String(answers.gleason_score || "3+4");
 
@@ -70,18 +73,61 @@ export const addSurvivalPage = async ({ doc, answers }: PdfPageProps) => {
             { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E" },
         ];
 
-        // Use non-blocking rendering - returns dataUrl and dimensions
-        const { dataUrl: imageDataUrl, width: chartWidth, height: chartHeight } = await renderChartToImageNonBlocking(SurvivalChartForPdf, { data: iconArrayData });
+        // Use direct canvas rendering - no html2canvas needed
+        const { dataUrl: imageDataUrl, width: chartWidth, height: chartHeight } = renderIconArrayToDataUrl(iconArrayData);
 
         const pdfWidth = doc.internal.pageSize.getWidth();
-        const imgWidth = pdfWidth - 28;
+        const margin = 14;
+        const legendWidth = 70; // Width reserved for legend
+        const chartDisplayWidth = pdfWidth - margin * 2 - legendWidth - 10; // 10px gap between chart and legend
+        
         // Calculate height based on actual aspect ratio to preserve circle shapes
         const aspectRatio = chartHeight / chartWidth;
-        const imgHeight = imgWidth * aspectRatio;
-        doc.addImage(imageDataUrl, 'JPEG', 14, 45, imgWidth, imgHeight);
+        const chartDisplayHeight = chartDisplayWidth * aspectRatio;
+        
+        // Draw chart on left side
+        doc.addImage(imageDataUrl, 'JPEG', margin, 45, chartDisplayWidth, chartDisplayHeight);
+
+        // Draw legend on right side
+        const legendX = margin + chartDisplayWidth + 15;
+        let legendY = 50;
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0, 0, 0);
+        doc.text('What the icons mean', legendX, legendY);
+        legendY += 12;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+
+        // Draw legend items with colored circles
+        iconArrayData.forEach((item) => {
+            // Draw colored circle
+            const circleRadius = 4;
+            // Parse hex color to RGB
+            const hexColor = item.color.replace('#', '');
+            const r = parseInt(hexColor.substring(0, 2), 16);
+            const g = parseInt(hexColor.substring(2, 4), 16);
+            const b = parseInt(hexColor.substring(4, 6), 16);
+            
+            doc.setFillColor(r, g, b);
+            doc.circle(legendX + circleRadius, legendY, circleRadius, 'F');
+            
+            // Draw label with percentage
+            doc.setTextColor(0, 0, 0);
+            const percentage = Number(survivalOutcome![item.name === "Alive" ? "Alive (%)" : 
+                item.name === "Death (from prostate cancer)" ? "PCa Death (%)" : "Other Death (%)"]).toFixed(1);
+            doc.text(`${item.name}: ${percentage}%`, legendX + circleRadius * 2 + 4, legendY + 1, { maxWidth: legendWidth - 15 });
+            
+            legendY += 14;
+        });
+
+        // Table starts below the chart
+        const tableY = 45 + chartDisplayHeight + 10;
 
         autoTable(doc, {
-            startY: 45 + imgHeight + 10,
+            startY: tableY,
             head: [['', 'Percentage']],
             body: [
                 ['Alive', `${Number(survivalOutcome['Alive (%)']).toFixed(1)}%`],

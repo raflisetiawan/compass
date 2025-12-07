@@ -41,19 +41,58 @@ const ResultsPage = () => {
 
     const age = parseInt(String(answers.age || "65"), 10);
     const psa = parseFloat(String(answers.psa || "8"));
-    const tStage = String(answers.cancer_stage || "T2").replace("T", "");
+    let tStage = String(answers.cancer_stage || "T2").replace("T", "");
+    
+    // Apply T-stage fixes
+    if (tStage === "4") {
+      tStage = "3b"; // Map T4 to 3b as T4 is not in the dataset
+    }
+    if (tStage === "Unknown") {
+      tStage = "2"; // Default to T2 if unknown
+    }
+    // Handle "T1 or T2" option - use T2 data
+    if (tStage === "1 or 2" || tStage.toLowerCase().includes("1 or t2")) {
+      tStage = "2";
+    }
+    
     const gleasonScore = String(answers.gleason_score || "3+4");
 
-    const ageGroup = getAgeGroup(age);
+    let ageGroup = getAgeGroup(age);
+    // Fix: Map age groups 65- and 70- to 60- as the JSON only supports 60-
+    if (ageGroup === '65-' || ageGroup === '70-') {
+      ageGroup = '60-';
+    }
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
-    const result = survivalData.Survival.find(
+    
+    let result = survivalData.Survival.find(
       (item) =>
         item["Age Group"] === ageGroup &&
         String(item["T Stage"]) === tStage &&
         Number(item["Grade Group"]) === Number(gradeGroup) &&
         item["PSA"] === psaRange
     );
+
+    // Fallback: If Grade Group is 1, try using Grade Group 2
+    const hasValidData = (data: typeof result) => {
+      return data && data["Alive (%)"] !== "" && data["Alive (%)"] != null;
+    };
+
+    if (!hasValidData(result)) {
+      if (gradeGroup === 1) {
+        const fallbackResult = survivalData.Survival.find(
+          (item) =>
+            item["Age Group"] === ageGroup &&
+            String(item["T Stage"]) === tStage &&
+            Number(item["Grade Group"]) === 2 &&
+            item["PSA"] === psaRange
+        );
+        if (hasValidData(fallbackResult)) {
+          result = fallbackResult;
+        }
+      }
+    }
+
     return result;
   }, [answers]);
 

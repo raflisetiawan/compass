@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl } from '../canvas';
 import erectileBotherData from "@/assets/erectile_bother.json";
-import { SexualBotherChartForPdf } from '@/features/results/components/SexualBotherChartForPdf';
 
-export const addSexualBotherPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addSexualBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 7: Bother with erectile function at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -44,12 +43,12 @@ export const addSexualBotherPage = async ({ doc, answers, margin, pdfWidth }: Pd
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = sbTreatmentOutcomes.map(treatment => ({
-        Component: SexualBotherChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

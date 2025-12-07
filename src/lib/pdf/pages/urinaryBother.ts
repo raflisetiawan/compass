@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl } from '../canvas';
 import urinaryBotherData from "@/assets/urinary_bother.json";
-import { UrinaryBotherChartForPdf } from '@/features/results/components/UrinaryBotherChartForPdf';
 
-export const addUrinaryBotherPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 5: Bother with urinary function at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -42,12 +41,12 @@ export const addUrinaryBotherPage = async ({ doc, answers, margin, pdfWidth }: P
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = botherTreatmentOutcomes.map(treatment => ({
-        Component: UrinaryBotherChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

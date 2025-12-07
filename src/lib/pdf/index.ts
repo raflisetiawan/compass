@@ -13,10 +13,9 @@ import { addErectileFunctionPage } from './pages/erectileFunction';
 import { addSexualBotherPage } from './pages/sexualBother';
 import { addBowelUrgencyPage } from './pages/bowelUrgency';
 import { addBowelBotherPage } from './pages/bowelBother';
-import { yieldToMain } from './utils';
 
 
-export const generatePdf = async (onProgress?: (progress: number) => void) => {
+export const generatePdf = (onProgress?: (progress: number) => void) => {
     const doc = new jsPDF({
         compress: true // Enable PDF compression
     });
@@ -37,71 +36,69 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
         imgWidth,
     };
 
-    const totalSteps = 12; // Updated: +2 for Introduction and Treatment Options
+    const totalSteps = 12;
     let currentStep = 0;
 
-    const updateProgress = async () => {
+    const updateProgress = () => {
         currentStep++;
         if (onProgress) {
             const percentage = Math.round((currentStep / totalSteps) * 100);
             onProgress(percentage);
         }
-        // Yield to main thread after each page to keep UI responsive
-        await yieldToMain();
     };
 
     // === A) Introduction of the tool ===
     // Page 1: Introduction (no heavy processing)
     addIntroductionPage(pageProps);
-    await updateProgress();
+    updateProgress();
 
     // === B) Information on treatment options (all four tables) ===
     // Pages 2-3: Treatment Options tables
     addTreatmentOptionsPages(pageProps);
-    await updateProgress();
+    updateProgress();
 
     // === C) Answers to pre-treatment assessment questions ===
     // Page 4: Results (no heavy processing)
     addResultsPage(pageProps);
-    await updateProgress();
+    updateProgress();
 
     // === D) Result of predicted outcomes ===
-    // Page 5: Survival - uses html2canvas
-    await addSurvivalPage(pageProps);
-    await updateProgress();
+    // Page 5: Survival - now uses direct canvas rendering (fast!)
+    addSurvivalPage(pageProps);
+    updateProgress();
 
-    // Functional Outcomes:
-    // Page 6: Urinary Leakage - uses html2canvas
-    await addUrinaryLeakagePage(pageProps);
-    await updateProgress();
+    // Functional Outcomes - all now use direct canvas rendering:
+    // Page 6: Urinary Leakage
+    addUrinaryLeakagePage(pageProps);
+    updateProgress();
 
-    // Page 7: Urinary Pad - uses html2canvas
-    await addUrinaryPadPage(pageProps);
-    await updateProgress();
+    // Page 7: Urinary Pad
+    addUrinaryPadPage(pageProps);
+    updateProgress();
 
-    // Page 8: Urinary Bother - uses html2canvas
-    await addUrinaryBotherPage(pageProps);
-    await updateProgress();
+    // Page 8: Urinary Bother
+    addUrinaryBotherPage(pageProps);
+    updateProgress();
 
-    // Page 9: Erectile Function - uses html2canvas
-    await addErectileFunctionPage(pageProps);
-    await updateProgress();
+    // Page 9: Erectile Function
+    addErectileFunctionPage(pageProps);
+    updateProgress();
 
-    // Page 10: Sexual Bother - uses html2canvas
-    await addSexualBotherPage(pageProps);
-    await updateProgress();
+    // Page 10: Sexual Bother
+    addSexualBotherPage(pageProps);
+    updateProgress();
 
-    // Page 11: Bowel Urgency - uses html2canvas
-    await addBowelUrgencyPage(pageProps);
-    await updateProgress();
+    // Page 11: Bowel Urgency
+    addBowelUrgencyPage(pageProps);
+    updateProgress();
 
-    // Page 12: Bowel Bother - uses html2canvas
-    await addBowelBotherPage(pageProps);
-    await updateProgress();
+    // Page 12: Bowel Bother
+    addBowelBotherPage(pageProps);
+    updateProgress();
 
     // Page 13: Summary table (Functional Outcomes summary)
     addSummaryPage(pageProps);
-    await updateProgress();
+    updateProgress();
 
     // Add User ID and Timestamp to all pages
     const totalPages = doc.getNumberOfPages();

@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl } from '../canvas';
 import bowelBotherData from "@/assets/bowel_bother.json";
-import { BowelBotherChartForPdf } from '@/features/results/components/BowelBotherChartForPdf';
 
-export const addBowelBotherPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 9: Bowel bother at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -44,12 +43,12 @@ export const addBowelBotherPage = async ({ doc, answers, margin, pdfWidth }: Pdf
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = bbTreatmentOutcomes.map(treatment => ({
-        Component: BowelBotherChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

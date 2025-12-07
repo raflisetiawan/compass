@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl, type IconData } from '../canvas';
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
-import { ErectileFunctionChartForPdf } from '@/features/results/components/ErectileFunctionChartForPdf';
 
-export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 6: Erectile function at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -45,11 +44,10 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }
             return {
                 name: treatment,
                 data: [
-                    { name: "Firm enough for intercourse", value: 0, color: '#1b5e20', showPill: false },
-                    { name: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
-                    { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545', showPill: false },
-                    { name: "Using sexual medication or device", value: 0, color: '#007bff', showPill: false },
-                ]
+                    { name: "Firm enough for intercourse", value: 0, color: '#1b5e20' },
+                    { name: "Firm enough for masturbation only", value: 0, color: '#ffc107' },
+                    { name: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545' },
+                ] as IconData[]
             };
         }
 
@@ -60,56 +58,56 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }
                 displayName: "Firm enough for intercourse",
                 value: treatmentData["Firm for intercourse - no assist"],
                 color: "#1b5e20",
-                showPill: false
+                iconType: 'circle' as const
             },
             {
                 name: "Firm for intercourse - with assist",
                 displayName: "Firm enough for intercourse (with assist)",
                 value: treatmentData["Firm for intercourse - with assist"],
                 color: "#1b5e20",
-                showPill: true
+                iconType: 'pill' as const
             },
             {
                 name: "Firm for masturbation - no assist",
                 displayName: "Firm enough for masturbation only",
                 value: treatmentData["Firm for masturbation - no assist"],
                 color: "#ffc107",
-                showPill: false
+                iconType: 'circle' as const
             },
             {
                 name: "Firm for masturbation - with assist",
                 displayName: "Firm enough for masturbation only (with assist)",
                 value: treatmentData["Firm for masturbation - with assist"],
                 color: "#ffc107",
-                showPill: true
+                iconType: 'pill' as const
             },
             {
                 name: "Not firm - no assist",
                 displayName: "Not firm enough for any sexual activity",
                 value: treatmentData["Not firm - no assist"],
                 color: "#dc3545",
-                showPill: false
+                iconType: 'circle' as const
             },
             {
                 name: "Not firm - with assist",
                 displayName: "Not firm enough for any sexual activity (with assist)",
                 value: treatmentData["Not firm - with assist"],
                 color: "#dc3545",
-                showPill: true
+                iconType: 'pill' as const
             },
             {
                 name: "None at all - no assist",
                 displayName: "None at all",
                 value: treatmentData["None at all - no assist"],
                 color: "#dc3545",
-                showPill: false
+                iconType: 'circle' as const
             },
             {
                 name: "None at all - with assist",
                 displayName: "None at all (with assist)",
                 value: treatmentData["None at all - with assist"],
                 color: "#dc3545",
-                showPill: true
+                iconType: 'pill' as const
             }
         ];
 
@@ -137,8 +135,8 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }
                 name: item.displayName,
                 value: item.value,
                 color: item.color,
-                showPill: item.showPill
-            }));
+                iconType: item.iconType
+            })) as IconData[];
 
         return {
             name: treatment,
@@ -146,12 +144,12 @@ export const addErectileFunctionPage = async ({ doc, answers, margin, pdfWidth }
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = efTreatmentOutcomes.map(treatment => ({
-        Component: ErectileFunctionChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

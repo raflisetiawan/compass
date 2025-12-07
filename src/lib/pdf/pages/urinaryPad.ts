@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl } from '../canvas';
 import urinaryPadData from "@/assets/use_of_urinary_pads_at_one_year.json";
-import { UrinaryPadUsageChartForPdf } from '@/features/results/components/UrinaryPadUsageChartForPdf';
 
-export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addUrinaryPadPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 4: Use of urinary pads at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -37,19 +36,19 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfP
         return {
             name: treatment,
             data: [
-                { name: "No use of pad; rarely or never leaking urine", value: noPads, color: "#1B5E20" },
-                { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#FBC02D" },
-                { name: ">=2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#D32F2F" },
+                { name: "No use of pad; rarely or never leaking urine", value: noPads, color: "#1B5E20", iconType: 'circle' as const },
+                { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#FBC02D", iconType: 'circle' as const },
+                { name: ">=2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#D32F2F", iconType: 'circle' as const },
             ],
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = padTreatmentOutcomes.map(treatment => ({
-        Component: UrinaryPadUsageChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;

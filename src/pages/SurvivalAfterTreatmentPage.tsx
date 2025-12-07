@@ -22,12 +22,17 @@ const SurvivalAfterTreatmentPageContent = () => {
     const psa = parseFloat(String(answers.psa || "8"));
     let tStage = String(answers.cancer_stage || "T2").replace("T", "");
 
+    console.log(tStage)
     // Apply T-stage fixes to match PDF logic
     if (tStage === "4") {
       tStage = "3b"; // Map T4 to 3b as T4 is not in the dataset
     }
     if (tStage === "Unknown") {
       tStage = "2"; // Default to T2 if unknown
+    }
+    // Handle "T1 or T2" option - use T2 data
+    if (tStage === "1 or 2" || tStage.toLowerCase().includes("1 or t2")) {
+      tStage = "2";
     }
 
     const gleasonScore = String(answers.gleason_score || "3+4");

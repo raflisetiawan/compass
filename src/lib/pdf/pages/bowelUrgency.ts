@@ -1,10 +1,9 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
-import { renderChartsNonBlocking } from '../utils';
+import { renderMultipleChartsToDataUrl } from '../canvas';
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
-import { ProblemWithUrgencyChartForPdf } from '@/features/results/components/ProblemWithUrgencyChartForPdf';
 
-export const addBowelUrgencyPage = async ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
+export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
     // Page 8: Problem with bowel urgency at 1 year
     doc.addPage();
     doc.setFontSize(16);
@@ -54,12 +53,12 @@ export const addBowelUrgencyPage = async ({ doc, answers, margin, pdfWidth }: Pd
         };
     });
 
-    // Render all charts with non-blocking approach
+    // Render all charts using direct canvas (synchronous, no html2canvas)
     const chartConfigs = urgencyTreatmentOutcomes.map(treatment => ({
-        Component: ProblemWithUrgencyChartForPdf,
-        props: { treatment }
+        title: treatment.name,
+        data: treatment.data
     }));
-    const chartResults = await renderChartsNonBlocking(chartConfigs);
+    const chartResults = renderMultipleChartsToDataUrl(chartConfigs);
 
     const colGutter = 5;
     const fourColWidth = (pdfWidth - (margin * 2) - (colGutter * 3)) / 4;
