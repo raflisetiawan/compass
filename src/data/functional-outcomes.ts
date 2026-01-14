@@ -10,6 +10,12 @@ export const functionalOutcomes: FunctionalOutcome[] = [
     slug: "survival-after-prostate-cancer-treatment",
     description: "% are alive at 5 years after diagnosis",
   },
+    {
+    title: "Risk & Retreatment Equations",
+    slug: "risk-retreatment-equations",
+    description:
+      "Updated risk assessment and retreatment probability calculations for prostate cancer treatment outcomes.",
+  },
   {
     title: "Leaking urine at 1 year",
     slug: "leaking-urine-at-one-year",
@@ -52,4 +58,5 @@ export const functionalOutcomes: FunctionalOutcome[] = [
     description:
       "How bother with bowel function changes at 1 year from starting treatment.",
   },
+
 ];

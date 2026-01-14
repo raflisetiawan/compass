@@ -1,4 +1,5 @@
 import SurvivalAfterTreatmentPage from "./pages/SurvivalAfterTreatmentPage";
+import RiskRetreatmentPage from "./pages/RiskRetreatmentPage";
 import UrinaryLeakagePage from "./pages/UrinaryLeakagePage";
 import UrinaryPadUsagePage from "./pages/UrinaryPadUsagePage";
 import UrinaryBotherPage from "./pages/UrinaryBotherPage";
@@ -288,6 +289,16 @@ function App() {
               <ProtectedRoute>
                 <AnimatedPage>
                   <SurvivalAfterTreatmentPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/functional-outcome/risk-retreatment-equations"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <RiskRetreatmentPage />
                 </AnimatedPage>
               </ProtectedRoute>
             }

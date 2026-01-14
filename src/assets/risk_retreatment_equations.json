@@ -1,0 +1,157 @@
+{
+  "meta_info": {
+    "description": "Lookup tables for BeSpoke Risk & Retreatment Equations",
+    "version": "2.0",
+    "source_inputs": "Firebase User Session Data"
+  },
+  "mappings": {
+    "description": "Logic to map Firebase raw inputs to JSON keys below",
+    "cancer_stage": {
+      "T1": "T1/T2",
+      "T1c": "T1/T2",
+      "T2": "T1/T2",
+      "T2a": "T1/T2",
+      "T2b": "T1/T2",
+      "T2c": "T1/T2",
+      "T3a": "T3a",
+      "T3b": "T3b"
+    },
+    "mri_visibility": {
+      "No (PI-RADS/Likert 1-3)": "not_visible",
+      "Yes (PI-RADS/Likert 4-5)": "visible"
+    },
+    "psa_ranges": {
+      "rule": "Parse 'psa' string to float",
+      "buckets": ["<10", "10-20", ">20"]
+    },
+    "psa_density_ranges": {
+      "calculation": "psa / prostate_volume",
+      "buckets": ["<0.1", "0.1-0.12", "0.12-0.15", "0.15-0.2", ">=0.2"]
+    },
+    "core_length_ranges": {
+      "variable": "max_core_length",
+      "buckets": ["<=3", ">3_and_<6", ">=6_and_<10", ">=10"]
+    }
+  },
+  "strategies": {
+    "active_surveillance": {
+      "output_type": "probability_no_treatment",
+      "visual_logic": "DarkGreen = value * 100; LightGreen = 100 - DarkGreen",
+      "data": {
+        "not_visible": {
+          "3+3": {
+            "<=3": { "<0.1": 0.91, "0.1-0.12": 0.90, "0.12-0.15": 0.87, "0.15-0.2": 0.86, ">=0.2": 0.84 },
+            ">3_and_<6": { "<0.1": 0.87, "0.1-0.12": 0.86, "0.12-0.15": 0.82, "0.15-0.2": 0.81, ">=0.2": 0.77 },
+            ">=6_and_<10": { "<0.1": 0.83, "0.1-0.12": 0.81, "0.12-0.15": 0.76, "0.15-0.2": 0.74, ">=0.2": 0.69 },
+            ">=10": { "<0.1": 0.79, "0.1-0.12": 0.76, "0.12-0.15": 0.71, "0.15-0.2": 0.69, ">=0.2": 0.63 }
+          },
+          "3+4": {
+            "<=3": { "<0.1": 0.82, "0.1-0.12": 0.79, "0.12-0.15": 0.74, "0.15-0.2": 0.73, ">=0.2": 0.68 },
+            ">3_and_<6": { "<0.1": 0.74, "0.1-0.12": 0.71, "0.12-0.15": 0.65, "0.15-0.2": 0.52, ">=0.2": 0.56 },
+            ">=6_and_<10": { "<0.1": 0.66, "0.1-0.12": 0.63, "0.12-0.15": 0.54, "0.15-0.2": 0.62, ">=0.2": 0.45 },
+            ">=10": { "<0.1": 0.60, "0.1-0.12": 0.55, "0.12-0.15": 0.47, "0.15-0.2": 0.44, ">=0.2": 0.37 }
+          },
+          "4+3": "not_recommended",
+          "4+4_or_higher": "not_recommended"
+        },
+        "visible": {
+          "3+3": {
+            "<=3": { "<0.1": 0.81, "0.1-0.12": 0.78, "0.12-0.15": 0.73, "0.15-0.2": 0.71, ">=0.2": 0.66 },
+            ">3_and_<6": { "<0.1": 0.73, "0.1-0.12": 0.70, "0.12-0.15": 0.63, "0.15-0.2": 0.61, ">=0.2": 0.54 },
+            ">=6_and_<10": { "<0.1": 0.64, "0.1-0.12": 0.60, "0.12-0.15": 0.52, "0.15-0.2": 0.50, ">=0.2": 0.43 },
+            ">=10": { "<0.1": 0.58, "0.1-0.12": 0.53, "0.12-0.15": 0.45, "0.15-0.2": 0.42, ">=0.2": 0.34 }
+          },
+          "3+4": {
+            "<=3": { "<0.1": 0.71, "0.1-0.12": 0.67, "0.12-0.15": 0.60, "0.15-0.2": 0.58, ">=0.2": 0.51 },
+            ">3_and_<6": { "<0.1": 0.60, "0.1-0.12": 0.56, "0.12-0.15": 0.47, "0.15-0.2": 0.44, ">=0.2": 0.37 },
+            ">=6_and_<10": { "<0.1": 0.49, "0.1-0.12": 0.44, "0.12-0.15": 0.35, "0.15-0.2": 0.32, ">=0.2": 0.25 },
+            ">=10": { "<0.1": 0.41, "0.1-0.12": 0.36, "0.12-0.15": 0.27, "0.15-0.2": 0.24, ">=0.2": 0.18 }
+          },
+          "4+3": "not_recommended",
+          "4+4_or_higher": "not_recommended"
+        }
+      }
+    },
+    "focal_therapy": {
+      "output_type": "distribution_percentages",
+      "visual_logic": "Yellow=repeat; Orange=radical; YellowOrange=both; LightGreen=remainder",
+      "data": {
+        "T1/T2": {
+          "3+3": {
+            "<10": { "repeat": 7, "radical": 10, "both": 7 },
+            "10-20": { "repeat": 7, "radical": 10, "both": 7 },
+            ">20": { "repeat": 7, "radical": 10, "both": 7 }
+          },
+          "3+4": {
+            "<10": { "repeat": 8, "radical": 10, "both": 8 },
+            "10-20": { "repeat": 8, "radical": 10, "both": 8 },
+            ">20": { "repeat": 8, "radical": 10, "both": 8 }
+          },
+          "4+3": {
+            "<10": { "repeat": 10, "radical": 17, "both": 4 },
+            "10-20": { "repeat": 10, "radical": 17, "both": 4 },
+            ">20": { "repeat": 10, "radical": 17, "both": 4 }
+          },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3a": {
+          "3+3": {
+            "<10": { "repeat": 7, "radical": 10, "both": 7 },
+            "10-20": { "repeat": 7, "radical": 10, "both": 7 },
+            ">20": { "repeat": 7, "radical": 10, "both": 7 }
+          },
+          "3+4": {
+            "<10": { "repeat": 8, "radical": 10, "both": 8 },
+            "10-20": { "repeat": 8, "radical": 10, "both": 8 },
+            ">20": { "repeat": 8, "radical": 10, "both": 8 }
+          },
+          "4+3": {
+            "<10": { "repeat": 10, "radical": 17, "both": 4 },
+            "10-20": { "repeat": 10, "radical": 17, "both": 4 },
+            ">20": { "repeat": 10, "radical": 17, "both": 4 }
+          },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3b": "insufficient_data"
+      }
+    },
+    "radiotherapy": {
+      "output_type": "probability_salvage",
+      "visual_logic": "Orange = value; LightGreen = 100 - Orange",
+      "data": {
+        "T1/T2": {
+          "3+3": { "<10": 2, "10-20": 3, ">20": 5 },
+          "3+4": { "<10": 4, "10-20": 6, ">20": 9 },
+          "4+3": { "<10": 9, "10-20": 12, ">20": 18 },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3a": {
+          "3+3": { "<10": 3, "10-20": 5, ">20": 8 },
+          "3+4": { "<10": 6, "10-20": 9, ">20": 12 },
+          "4+3": { "<10": 13, "10-20": 19, ">20": 26 },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3b": "insufficient_data"
+      }
+    },
+    "surgery": {
+      "output_type": "probability_salvage",
+      "visual_logic": "Orange = value; LightGreen = 100 - Orange",
+      "data": {
+        "T1/T2": {
+          "3+3": { "<10": 6, "10-20": 10, ">20": 12 },
+          "3+4": { "<10": 8, "10-20": 13, ">20": 15 },
+          "4+3": { "<10": 14, "10-20": 21, ">20": 25 },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3a": {
+          "3+3": { "<10": 13, "10-20": 21, ">20": 25 },
+          "3+4": { "<10": 17, "10-20": 26, ">20": 31 },
+          "4+3": { "<10": 28, "10-20": 40, ">20": 45 },
+          "4+4_or_higher": "insufficient_data"
+        },
+        "T3b": "insufficient_data"
+      }
+    }
+  }
+}
