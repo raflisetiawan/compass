@@ -119,3 +119,8 @@ h1 {
       @apply outline-none ring-2 ring-blue-500 ring-offset-2;
   }
 }
+
+/* Hide reCAPTCHA v3 badge - Google allows this with required attribution text */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}

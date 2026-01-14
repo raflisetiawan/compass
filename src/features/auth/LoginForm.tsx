@@ -49,6 +49,29 @@ const LoginForm = () => {
           </button>
         </div>
       </form>
+
+      {/* reCAPTCHA Attribution - Required by Google ToS when hiding the badge */}
+      <p className="text-xs text-gray-400 text-center">
+        This site is protected by reCAPTCHA and the Google{' '}
+        <a 
+          href="https://policies.google.com/privacy" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="underline hover:text-gray-600"
+        >
+          Privacy Policy
+        </a>{' '}
+        and{' '}
+        <a 
+          href="https://policies.google.com/terms" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="underline hover:text-gray-600"
+        >
+          Terms of Service
+        </a>{' '}
+        apply.
+      </p>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -7,6 +7,7 @@ import {
   updateUserUid,
   auth,
 } from '../services/firebase';
+import { loadRecaptchaScript, verifyRecaptchaForLogin } from '../services/recaptcha';
 import { useUserStore } from '../stores/userStore';
 import {type User} from '@/types'
 import { signInAnonymously } from 'firebase/auth';
@@ -17,8 +18,27 @@ export const useLoginForm = () => {
   const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useUserStore();
+
+  // Load reCAPTCHA script on component mount
+  useEffect(() => {
+    const initRecaptcha = async () => {
+      try {
+        await loadRecaptchaScript();
+        setRecaptchaReady(true);
+      } catch (error) {
+        console.error('Failed to load reCAPTCHA:', error);
+        // In development, allow proceeding without reCAPTCHA
+        if (import.meta.env.DEV) {
+          setRecaptchaReady(true);
+        }
+      }
+    };
+
+    initRecaptcha();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +54,14 @@ export const useLoginForm = () => {
     const submittedAccessCode = validationResult.data;
 
     try {
+      // Verify reCAPTCHA before proceeding with login
+      const recaptchaVerified = await verifyRecaptchaForLogin();
+      if (!recaptchaVerified) {
+        setError('Security verification failed. Please try again.');
+        setLoading(false);
+        return;
+      }
+
       const userDoc = await getUserDocByAccessCode(submittedAccessCode);
 
       if (!userDoc) {
@@ -86,6 +114,7 @@ export const useLoginForm = () => {
     accessCode,
     error,
     loading,
+    recaptchaReady,
     handleSubmit,
     handleInputChange,
   };
