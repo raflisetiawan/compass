@@ -11,6 +11,7 @@ interface IconArrayProps {
     showPill?: boolean;
     Icon?: React.ElementType;
     iconUrl?: string;
+    borderColor?: string;
   }[];
 }
 
@@ -51,6 +52,7 @@ const IconArray = ({ data }: IconArrayProps) => {
         showPill?: boolean;
         Icon?: React.ElementType;
         iconUrl?: string;
+        borderColor?: string;
       }[] = [];
       data.forEach((d) => {
         for (let i = 0; i < d.value; i++) {
@@ -60,6 +62,7 @@ const IconArray = ({ data }: IconArrayProps) => {
             showPill: d.showPill,
             Icon: d.Icon,
             iconUrl: d.iconUrl,
+            borderColor: d.borderColor,
           });
         }
       });
@@ -84,7 +87,7 @@ const IconArray = ({ data }: IconArrayProps) => {
           // If showPill is true, use LegendIcon with pill
           if (item.showPill) {
             const iconHtml = ReactDOMServer.renderToString(
-              <LegendIcon color={item.color} name={item.category} showPill={true} size={iconSize} />
+              <LegendIcon color={item.color} name={item.category} showPill={true} size={iconSize} borderColor={item.borderColor} />
             );
             group
               .append("foreignObject")
@@ -110,7 +113,7 @@ const IconArray = ({ data }: IconArrayProps) => {
           } else {
             // Fallback: Simple circle (using LegendIcon without pill)
             const iconHtml = ReactDOMServer.renderToString(
-              <LegendIcon color={item.color} name={item.category} showPill={false} size={iconSize} />
+              <LegendIcon color={item.color} name={item.category} showPill={false} size={iconSize} borderColor={item.borderColor} />
             );
             group
               .append("foreignObject")

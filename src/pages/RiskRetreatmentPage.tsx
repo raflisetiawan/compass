@@ -50,27 +50,37 @@ const RiskRetreatmentPageContent = () => {
 
   const Legend = () => (
     <div className="mb-6 p-4 rounded-lg">
-      <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
+      <h3 className="font-bold mb-2 text-lg">What Icon Means:</h3>
       <div className="flex flex-col space-y-2">
         <div className="flex items-center">
-          <LegendIcon color="#1b5e20" name="No Treatment" />
-          <span className="ml-2">No Treatment Needed / Success</span>
+          <div className="shrink-0 w-4 h-4">
+            <LegendIcon color="#1b5e20" name="No Treatment" />
+          </div>
+          <span className="ml-2">No treatment (i.e. Active surveillance only)</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#90EE90" name="Progression" />
-          <span className="ml-2">Progression to Treatment / First Treatment Success</span>
+          <div className="shrink-0 w-4 h-4">
+            <LegendIcon color="#90EE90" name="First Treatment" />
+          </div>
+          <span className="ml-2">First treatment only (i.e. Focal therapy, Prostatectomy, Radiotherapy)</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#FFEB3B" name="Repeat Focal" />
-          <span className="ml-2">Repeat Focal Treatment</span>
+          <div className="shrink-0 w-4 h-4">
+            <LegendIcon color="#FFEB3B" name="Second Round Focal" />
+          </div>
+          <span className="ml-2">Second round of additional focal treatment</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#FF9800" name="Radical/Salvage" />
-          <span className="ml-2">Radical / Salvage Treatment Needed</span>
+          <div className="shrink-0 w-4 h-4">
+            <LegendIcon color="#FFEB3B" name="Progressed After Focal" borderColor="#FF9800" />
+          </div>
+          <span className="ml-2">Progressed to radiotherapy or surgery after a second round of additional focal therapy</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#FFC107" name="Both" />
-          <span className="ml-2">Both Repeat & Radical Treatment</span>
+          <div className="shrink-0 w-4 h-4">
+            <LegendIcon color="#FF9800" name="Progressed Different" />
+          </div>
+          <span className="ml-2">Progressed to different treatment (i.e. Radiotherapy or surgery after focal therapy; Salvage radiotherapy after surgery; Hormone treatment after radiotherapy)</span>
         </div>
       </div>
     </div>

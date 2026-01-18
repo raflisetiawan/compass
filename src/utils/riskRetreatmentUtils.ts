@@ -5,6 +5,7 @@ interface WaffleDataItem {
   name: string;
   value: number;
   color: string;
+  borderColor?: string;
 }
 
 interface WaffleResult {
@@ -157,8 +158,8 @@ const calculateActiveSurveillance = (
     
     return {
       data: [
-        { name: "No Treatment Needed", value: noTreatment, color: "#1b5e20" },
-        { name: "Progression to Treatment", value: progression, color: "#90EE90" },
+        { name: "No treatment (i.e. Active surveillance only)", value: noTreatment, color: "#1b5e20" },
+        { name: "First treatment only (i.e. Focal therapy, Prostatectomy, Radiotherapy)", value: progression, color: "#90EE90" },
       ],
     };
   } catch {
@@ -199,10 +200,10 @@ const calculateFocalTherapy = (
     
     return {
       data: [
-        { name: "Success (First Treatment Only)", value: success, color: "#90EE90" },
-        { name: "Repeat Focal Treatment", value: repeat, color: "#FFEB3B" },
-        { name: "Radical Treatment", value: radical, color: "#FF9800" },
-        { name: "Both Repeat & Radical", value: both, color: "#FFC107" },
+        { name: "First treatment only (i.e. Focal therapy, Prostatectomy, Radiotherapy)", value: success, color: "#90EE90" },
+        { name: "Second round of additional focal treatment", value: repeat, color: "#FFEB3B" },
+        { name: "Progressed to different treatment", value: radical, color: "#FF9800" },
+        { name: "Progressed to radiotherapy or surgery after a second round of additional focal therapy", value: both, color: "#FFEB3B", borderColor: "#FF9800" },
       ],
     };
   } catch {
@@ -241,8 +242,8 @@ const calculateRadiotherapyOrSurgery = (
     
     return {
       data: [
-        { name: "Success (First Treatment Only)", value: success, color: "#90EE90" },
-        { name: "Salvage Treatment Needed", value: salvageValue, color: "#FF9800" },
+        { name: "First treatment only (i.e. Focal therapy, Prostatectomy, Radiotherapy)", value: success, color: "#90EE90" },
+        { name: "Progressed to different treatment", value: salvageValue, color: "#FF9800" },
       ],
     };
   } catch {

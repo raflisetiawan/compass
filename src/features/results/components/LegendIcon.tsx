@@ -5,14 +5,19 @@ interface LegendIconProps {
   name: string;
   showPill?: boolean;
   size?: number;
+  borderColor?: string;
 }
 
-const LegendIcon: React.FC<LegendIconProps> = ({ color, name, showPill = false, size = 16 }) => {
+const LegendIcon: React.FC<LegendIconProps> = ({ color, name, showPill = false, size = 16, borderColor }) => {
   const iconSize = size;
   const center = iconSize / 2;
   const pillWidth = iconSize * 0.6;
   const pillHeight = iconSize * 0.35;
   const pillRadius = pillHeight / 2;
+  const strokeWidth = borderColor ? 2 : 0;
+  // All icons should have the same visual radius
+  // For bordered icons, we use slightly smaller radius so the stroke fits inside
+  const radius = center - 1;
 
   return (
     <svg
@@ -27,8 +32,10 @@ const LegendIcon: React.FC<LegendIconProps> = ({ color, name, showPill = false, 
       <circle
         cx={center}
         cy={center}
-        r={center}
+        r={radius}
         fill={color}
+        stroke={borderColor}
+        strokeWidth={strokeWidth}
       />
       {/* Pill icon if showPill is true */}
       {showPill && (
