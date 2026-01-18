@@ -1,32 +1,48 @@
 /**
- * Firebase App Check with reCAPTCHA v3 Service
+ * reCAPTCHA v2 Service
  * 
- * This service provides reCAPTCHA v3 verification for the login flow
+ * This service provides reCAPTCHA v2 checkbox verification for the login flow
  * to prevent automated access as per PRD security requirements.
  */
 
-import { initializeAppCheck, ReCaptchaV3Provider, getToken } from 'firebase/app-check';
-import { getApp } from 'firebase/app';
-
 /**
- * Type definition for Google reCAPTCHA v3 interface
+ * Type definition for Google reCAPTCHA v2 interface
  */
-interface ReCaptchaV3Instance {
-  ready: (callback: () => void) => void;
-  execute: (siteKey: string, options: { action: string }) => Promise<string>;
+interface ReCaptchaV2Instance {
+  render: (
+    container: string | HTMLElement,
+    parameters: {
+      sitekey: string;
+      callback?: (token: string) => void;
+      'expired-callback'?: () => void;
+      'error-callback'?: () => void;
+      theme?: 'light' | 'dark';
+      size?: 'normal' | 'compact';
+    }
+  ) => number;
+  reset: (widgetId?: number) => void;
+  getResponse: (widgetId?: number) => string;
 }
 
-let appCheckInitialized = false;
+declare global {
+  interface Window {
+    grecaptcha: ReCaptchaV2Instance;
+    onRecaptchaLoad: () => void;
+  }
+}
+
 let recaptchaScriptLoaded = false;
+let recaptchaWidgetId: number | null = null;
+let onLoadCallback: (() => void) | null = null;
 
 /**
- * Dynamically load the reCAPTCHA v3 script
+ * Dynamically load the reCAPTCHA v2 script
  */
 export const loadRecaptchaScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
     
-    if (!siteKey || siteKey === 'YOUR_RECAPTCHA_V3_SITE_KEY') {
+    if (!siteKey || siteKey === 'YOUR_RECAPTCHA_V2_SITE_KEY') {
       if (import.meta.env.DEV) {
         console.warn('reCAPTCHA site key not configured. Skipping script load in development.');
         resolve();
@@ -37,22 +53,30 @@ export const loadRecaptchaScript = (): Promise<void> => {
     }
 
     // Check if already loaded
-    if (recaptchaScriptLoaded || (window as unknown as { grecaptcha?: ReCaptchaV3Instance }).grecaptcha) {
+    if (recaptchaScriptLoaded && window.grecaptcha) {
       resolve();
       return;
     }
 
-    // Create and append the script
-    const script = document.createElement('script');
-    script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
-    script.async = true;
-    script.defer = true;
-    
-    script.onload = () => {
+    // Set up the callback for when script loads
+    onLoadCallback = () => {
       recaptchaScriptLoaded = true;
-      console.log('reCAPTCHA script loaded successfully');
+      console.log('reCAPTCHA v2 script loaded successfully');
       resolve();
     };
+
+    // Define global callback function
+    window.onRecaptchaLoad = () => {
+      if (onLoadCallback) {
+        onLoadCallback();
+      }
+    };
+
+    // Create and append the script
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+    script.async = true;
+    script.defer = true;
     
     script.onerror = () => {
       reject(new Error('Failed to load reCAPTCHA script'));
@@ -63,112 +87,90 @@ export const loadRecaptchaScript = (): Promise<void> => {
 };
 
 /**
- * Initialize Firebase App Check with reCAPTCHA v3
- * This should be called once when the app starts
+ * Render the reCAPTCHA v2 checkbox widget
+ * @param containerId - The ID of the container element to render the widget in
+ * @param onVerify - Callback when user successfully completes the captcha
+ * @param onExpired - Callback when the captcha expires
+ * @param onError - Callback when an error occurs
  */
-export const initializeRecaptcha = () => {
-  if (appCheckInitialized) {
-    return;
-  }
-
+export const renderRecaptcha = (
+  containerId: string,
+  onVerify: (token: string) => void,
+  onExpired?: () => void,
+  onError?: () => void
+): void => {
   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
-  if (!siteKey) {
-    console.warn('reCAPTCHA site key not found. App Check will not be initialized.');
+  
+  if (!siteKey || siteKey === 'YOUR_RECAPTCHA_V2_SITE_KEY') {
+    if (import.meta.env.DEV) {
+      console.warn('reCAPTCHA site key not configured. Skipping render in development.');
+      // In development, auto-verify with a fake token
+      onVerify('dev-mode-token');
+      return;
+    }
+    console.error('reCAPTCHA site key not configured');
     return;
   }
+
+  if (!window.grecaptcha) {
+    console.error('reCAPTCHA not loaded');
+    return;
+  }
+
+  const container = document.getElementById(containerId);
+  if (!container) {
+    console.error(`Container element #${containerId} not found`);
+    return;
+  }
+
+  // Clear any existing widget
+  container.innerHTML = '';
 
   try {
-    const app = getApp();
-    
-    // Enable debug mode in development
-    if (import.meta.env.DEV) {
-      // @ts-expect-error - Debug token for development
-      self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    }
-
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(siteKey),
-      isTokenAutoRefreshEnabled: true,
+    recaptchaWidgetId = window.grecaptcha.render(containerId, {
+      sitekey: siteKey,
+      callback: onVerify,
+      'expired-callback': onExpired,
+      'error-callback': onError,
+      theme: 'light',
+      size: 'normal',
     });
-
-    appCheckInitialized = true;
-    console.log('Firebase App Check initialized with reCAPTCHA v3');
+    console.log('reCAPTCHA widget rendered successfully');
   } catch (error) {
-    console.error('Failed to initialize App Check:', error);
+    console.error('Failed to render reCAPTCHA widget:', error);
   }
 };
 
 /**
- * Get the current App Check token
- * This can be used to verify the user before sensitive operations
+ * Reset the reCAPTCHA widget
+ * Call this after a failed login attempt to allow the user to try again
  */
-export const getAppCheckToken = async (): Promise<string | null> => {
-  try {
-    const app = getApp();
-    const appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY || ''),
-      isTokenAutoRefreshEnabled: true,
-    });
-    
-    const tokenResult = await getToken(appCheck, /* forceRefresh */ false);
-    return tokenResult.token;
-  } catch (error) {
-    console.error('Failed to get App Check token:', error);
-    return null;
+export const resetRecaptcha = (): void => {
+  if (window.grecaptcha && recaptchaWidgetId !== null) {
+    try {
+      window.grecaptcha.reset(recaptchaWidgetId);
+      console.log('reCAPTCHA widget reset');
+    } catch (error) {
+      console.error('Failed to reset reCAPTCHA widget:', error);
+    }
   }
 };
 
 /**
- * Verify reCAPTCHA before login
- * Returns true if verification passed, false otherwise
+ * Get the current reCAPTCHA response token
+ * Returns empty string if not verified
  */
-export const verifyRecaptchaForLogin = async (): Promise<boolean> => {
+export const getRecaptchaResponse = (): string => {
+  if (window.grecaptcha && recaptchaWidgetId !== null) {
+    return window.grecaptcha.getResponse(recaptchaWidgetId);
+  }
+  return '';
+};
+
+/**
+ * Check if reCAPTCHA is available (for development mode fallback)
+ */
+export const isRecaptchaAvailable = (): boolean => {
   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
-  if (!siteKey) {
-    // If no site key, skip verification in development
-    if (import.meta.env.DEV) {
-      console.warn('reCAPTCHA site key not configured. Skipping verification in development.');
-      return true;
-    }
-    return false;
-  }
-
-  try {
-    // For reCAPTCHA v3, we use the grecaptcha.execute method
-    // This is loaded from the script tag in index.html
-    const grecaptcha = (window as unknown as { grecaptcha?: ReCaptchaV3Instance }).grecaptcha;
-    
-    if (!grecaptcha) {
-      console.error('reCAPTCHA not loaded');
-      return false;
-    }
-
-    return new Promise((resolve) => {
-      grecaptcha.ready(() => {
-        grecaptcha
-          .execute(siteKey, { action: 'login' })
-          .then((token: string) => {
-            // In a production environment, you would send this token
-            // to your backend for verification
-            // For now, we just check if a token was generated
-            if (token) {
-              console.log('reCAPTCHA verification successful');
-              resolve(true);
-            } else {
-              console.error('reCAPTCHA verification failed: no token');
-              resolve(false);
-            }
-          })
-          .catch((error: Error) => {
-            console.error('reCAPTCHA verification error:', error);
-            resolve(false);
-          });
-      });
-    });
-  } catch (error) {
-    console.error('reCAPTCHA verification error:', error);
-    return false;
-  }
+  return !!(siteKey && siteKey !== 'YOUR_RECAPTCHA_V2_SITE_KEY');
 };

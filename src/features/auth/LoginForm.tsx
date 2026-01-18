@@ -1,13 +1,19 @@
 import { useLoginForm } from '../../hooks/useLoginForm';
+import { isRecaptchaAvailable } from '../../services/recaptcha';
 
 const LoginForm = () => {
   const {
     accessCode,
     error,
     loading,
+    recaptchaReady,
+    recaptchaToken,
     handleSubmit,
     handleInputChange,
   } = useLoginForm();
+
+  const showRecaptcha = isRecaptchaAvailable();
+  const isSubmitDisabled = loading || (showRecaptcha && !recaptchaToken);
 
   return (
     <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 space-y-6">
@@ -38,11 +44,22 @@ const LoginForm = () => {
           />
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         </div>
+
+        {/* reCAPTCHA v2 Checkbox Widget */}
+        {showRecaptcha && (
+          <div className="flex justify-center py-2">
+            <div id="recaptcha-container">
+              {!recaptchaReady && (
+                <div className="text-sm text-gray-500">Loading security verification...</div>
+              )}
+            </div>
+          </div>
+        )}
         
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitDisabled}
             className="px-8 py-2 text-sm font-semibold text-gray-700 bg-[#e0f2f7] border border-transparent rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Submitting...' : 'Submit'}
@@ -50,7 +67,7 @@ const LoginForm = () => {
         </div>
       </form>
 
-      {/* reCAPTCHA Attribution - Required by Google ToS when hiding the badge */}
+      {/* reCAPTCHA Attribution - Required by Google ToS */}
       <p className="text-xs text-gray-400 text-center">
         This site is protected by reCAPTCHA and the Google{' '}
         <a 
