@@ -33,7 +33,7 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - **Firebase Authentication** - User authentication
 - **Firestore** - NoSQL database
 - **Static JSON Data** - Clinical outcome probabilities
-- **reCAPTCHA v3** - Bot protection for login
+- **reCAPTCHA v2** - Bot protection for login
 
 ### Visualization & Export
 - **D3.js** - Custom charts and icon plots
@@ -78,8 +78,8 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - Session management with Firebase
 
 ### 6. Security
-- **reCAPTCHA v3** protection on login to prevent automated access
-- Invisible verification (no puzzle challenges)
+- **reCAPTCHA v2** checkbox protection on login to prevent automated access
+- "I'm not a robot" verification with optional puzzle challenges
 - Google Privacy Policy and Terms of Service attribution included
 
 ## 📦 Installation
@@ -113,10 +113,10 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_RECAPTCHA_SITE_KEY=your_recaptcha_v3_site_key
+VITE_RECAPTCHA_SITE_KEY=your_recaptcha_v2_site_key
 ```
 
-> **Note**: To get a reCAPTCHA v3 site key, visit [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin) and create a new site with reCAPTCHA v3. Add `localhost` for development and your production domain.
+> **Note**: To get a reCAPTCHA v2 site key, visit [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin) and create a new site with reCAPTCHA v2 ("I'm not a robot" Checkbox). Add `localhost` for development and your production domain.
 
 4. **Run development server**
 ```bash
@@ -151,7 +151,7 @@ compass/
 │   │   └── [functional outcome pages]
 │   ├── services/           # External service integrations
 │   │   ├── firebase.ts     # Firebase config & Firestore operations
-│   │   ├── recaptcha.ts    # reCAPTCHA v3 verification
+│   │   ├── recaptcha.ts    # reCAPTCHA v2 verification
 │   │   └── prediction.ts   # Clinical prediction logic
 │   ├── stores/             # Zustand state stores
 │   │   ├── questionnaireStore.ts
@@ -233,7 +233,7 @@ The application uses validated clinical data from research studies. Data is stor
 ## 🔒 Authentication Flow
 
 1. User enters unique access code on login page
-2. **reCAPTCHA v3** verification runs invisibly in background
+2. User completes **reCAPTCHA v2** checkbox verification
 3. Firebase Authentication creates/retrieves user session
 4. Access code is validated against Firestore
 5. User role (clinician/patient) determines available features

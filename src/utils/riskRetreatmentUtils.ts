@@ -1,5 +1,8 @@
 import riskRetreatmentData from "@/assets/risk_retreatment_equations.json";
 
+// Constants
+const INSUFFICIENT_DATA_MESSAGE = "There are insufficient data to provide an estimate of the need for additional treatment.";
+
 // Type definitions
 interface WaffleDataItem {
   name: string;
@@ -135,7 +138,7 @@ const calculateActiveSurveillance = (
   try {
     const mriData = data[mriVisibility] as Record<string, unknown>;
     if (!mriData) {
-      return { data: [], error: "Data not available for this MRI visibility" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const gleasonData = mriData[gleasonScore];
@@ -145,12 +148,12 @@ const calculateActiveSurveillance = (
     
     const coreLengthData = (gleasonData as Record<string, Record<string, number>>)?.[coreLengthBucket];
     if (!coreLengthData) {
-      return { data: [], error: "Data not available for this cancer core length" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const value = coreLengthData[densityBucket];
     if (value === undefined) {
-      return { data: [], error: "Data not available for this PSA density" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const noTreatment = Math.round(value * 100);
@@ -180,17 +183,17 @@ const calculateFocalTherapy = (
   try {
     const stageData = data[stageBucket];
     if (typeof stageData === "string") {
-      return { data: [], error: "Insufficient data for this T stage" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const gleasonData = (stageData as Record<string, unknown>)?.[gleasonScore];
     if (typeof gleasonData === "string") {
-      return { data: [], error: "Insufficient data for this Gleason score" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const psaData = (gleasonData as Record<string, FocalTherapyData>)?.[psaBucket];
     if (!psaData || typeof psaData === "string") {
-      return { data: [], error: "Insufficient data for this PSA level" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const repeat = psaData.repeat;
@@ -225,17 +228,17 @@ const calculateRadiotherapyOrSurgery = (
   try {
     const stageData = strategyData[stageBucket];
     if (typeof stageData === "string") {
-      return { data: [], error: "Insufficient data for this T stage" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const gleasonData = (stageData as Record<string, unknown>)?.[gleasonScore];
     if (typeof gleasonData === "string") {
-      return { data: [], error: "Insufficient data for this Gleason score" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const salvageValue = (gleasonData as Record<string, number>)?.[psaBucket];
     if (salvageValue === undefined || typeof salvageValue === "string") {
-      return { data: [], error: "Insufficient data for this PSA level" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const success = 100 - salvageValue;
