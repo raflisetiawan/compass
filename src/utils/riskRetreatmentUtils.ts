@@ -143,7 +143,7 @@ const calculateActiveSurveillance = (
     
     const gleasonData = mriData[gleasonScore];
     if (typeof gleasonData === "string") {
-      return { data: [], error: "Active Surveillance is not recommended for this Gleason score" };
+      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
     }
     
     const coreLengthData = (gleasonData as Record<string, Record<string, number>>)?.[coreLengthBucket];
