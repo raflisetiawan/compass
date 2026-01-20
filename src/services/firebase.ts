@@ -94,6 +94,7 @@ export const updateUserLastLogin = async (accessCode: string) => {
 const SESSIONS_COLLECTION = 'questionnaireSessions';
 
 import { type ClinicalOutcomes } from '@/types/questionnaire';
+import { type VceAnswers } from '@/stores/vceStore';
 
 export type Answers = { [questionId: string]: string | number };
 
@@ -107,6 +108,7 @@ export interface QuestionnaireSession {
   completedAt?: Timestamp;
   userAgent: string;
   clinicalOutcomes?: ClinicalOutcomes;
+  vceAnswers?: VceAnswers;
 }
 
 /**

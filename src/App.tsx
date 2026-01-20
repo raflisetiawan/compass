@@ -26,6 +26,8 @@ import TreatmentOptionsPostTreatmentPage from "./pages/TreatmentOptionsPostTreat
 import TreatmentOptionsFollowUpPage from "./pages/TreatmentOptionsFollowUpPage";
 import ResultsPage from "./pages/ResultsPage";
 import AboutPage from "./pages/AboutPage";
+import VCEIntroPage from "./pages/VCEIntroPage";
+import VCEQuestionsPage from "./pages/VCEQuestionsPage";
 
 function App() {
   const location = useLocation();
@@ -50,6 +52,13 @@ function App() {
         break;
       case "/personalised-info-intro":
         title = "Personalised Information | COMPASS";
+        break;
+      case "/vce":
+        if (pathParts[1] === "intro") {
+          title = "Value Clarification Exercise | COMPASS";
+        } else if (pathParts[1] === "questions") {
+          title = "VCE Questions | COMPASS";
+        }
         break;
       case "/treatment-options/definition":
         title = "Treatment Options - Definition | COMPASS";
@@ -141,6 +150,26 @@ function App() {
               <ProtectedRoute>
                 <AnimatedPage>
                   <PersonalisedInfoIntroPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vce/intro"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <VCEIntroPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vce/questions"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <VCEQuestionsPage />
                 </AnimatedPage>
               </ProtectedRoute>
             }

@@ -77,7 +77,14 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - Role-based access (clinician/patient)
 - Session management with Firebase
 
-### 6. Security
+### 6. Value Clarification Exercise (VCE)
+- Multi-step questionnaire to help patients reflect on treatment preferences
+- Treatment philosophy choice (active treatment vs. monitoring)
+- Side effects importance ratings (5 items)
+- Logistics importance ratings (3 items)
+- Answers saved to Firestore session
+
+### 7. Security
 - **reCAPTCHA v2** checkbox protection on login to prevent automated access
 - "I'm not a robot" verification with optional puzzle challenges
 - Google Privacy Policy and Terms of Service attribution included
@@ -155,7 +162,8 @@ compass/
 │   │   └── prediction.ts   # Clinical prediction logic
 │   ├── stores/             # Zustand state stores
 │   │   ├── questionnaireStore.ts
-│   │   └── userStore.ts
+│   │   ├── userStore.ts
+│   │   └── vceStore.ts     # Value Clarification Exercise state
 │   ├── types/              # TypeScript type definitions
 │   └── App.tsx
 ├── public/
@@ -179,8 +187,13 @@ users/{accessCode}
 
 #### Questionnaire Sessions (Subcollection)
 ```typescript
-users/{accessCode}/questionnaireSessions/{sessionId}
+questionnaireSessions/{accessCode}/sessions/{sessionId}
   - answers: object
+  - vceAnswers: {
+      treatmentPhilosophy: 'active' | 'monitoring',
+      sideEffectsImportance: object,
+      logisticsImportance: object
+    }
   - createdAt: Timestamp
   - updatedAt: Timestamp
 ```
@@ -250,10 +263,12 @@ The application is fully responsive with specific optimizations for:
 
 1. **Landing Page** - Introduction to the tool
 2. **Login** - Access code authentication
-3. **Clinical Data Input** - Multi-step form for patient characteristics
-4. **Functional Baseline** - Current quality of life assessment
-5. **Results Dashboard** - Personalized predictions for all treatments
-6. **PDF Export** - Download comprehensive summary
+3. **Value Clarification Exercise** - Reflect on treatment preferences (VCE)
+4. **Treatment Options** - Learn about available treatments
+5. **Clinical Data Input** - Multi-step form for patient characteristics
+6. **Functional Baseline** - Current quality of life assessment
+7. **Results Dashboard** - Personalized predictions for all treatments
+8. **PDF Export** - Download comprehensive summary
 
 ## 🐛 Known Issues & Limitations
 

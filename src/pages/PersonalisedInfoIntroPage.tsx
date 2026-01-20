@@ -22,7 +22,7 @@ const PersonalisedInfoIntroPage = () => {
             </div>
 
             <div className="flex justify-end pt-4">
-              <Link to="/treatment-options/definition">
+              <Link to="/vce/intro">
                 <button className="px-8 py-2 text-sm font-semibold text-gray-700 bg-[#e0f2f7] border border-transparent rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
                   Next
                 </button>
