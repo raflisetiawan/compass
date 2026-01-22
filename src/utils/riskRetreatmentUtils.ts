@@ -205,8 +205,8 @@ const calculateFocalTherapy = (
       data: [
         { name: "First treatment only (i.e. Focal therapy, Prostatectomy, Radiotherapy)", value: success, color: "#90EE90" },
         { name: "Second round of additional focal treatment", value: repeat, color: "#FFEB3B" },
-        { name: "Progressed to different treatment", value: radical, color: "#FF9800" },
         { name: "Progressed to radiotherapy or surgery after a second round of additional focal therapy", value: both, color: "#FFEB3B", borderColor: "#FF9800" },
+        { name: "Progressed to different treatment", value: radical, color: "#FF9800" },
       ],
     };
   } catch {
