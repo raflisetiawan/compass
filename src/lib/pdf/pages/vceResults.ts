@@ -27,8 +27,6 @@ const IMPORTANCE_LABELS = {
   less: 'Less Important',
 };
 
-type ImportanceLevel = 'less' | 'somewhat' | 'very' | null;
-
 export const addVceResultsPage = ({ doc, vceAnswers }: PdfPageProps) => {
   // Use vceAnswers from props
   const treatmentPhilosophy = vceAnswers?.treatmentPhilosophy ?? null;
