@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import type { Answers } from '@/types/questionnaire';
+import type { VceAnswers } from '@/stores/vceStore';
 
 export interface PdfPageProps {
     doc: jsPDF;
@@ -8,6 +9,7 @@ export interface PdfPageProps {
     margin: number;
     gutter: number;
     imgWidth: number;
+    vceAnswers?: VceAnswers;
 }
 
 export interface OutcomeData {

@@ -28,6 +28,7 @@ import ResultsPage from "./pages/ResultsPage";
 import AboutPage from "./pages/AboutPage";
 import VCEIntroPage from "./pages/VCEIntroPage";
 import VCEQuestionsPage from "./pages/VCEQuestionsPage";
+import VCEResultsPage from "./pages/VCEResultsPage";
 
 function App() {
   const location = useLocation();
@@ -58,6 +59,8 @@ function App() {
           title = "Value Clarification Exercise | COMPASS";
         } else if (pathParts[1] === "questions") {
           title = "VCE Questions | COMPASS";
+        } else if (pathParts[1] === "results") {
+          title = "VCE Results | COMPASS";
         }
         break;
       case "/treatment-options/definition":
@@ -170,6 +173,16 @@ function App() {
               <ProtectedRoute>
                 <AnimatedPage>
                   <VCEQuestionsPage />
+                </AnimatedPage>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vce/results"
+            element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <VCEResultsPage />
                 </AnimatedPage>
               </ProtectedRoute>
             }

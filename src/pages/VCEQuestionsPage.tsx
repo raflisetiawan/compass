@@ -44,13 +44,25 @@ const VCEQuestionsPage = () => {
     setCurrentStep(2);
   };
 
+  const handleBackToIntro = () => {
+    navigate("/vce/intro");
+  };
+
+  const handleBackToStep1 = () => {
+    setCurrentStep(1);
+  };
+
+  const handleBackToStep2 = () => {
+    setCurrentStep(2);
+  };
+
   const handleSideEffectsNext = () => {
     setCurrentStep(3);
   };
 
   const handleLogisticsNext = async () => {
     await saveVceAnswers();
-    navigate("/treatment-options/definition");
+    navigate("/vce/results");
   };
 
   const isSideEffectsComplete = Object.values(sideEffectsImportance).every(
@@ -142,6 +154,15 @@ const VCEQuestionsPage = () => {
                     )}
                   </div>
                 </div>
+
+                <div className="flex justify-start pt-4">
+                  <button
+                    onClick={handleBackToIntro}
+                    className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
             )}
 
@@ -190,7 +211,13 @@ const VCEQuestionsPage = () => {
                   </div>
                 ))}
 
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-between pt-4">
+                  <button
+                    onClick={handleBackToStep1}
+                    className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Back
+                  </button>
                   <button
                     onClick={handleSideEffectsNext}
                     disabled={!isSideEffectsComplete}
@@ -251,7 +278,13 @@ const VCEQuestionsPage = () => {
                   </div>
                 ))}
 
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-between pt-4">
+                  <button
+                    onClick={handleBackToStep2}
+                    className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Back
+                  </button>
                   <button
                     onClick={handleLogisticsNext}
                     disabled={!isLogisticsComplete || isSaving}

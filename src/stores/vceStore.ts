@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Timestamp } from 'firebase/firestore';
-import { updateQuestionnaireSession } from '@/services/firebase';
+import { updateQuestionnaireSession, loadLatestQuestionnaireSession } from '@/services/firebase';
 import { useQuestionnaireStore } from './questionnaireStore';
 import { useUserStore } from './userStore';
 
@@ -33,6 +33,7 @@ type State = {
   sideEffectsImportance: SideEffectsImportance;
   logisticsImportance: LogisticsImportance;
   isSaving: boolean;
+  isLoading: boolean;
 };
 
 type Actions = {
@@ -40,6 +41,7 @@ type Actions = {
   setSideEffectImportance: (key: keyof SideEffectsImportance, value: ImportanceLevel) => void;
   setLogisticsImportance: (key: keyof LogisticsImportance, value: ImportanceLevel) => void;
   saveVceAnswers: () => Promise<void>;
+  loadVceAnswers: () => Promise<void>;
   reset: () => void;
 };
 
@@ -58,6 +60,7 @@ const initialState: State = {
     timeAwayFromActivities: null,
   },
   isSaving: false,
+  isLoading: false,
 };
 
 // Helper to get the active access code
@@ -132,6 +135,37 @@ const useVceStore = create<State & Actions>((set, get) => ({
       console.error('Error saving VCE answers:', error);
     } finally {
       set({ isSaving: false });
+    }
+  },
+
+  loadVceAnswers: async () => {
+    const accessCode = getActiveAccessCode();
+
+    if (!accessCode) {
+      console.error('Cannot load VCE answers: missing accessCode');
+      return;
+    }
+
+    set({ isLoading: true });
+
+    try {
+      const session = await loadLatestQuestionnaireSession(accessCode);
+
+      if (session?.vceAnswers) {
+        const { treatmentPhilosophy, sideEffectsImportance, logisticsImportance } = session.vceAnswers;
+        set({
+          treatmentPhilosophy: treatmentPhilosophy ?? null,
+          sideEffectsImportance: sideEffectsImportance ?? initialState.sideEffectsImportance,
+          logisticsImportance: logisticsImportance ?? initialState.logisticsImportance,
+        });
+        console.log('VCE answers loaded successfully');
+      } else {
+        console.log('No VCE answers found in session');
+      }
+    } catch (error) {
+      console.error('Error loading VCE answers:', error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 

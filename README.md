@@ -69,6 +69,7 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 
 ### 4. PDF Export
 - Comprehensive summary of patient data and predictions
+- **VCE Results**: Treatment preferences and importance ratings
 - Includes all visualizations and outcomes
 - Optimized for clinical consultation
 
@@ -79,10 +80,12 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 
 ### 6. Value Clarification Exercise (VCE)
 - Multi-step questionnaire to help patients reflect on treatment preferences
-- Treatment philosophy choice (active treatment vs. monitoring)
-- Side effects importance ratings (5 items)
-- Logistics importance ratings (3 items)
-- Answers saved to Firestore session
+- **Question 1**: Treatment philosophy choice (active treatment vs. monitoring)
+- **Question 2**: Side effects importance ratings (5 items: urinary leakage, frequency, bowel issues, energy, erectile)
+- **Question 3**: Logistics importance ratings (3 items: daily travel, distant travel, time away from activities)
+- **VCE Results Page**: Read-only summary of all answers sorted by importance level
+- Answers automatically saved to Firestore session
+- VCE answers included in PDF export with simplified, document-friendly layout
 
 ### 7. Security
 - **reCAPTCHA v2** checkbox protection on login to prevent automated access
@@ -154,6 +157,9 @@ compass/
 │   ├── pages/              # Page components
 │   │   ├── IntroductionPage.tsx
 │   │   ├── PatientInfoPage.tsx
+│   │   ├── VCEIntroPage.tsx        # VCE introduction
+│   │   ├── VCEQuestionsPage.tsx    # VCE multi-step questions
+│   │   ├── VCEResultsPage.tsx      # VCE results summary
 │   │   ├── ResultsPage.tsx
 │   │   └── [functional outcome pages]
 │   ├── services/           # External service integrations
