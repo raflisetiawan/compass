@@ -50,6 +50,7 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
             treatmentPhilosophy: vceState.treatmentPhilosophy,
             sideEffectsImportance: vceState.sideEffectsImportance,
             logisticsImportance: vceState.logisticsImportance,
+            mostImportantSideEffect: vceState.mostImportantSideEffect,
         };
         console.log('VCE answers loaded from store for PDF:', vceAnswers);
     }
