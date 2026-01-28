@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import BeSpokeLogo from "../components/BeSpokeLogo";
 import Footer from "../components/Footer";
-import { useVceStore, type ImportanceLevel } from "../stores/vceStore";
+import { useVceStore, type ImportanceLevel, type SideEffectKey } from "../stores/vceStore";
 
 const IMPORTANCE_OPTIONS: { value: ImportanceLevel; label: string }[] = [
   { value: "less", label: "Less Important" },
@@ -32,10 +33,12 @@ const VCEQuestionsPage = () => {
   const {
     sideEffectsImportance,
     logisticsImportance,
+    mostImportantSideEffect,
     isSaving,
     setTreatmentPhilosophy,
     setSideEffectImportance,
     setLogisticsImportance,
+    setMostImportantSideEffect,
     saveVceAnswers,
   } = useVceStore();
 
@@ -67,7 +70,7 @@ const VCEQuestionsPage = () => {
 
   const isSideEffectsComplete = Object.values(sideEffectsImportance).every(
     (value) => value !== null
-  );
+  ) && mostImportantSideEffect !== null;
 
   const isLogisticsComplete = Object.values(logisticsImportance).every(
     (value) => value !== null
@@ -211,6 +214,31 @@ const VCEQuestionsPage = () => {
                   </div>
                 ))}
 
+                {/* Dropdown for most important side effect */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="bg-[#f0f8fa] p-4">
+                    <p className="text-gray-800 font-medium">
+                      If you had to choose one side effect <span className="underline">you would most like to avoid</span>, which would it be?
+                    </p>
+                  </div>
+                  <div className="p-4 bg-white">
+                    <div className="relative">
+                      <select
+                        value={mostImportantSideEffect || ""}
+                        onChange={(e) => setMostImportantSideEffect(e.target.value as SideEffectKey || null)}
+                        className="w-full p-3 pr-10 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer appearance-none"
+                      >
+                        <option value="">Select an option...</option>
+                        {SIDE_EFFECTS_QUESTIONS.map((question) => (
+                          <option key={question.key} value={question.key}>
+                            {question.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
                 <div className="flex justify-between pt-4">
                   <button
                     onClick={handleBackToStep1}

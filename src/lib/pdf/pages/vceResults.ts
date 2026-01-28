@@ -42,6 +42,7 @@ export const addVceResultsPage = ({ doc, vceAnswers }: PdfPageProps) => {
     distantHospitalTravel: null,
     timeAwayFromActivities: null,
   };
+  const mostImportantSideEffect = vceAnswers?.mostImportantSideEffect ?? null;
 
   // Start new page
   doc.addPage();
@@ -152,7 +153,30 @@ export const addVceResultsPage = ({ doc, vceAnswers }: PdfPageProps) => {
     currentY += Math.max(questionLines.length * 4, 6) + 2;
   });
 
-  currentY += 8;
+  // Most important side effect to avoid
+  currentY += 6;
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(60, 60, 60);
+  doc.text('Side effect you would most like to avoid:', margin, currentY);
+  currentY += 6;
+  
+  doc.setFontSize(9);
+  if (mostImportantSideEffect) {
+    const selectedLabel = SIDE_EFFECTS_QUESTIONS.find(q => q.key === mostImportantSideEffect)?.label || 'Not specified';
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 100, 0); // Green to highlight
+    const selectedLines = doc.splitTextToSize(selectedLabel, maxWidth - 10);
+    doc.text(selectedLines, margin + 5, currentY);
+    currentY += selectedLines.length * 4 + 2;
+  } else {
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(150, 150, 150);
+    doc.text('Not selected', margin + 5, currentY);
+    currentY += 6;
+  }
+
+  currentY += 10;
 
   // === Question 3: Logistics Importance ===
   doc.setFontSize(12);

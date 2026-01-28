@@ -40,6 +40,7 @@ const VCEResultsPage = () => {
     treatmentPhilosophy,
     sideEffectsImportance,
     logisticsImportance,
+    mostImportantSideEffect,
     isLoading,
     loadVceAnswers,
     reset,
@@ -236,6 +237,21 @@ const VCEResultsPage = () => {
                   ))}
                 </div>
               ))}
+
+              {/* Most Important Side Effect Selection */}
+              <div className="mt-4 p-4 bg-[#f0f8fa] border border-gray-200 rounded-lg">
+                <p className="text-gray-800 font-medium mb-2">
+                  If you had to choose one side effect <span className="underline">you would most like to avoid</span>, which would it be?
+                </p>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <span className="text-gray-700">
+                    {mostImportantSideEffect
+                      ? SIDE_EFFECTS_QUESTIONS.find((q) => q.key === mostImportantSideEffect)?.label || "Not selected"
+                      : "Not selected"}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Question 3: Logistics Importance */}
@@ -291,8 +307,14 @@ const VCEResultsPage = () => {
               ))}
             </div>
 
-            {/* Next Button */}
-            <div className="flex justify-end pt-4 border-t border-gray-200">
+            {/* Navigation Buttons */}
+            <div className="flex justify-between pt-4 border-t border-gray-200">
+              <button
+                onClick={() => navigate("/vce/questions")}
+                className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Back
+              </button>
               <button
                 onClick={handleNext}
                 className="px-8 py-2 text-sm font-semibold text-black bg-[#C2E2E9] rounded-lg hover:bg-[#a8d4de] transition-colors"

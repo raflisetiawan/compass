@@ -22,16 +22,20 @@ type LogisticsImportance = {
 
 type TreatmentPhilosophy = 'active' | 'monitoring' | null;
 
+export type SideEffectKey = keyof SideEffectsImportance;
+
 export interface VceAnswers {
   treatmentPhilosophy: TreatmentPhilosophy;
   sideEffectsImportance: SideEffectsImportance;
   logisticsImportance: LogisticsImportance;
+  mostImportantSideEffect: SideEffectKey | null;
 }
 
 type State = {
   treatmentPhilosophy: TreatmentPhilosophy;
   sideEffectsImportance: SideEffectsImportance;
   logisticsImportance: LogisticsImportance;
+  mostImportantSideEffect: SideEffectKey | null;
   isSaving: boolean;
   isLoading: boolean;
 };
@@ -40,6 +44,7 @@ type Actions = {
   setTreatmentPhilosophy: (value: TreatmentPhilosophy) => void;
   setSideEffectImportance: (key: keyof SideEffectsImportance, value: ImportanceLevel) => void;
   setLogisticsImportance: (key: keyof LogisticsImportance, value: ImportanceLevel) => void;
+  setMostImportantSideEffect: (value: SideEffectKey | null) => void;
   saveVceAnswers: () => Promise<void>;
   loadVceAnswers: () => Promise<void>;
   reset: () => void;
@@ -59,6 +64,7 @@ const initialState: State = {
     distantHospitalTravel: null,
     timeAwayFromActivities: null,
   },
+  mostImportantSideEffect: null,
   isSaving: false,
   isLoading: false,
 };
@@ -93,6 +99,8 @@ const useVceStore = create<State & Actions>((set, get) => ({
       },
     })),
 
+  setMostImportantSideEffect: (value) => set({ mostImportantSideEffect: value }),
+
   saveVceAnswers: async () => {
     const accessCode = getActiveAccessCode();
     let sessionId = useQuestionnaireStore.getState().sessionId;
@@ -117,12 +125,13 @@ const useVceStore = create<State & Actions>((set, get) => ({
         }
       }
 
-      const { treatmentPhilosophy, sideEffectsImportance, logisticsImportance } = get();
+      const { treatmentPhilosophy, sideEffectsImportance, logisticsImportance, mostImportantSideEffect } = get();
 
       const vceAnswers: VceAnswers = {
         treatmentPhilosophy,
         sideEffectsImportance,
         logisticsImportance,
+        mostImportantSideEffect,
       };
 
       await updateQuestionnaireSession(accessCode, sessionId, {
@@ -152,11 +161,12 @@ const useVceStore = create<State & Actions>((set, get) => ({
       const session = await loadLatestQuestionnaireSession(accessCode);
 
       if (session?.vceAnswers) {
-        const { treatmentPhilosophy, sideEffectsImportance, logisticsImportance } = session.vceAnswers;
+        const { treatmentPhilosophy, sideEffectsImportance, logisticsImportance, mostImportantSideEffect } = session.vceAnswers;
         set({
           treatmentPhilosophy: treatmentPhilosophy ?? null,
           sideEffectsImportance: sideEffectsImportance ?? initialState.sideEffectsImportance,
           logisticsImportance: logisticsImportance ?? initialState.logisticsImportance,
+          mostImportantSideEffect: mostImportantSideEffect ?? null,
         });
         console.log('VCE answers loaded successfully');
       } else {
