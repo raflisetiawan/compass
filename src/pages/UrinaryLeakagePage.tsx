@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
+import NoFunctionalDataMessage from "@/features/results/components/NoFunctionalDataMessage";
 import FilledSun from "@/features/results/components/FilledSun";
 import FilledDroplet from "@/features/results/components/FilledDroplet";
 import IconArray from "@/features/results/components/IconArray";
@@ -92,68 +93,74 @@ const UrinaryLeakagePageContent = () => {
 
   return (
     <>
-      <div className="text-sm text-gray-600 mb-4 space-y-2">
-        <p>
-          As men get older, some will develop urinary problems. This can happen even without prostate cancer or its treatment.
-        </p>
-        <p>
-          The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.
-        </p>
-      </div>
-      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold mb-2 text-lg">Your current urinary function:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded"> 
-          {baselineLeakageStatus === "Rarely or never" ? (
-            <FilledSun color="#FFC107" size={20} className="mr-2" />
-          ) : baselineLeakageStatus === "At least once a week" ? (
-            <FilledDroplet color="#64B5F6" size={20} className="mr-2" />
-          ) : (
-            <FilledDroplet color="#1976D2" size={20} className="mr-2" />
-          )}
-          <span>{getBaselineDisplayName(baselineLeakageStatus)}</span>
-        </div>
-      </div>
-      <Legend />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
-            <IconArray data={treatment.data} />
+      {!answers.urine_leak ? (
+        <NoFunctionalDataMessage />
+      ) : (
+        <>
+          <div className="text-sm text-gray-600 mb-4 space-y-2">
+            <p>
+              As men get older, some will develop urinary problems. This can happen even without prostate cancer or its treatment.
+            </p>
+            <p>
+              The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.
+            </p>
           </div>
-        ))}
-      </div>
-      <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
-      <UrinaryLeakageTable data={treatmentOutcomes} />
-      <Accordion type="single" collapsible className="w-full mt-6">
-        <AccordionItem value="summary">
-          <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
-          <AccordionContent>
-            <div className="text-sm text-gray-600 space-y-4">
-              <p>
-                Out of 100 men like you who are currently{" "}
-                <span className="font-semibold">{getBaselineDisplayName(baselineLeakageStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
-              </p>
-              {treatmentOutcomes.map((treatment) => (
-                <div key={treatment.name}>
-                  <p className="font-semibold">For men who choose {treatment.name}:</p>
-                  <ul className="list-disc list-inside pl-4">
-                    {treatment.data.map((outcome) => (
-                      <li key={outcome.name}>{Math.round(outcome.value)} out of 100 will be {outcome.name.toLowerCase()}.</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+          <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-lg">Your current urinary function:</h3>
+            <div className="flex items-center bg-pink-100 p-2 rounded"> 
+              {baselineLeakageStatus === "Rarely or never" ? (
+                <FilledSun color="#FFC107" size={20} className="mr-2" />
+              ) : baselineLeakageStatus === "At least once a week" ? (
+                <FilledDroplet color="#64B5F6" size={20} className="mr-2" />
+              ) : (
+                <FilledDroplet color="#1976D2" size={20} className="mr-2" />
+              )}
+              <span>{getBaselineDisplayName(baselineLeakageStatus)}</span>
             </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      {legendModalData && (
-        <IconLegendModal
-          isOpen={!!legendModalData}
-          onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data}
-        />
+          </div>
+          <Legend />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {treatmentOutcomes.map((treatment) => (
+              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
+                <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
+                <IconArray data={treatment.data} />
+              </div>
+            ))}
+          </div>
+          <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
+          <UrinaryLeakageTable data={treatmentOutcomes} />
+          <Accordion type="single" collapsible className="w-full mt-6">
+            <AccordionItem value="summary">
+              <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
+              <AccordionContent>
+                <div className="text-sm text-gray-600 space-y-4">
+                  <p>
+                    Out of 100 men like you who are currently{" "}
+                    <span className="font-semibold">{getBaselineDisplayName(baselineLeakageStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                  </p>
+                  {treatmentOutcomes.map((treatment) => (
+                    <div key={treatment.name}>
+                      <p className="font-semibold">For men who choose {treatment.name}:</p>
+                      <ul className="list-disc list-inside pl-4">
+                        {treatment.data.map((outcome) => (
+                          <li key={outcome.name}>{Math.round(outcome.value)} out of 100 will be {outcome.name.toLowerCase()}.</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          {legendModalData && (
+            <IconLegendModal
+              isOpen={!!legendModalData}
+              onClose={() => setLegendModalData(null)}
+              title={`Legend for ${legendModalData.name}`}
+              legendData={legendModalData.data}
+            />
+          )}
+        </>
       )}
     </>
   );

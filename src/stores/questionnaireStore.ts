@@ -22,6 +22,9 @@ import { calculateOutcomes } from "@/services/outcomes";
 const DEBOUNCE_DELAY = 1500;
 const SESSION_EXPIRY_HOURS = 24;
 
+// Sections that are optional and can be skipped
+export const OPTIONAL_SECTIONS = ['Urinary Function', 'Erectile Function', 'Bowel Function'];
+
 // --- Store Definition ---
 type State = {
   sections: Section[];
@@ -52,6 +55,7 @@ type Actions = {
   goToSection: (index: number) => void;
   nextQuestion: () => void;
   prevQuestion: () => void;
+  skipSection: () => void;
   loadInitialData: () => Promise<void>;
   setPatientId: (patientId: string) => void;
   saveFinalAnswers: () => Promise<void>;
@@ -142,6 +146,14 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
       });
     } else if (!isFirstQuestion) {
       set({ currentQuestionIndex: currentQuestionIndex - 1 });
+    }
+  },
+
+  skipSection: () => {
+    const { sections, currentSectionIndex } = get();
+    const isLastSection = currentSectionIndex === sections.length - 1;
+    if (!isLastSection) {
+      set({ currentSectionIndex: currentSectionIndex + 1, currentQuestionIndex: 0 });
     }
   },
 

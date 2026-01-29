@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
+import NoFunctionalDataMessage from "@/features/results/components/NoFunctionalDataMessage";
 import IconArray from "@/features/results/components/IconArray";
 import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
@@ -234,17 +235,21 @@ const ErectileFunctionPageContent = () => {
 
   return (
     <>
-      <div className="text-sm text-gray-600 mb-4 space-y-2">
-        <p>
-          As men get older, some will develop problems with erections. This can happen even without prostate cancer or its treatment.
-        </p>
-        <p>
-          The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.
-        </p>
-      </div>
-      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold mb-2 text-lg">Your current erectile function status:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded">
+      {!answers.erection_quality ? (
+        <NoFunctionalDataMessage />
+      ) : (
+        <>
+          <div className="text-sm text-gray-600 mb-4 space-y-2">
+            <p>
+              As men get older, some will develop problems with erections. This can happen even without prostate cancer or its treatment.
+            </p>
+            <p>
+              The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.
+            </p>
+          </div>
+          <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-lg">Your current erectile function status:</h3>
+            <div className="flex items-center bg-pink-100 p-2 rounded">
           <LegendIcon
             color={
               baselineStatus.includes("Firm for intercourse") ? "#1b5e20" :
@@ -311,13 +316,15 @@ const ErectileFunctionPageContent = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      {legendModalData && (
-        <IconLegendModal
-          isOpen={!!legendModalData}
-          onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data}
+          {legendModalData && (
+            <IconLegendModal
+              isOpen={!!legendModalData}
+              onClose={() => setLegendModalData(null)}
+              title={`Legend for ${legendModalData.name}`}
+              legendData={legendModalData.data}
         />
+          )}
+        </>
       )}
     </>
   );

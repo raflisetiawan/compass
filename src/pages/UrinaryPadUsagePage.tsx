@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
+import NoFunctionalDataMessage from "@/features/results/components/NoFunctionalDataMessage";
 import IconArray from "@/features/results/components/IconArray";
 import padUsageData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
@@ -100,64 +101,70 @@ const UrinaryPadUsagePageContent = () => {
 
   return (
     <>
-      <p className="text-sm text-gray-600 mb-4">
-        The following graphs represents 100 men with the same pad usage as you. The icon plot shows how their pad usage status changes at 1 year from starting their prostate cancer treatment.
-      </p>
-      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold mb-2 text-lg">Your current use of pad and leaking status:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded">
-          <LegendIcon
-            color={
-              baselinePadStatus.includes("two or more") ? "#D32F2F" :
-                baselinePadStatus.includes("one pad") ? "#FBC02D" :
-                  "#1B5E20"
-            }
-            name={baselinePadStatus}
-          />
-          <span className="ml-2">{getBaselineDisplayName(baselinePadStatus)}</span>
-        </div>
-      </div>
-      <Legend />
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-            <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
-            <IconArray data={treatment.data} />
-          </div>
-        ))}
-      </div>
-      <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
-      <UrinaryPadUsageTable data={treatmentOutcomes} />
-      <Accordion type="single" collapsible className="w-full mt-6">
-        <AccordionItem value="summary">
-          <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
-          <AccordionContent>
-            <div className="text-sm text-gray-600 space-y-4">
-              <p>
-                Out of 100 men like you who are currently{" "}
-                <span className="font-semibold">{getBaselineDisplayName(baselinePadStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
-              </p>
-              {treatmentOutcomes.map((treatment) => (
-                <div key={treatment.name}>
-                  <p className="font-semibold">For men who choose {treatment.name}:</p>
-                  <ul className="list-disc list-inside pl-4">
-                    {treatment.data.map((outcome) => (
-                      <li key={outcome.name}>{Math.round(outcome.value)} out of 100: {outcome.name}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+      {!answers.pad_usage ? (
+        <NoFunctionalDataMessage />
+      ) : (
+        <>
+          <p className="text-sm text-gray-600 mb-4">
+            The following graphs represents 100 men with the same pad usage as you. The icon plot shows how their pad usage status changes at 1 year from starting their prostate cancer treatment.
+          </p>
+          <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-lg">Your current use of pad and leaking status:</h3>
+            <div className="flex items-center bg-pink-100 p-2 rounded">
+              <LegendIcon
+                color={
+                  baselinePadStatus.includes("two or more") ? "#D32F2F" :
+                    baselinePadStatus.includes("one pad") ? "#FBC02D" :
+                      "#1B5E20"
+                }
+                name={baselinePadStatus}
+              />
+              <span className="ml-2">{getBaselineDisplayName(baselinePadStatus)}</span>
             </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      {legendModalData && (
-        <IconLegendModal
-          isOpen={!!legendModalData}
-          onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data}
-        />
+          </div>
+          <Legend />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {treatmentOutcomes.map((treatment) => (
+              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
+                <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
+                <IconArray data={treatment.data} />
+              </div>
+            ))}
+          </div>
+          <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
+          <UrinaryPadUsageTable data={treatmentOutcomes} />
+          <Accordion type="single" collapsible className="w-full mt-6">
+            <AccordionItem value="summary">
+              <AccordionTrigger className="font-bold text-lg">Summary</AccordionTrigger>
+              <AccordionContent>
+                <div className="text-sm text-gray-600 space-y-4">
+                  <p>
+                    Out of 100 men like you who are currently{" "}
+                    <span className="font-semibold">{getBaselineDisplayName(baselinePadStatus).toLowerCase()}</span>, the outcomes at 1 year after treatment are:
+                  </p>
+                  {treatmentOutcomes.map((treatment) => (
+                    <div key={treatment.name}>
+                      <p className="font-semibold">For men who choose {treatment.name}:</p>
+                      <ul className="list-disc list-inside pl-4">
+                        {treatment.data.map((outcome) => (
+                          <li key={outcome.name}>{Math.round(outcome.value)} out of 100: {outcome.name}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          {legendModalData && (
+            <IconLegendModal
+              isOpen={!!legendModalData}
+              onClose={() => setLegendModalData(null)}
+              title={`Legend for ${legendModalData.name}`}
+              legendData={legendModalData.data}
+            />
+          )}
+        </>
       )}
     </>
   );

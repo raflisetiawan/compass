@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card } from "@/components/ui/card"
-import { useQuestionnaireStore } from "@/stores/questionnaireStore"
+import { useQuestionnaireStore, OPTIONAL_SECTIONS } from "@/stores/questionnaireStore"
 import { CheckCircle2, Lock } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -16,8 +16,10 @@ const MobileSectionSelector = () => {
     if (sectionIndex === 0) return true;
     for (let i = 0; i < sectionIndex; i++) {
       const prevSection = sections[i];
+      const prevIsOptional = OPTIONAL_SECTIONS.includes(prevSection.section);
       const prevQuestionsAnswered = prevSection.questions.filter((q) => answers[q.id] !== undefined).length;
-      if (prevQuestionsAnswered !== prevSection.questions.length) {
+      // Optional sections don't block the next section
+      if (prevQuestionsAnswered !== prevSection.questions.length && !prevIsOptional) {
         return false;
       }
     }
@@ -48,7 +50,14 @@ const MobileSectionSelector = () => {
                       !isUnlocked && "cursor-not-allowed text-gray-400"
                     )}
                   >
-                    <span>{section.section}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{section.section}</span>
+                      {OPTIONAL_SECTIONS.includes(section.section) && (
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-500 rounded">
+                          Optional
+                        </span>
+                      )}
+                    </div>
                     {isUnlocked ? 
                       (isCompleted && <CheckCircle2 className="h-5 w-5 text-green-500" />) : 
                       <Lock className="h-5 w-5 text-gray-400" />

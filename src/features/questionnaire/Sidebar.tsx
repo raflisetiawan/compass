@@ -2,7 +2,7 @@ import { CheckCircle2, Clock, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { useQuestionnaireStore } from '@/stores/questionnaireStore';
+import { useQuestionnaireStore, OPTIONAL_SECTIONS } from '@/stores/questionnaireStore';
 import type { Section } from '@/types/questionnaire';
 
 type Status = 'COMPLETED' | 'ON GOING' | 'LOCKED';
@@ -15,6 +15,7 @@ interface SidebarItemProps {
   isActive?: boolean;
   onClick?: () => void;
   isDisabled?: boolean;
+  isOptional?: boolean;
 }
 
 const statusStyles: Record<Status, string> = {
@@ -23,7 +24,7 @@ const statusStyles: Record<Status, string> = {
   LOCKED: 'bg-gray-100 text-gray-500 hover:bg-gray-100',
 };
 
-const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisabled }: SidebarItemProps) => (
+const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisabled, isOptional }: SidebarItemProps) => (
   <button
     onClick={onClick}
     disabled={isDisabled}
@@ -37,7 +38,14 @@ const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisab
       {icon}
     </div>
     <div className="flex-grow">
-      <p className="font-semibold">{title}</p>
+      <div className="flex items-center gap-2">
+        <p className="font-semibold">{title}</p>
+        {isOptional && (
+          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-500 rounded">
+            Optional
+          </span>
+        )}
+      </div>
       <p className="text-sm text-gray-500">{subtitle}</p>
     </div>
     <Badge className={cn('font-bold', statusStyles[status])}>{status}</Badge>
@@ -63,6 +71,7 @@ const Sidebar = () => {
   const getSectionStatus = (section: Section, index: number): { status: Status; isUnlocked: boolean } => {
     const allQuestionsAnswered = section.questions.every((q) => answers[q.id] !== undefined);
 
+
     if (allQuestionsAnswered) {
       return { status: 'COMPLETED', isUnlocked: true };
     }
@@ -71,8 +80,10 @@ const Sidebar = () => {
     let allPreviousComplete = true;
     for (let i = 0; i < index; i++) {
       const prevSection = sections[i];
+      const prevIsOptional = OPTIONAL_SECTIONS.includes(prevSection.section);
       const allPrevAnswered = prevSection.questions.every((q) => answers[q.id] !== undefined);
-      if (!allPrevAnswered) {
+      // Optional sections don't block the next section
+      if (!allPrevAnswered && !prevIsOptional) {
         allPreviousComplete = false;
         break;
       }
@@ -82,7 +93,7 @@ const Sidebar = () => {
       // This is the first section that is not complete, so it's ongoing.
       return { status: 'ON GOING', isUnlocked: true };
     } else {
-      // A previous section is not yet complete.
+      // A previous required section is not yet complete.
       return { status: 'LOCKED', isUnlocked: false };
     }
   };
@@ -105,6 +116,7 @@ const Sidebar = () => {
                 icon={getIcon(status)}
                 isActive={index === currentSectionIndex}
                 isDisabled={!isUnlocked}
+                isOptional={OPTIONAL_SECTIONS.includes(section.section)}
                 onClick={() => isUnlocked && goToSection(index)}
               />
             );

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
+import NoFunctionalDataMessage from "@/features/results/components/NoFunctionalDataMessage";
 import IconArray from "@/features/results/components/IconArray";
 import erectileBotherData from "@/assets/erectile_bother.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
@@ -93,25 +94,29 @@ const SexualBotherPageContent = () => {
 
   return (
     <>
-      <p className="text-sm text-gray-600 mb-4">
-        The following graphs represent 100 men with the same degree of bother with their erectile function as you. The icon plot shows how the degree of their sexual bother changes at 1 year from starting their prostate cancer treatment.
-      </p>
-      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold mb-2 text-lg">Your current sexual bother status:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded">
-          <LegendIcon
-            color={
-              baselineBotherStatus === "No problem" ? "#1b5e20" :
-                baselineBotherStatus === "Very/small problem" ? "#ffc107" :
-                  "#dc3545"
-            }
-            name={baselineBotherStatus}
-          />
-          <span className="ml-2">{getBaselineDisplayName(baselineBotherStatus)}</span>
-        </div>
-      </div>
-      <Legend />
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      {!answers.erection_bother ? (
+        <NoFunctionalDataMessage />
+      ) : (
+        <>
+          <p className="text-sm text-gray-600 mb-4">
+            The following graphs represent 100 men with the same degree of bother with their erectile function as you. The icon plot shows how the degree of their sexual bother changes at 1 year from starting their prostate cancer treatment.
+          </p>
+          <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-lg">Your current sexual bother status:</h3>
+            <div className="flex items-center bg-pink-100 p-2 rounded">
+              <LegendIcon
+                color={
+                  baselineBotherStatus === "No problem" ? "#1b5e20" :
+                    baselineBotherStatus === "Very/small problem" ? "#ffc107" :
+                      "#dc3545"
+                }
+                name={baselineBotherStatus}
+              />
+              <span className="ml-2">{getBaselineDisplayName(baselineBotherStatus)}</span>
+            </div>
+          </div>
+          <Legend />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
             <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
@@ -144,13 +149,15 @@ const SexualBotherPageContent = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      {legendModalData && (
-        <IconLegendModal
-          isOpen={!!legendModalData}
-          onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data}
-        />
+          {legendModalData && (
+            <IconLegendModal
+              isOpen={!!legendModalData}
+              onClose={() => setLegendModalData(null)}
+              title={`Legend for ${legendModalData.name}`}
+              legendData={legendModalData.data}
+            />
+          )}
+        </>
       )}
     </>
   );

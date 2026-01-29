@@ -48,6 +48,8 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 ### 1. Multi-Step Questionnaire
 - Clinical data input (Age, PSA, Gleason Score, T-Stage, etc.)
 - Baseline functional assessment (urinary, erectile, bowel function)
+- **Optional functional sections**: Urinary, Erectile, and Bowel function questions can be skipped
+- "Skip Section" button for optional sections
 - Form validation with immediate feedback
 
 ### 2. Personalized Results Dashboard
@@ -66,6 +68,7 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - Icon plots showing outcomes for 100 men with similar characteristics
 - Color-coded predictions for different severity levels
 - Responsive data tables
+- **Conditional display**: Shows informative message when functional data is not provided
 
 ### 4. PDF Export
 - Comprehensive summary of patient data and predictions
@@ -91,6 +94,11 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - **reCAPTCHA v2** checkbox protection on login to prevent automated access
 - "I'm not a robot" verification with optional puzzle challenges
 - Google Privacy Policy and Terms of Service attribution included
+
+### 8. Baseline Function Sidebar
+- Displays patient's baseline urinary, erectile, and bowel function
+- Shows "Not answered" for skipped optional questions
+- Includes all functional parameters: leakage, pad usage, urinary bother, erectile function, sexual medication, erectile bother, bowel urgency, and bowel bother
 
 ## 📦 Installation
 

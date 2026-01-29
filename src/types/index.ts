@@ -6,7 +6,7 @@ export type User = {
 };
 
 export type ClinicalParameters = { [key: string]: string | number };
-export type BaselineFunction = { [key: string]: string | number };
+export type BaselineFunction = { [key: string]: string | number | undefined };
 export type ModalContentType = null | "clinical" | "baseline";
 
 export interface SurvivalData {

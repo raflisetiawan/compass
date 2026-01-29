@@ -15,7 +15,11 @@ export const BaselineFunctionContent = ({
             .replace(/([A-Z])/g, " $1")
             .replace(/^./, (str) => str.toUpperCase())}
         </p>
-        <p className="font-bold">{String(value)}</p>
+        {value ? (
+          <p className="font-bold">{String(value)}</p>
+        ) : (
+          <p className="text-sm italic text-gray-400">Not answered</p>
+        )}
       </div>
     ))}
   </div>

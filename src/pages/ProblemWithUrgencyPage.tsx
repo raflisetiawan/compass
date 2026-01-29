@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FunctionalOutcomePageLayout } from "@/layouts/FunctionalOutcomePageLayout";
 import { useOutcomePageData } from "@/hooks/useOutcomePageData";
+import NoFunctionalDataMessage from "@/features/results/components/NoFunctionalDataMessage";
 import IconArray from "@/features/results/components/IconArray";
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
@@ -98,30 +99,34 @@ const ProblemWithUrgencyPageContent = () => {
 
   return (
     <>
-      <div className="text-sm text-gray-600 mb-4 space-y-2">
-        <p>
-          As men get older, some will develop problems with their bowel function. This can happen even without prostate cancer or its treatment.
-        </p>
-        <p>
-          The following graphs represent 100 men with the same problem with bowel urgency as you. The icon plot show how their degree of problem with bowel urgency changes at 1 year from starting their prostate cancer treatment.
-        </p>
-      </div>
-      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold mb-2 text-lg">Your current problem with bowel urgency status:</h3>
-        <div className="flex items-center bg-pink-100 p-2 rounded">
-          <LegendIcon
-            color={
-              baselineStatus === "No_problem" ? "#1b5e20" :
-                baselineStatus === "Very_small_problem" ? "#ffc107" :
-                  "#dc3545"
-            }
-            name={baselineStatus}
-          />
-          <span className="ml-2">{getBaselineDisplayName(baselineStatus)}</span>
-        </div>
-      </div>
-      <Legend />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      {!answers.bowel_urgency ? (
+        <NoFunctionalDataMessage />
+      ) : (
+        <>
+          <div className="text-sm text-gray-600 mb-4 space-y-2">
+            <p>
+              As men get older, some will develop problems with their bowel function. This can happen even without prostate cancer or its treatment.
+            </p>
+            <p>
+              The following graphs represent 100 men with the same problem with bowel urgency as you. The icon plot show how their degree of problem with bowel urgency changes at 1 year from starting their prostate cancer treatment.
+            </p>
+          </div>
+          <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold mb-2 text-lg">Your current problem with bowel urgency status:</h3>
+            <div className="flex items-center bg-pink-100 p-2 rounded">
+              <LegendIcon
+                color={
+                  baselineStatus === "No_problem" ? "#1b5e20" :
+                    baselineStatus === "Very_small_problem" ? "#ffc107" :
+                      "#dc3545"
+                }
+                name={baselineStatus}
+              />
+              <span className="ml-2">{getBaselineDisplayName(baselineStatus)}</span>
+            </div>
+          </div>
+          <Legend />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
             <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
@@ -153,13 +158,15 @@ const ProblemWithUrgencyPageContent = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      {legendModalData && (
-        <IconLegendModal
-          isOpen={!!legendModalData}
-          onClose={() => setLegendModalData(null)}
-          title={`Legend for ${legendModalData.name}`}
-          legendData={legendModalData.data}
-        />
+          {legendModalData && (
+            <IconLegendModal
+              isOpen={!!legendModalData}
+              onClose={() => setLegendModalData(null)}
+              title={`Legend for ${legendModalData.name}`}
+              legendData={legendModalData.data}
+            />
+          )}
+        </>
       )}
     </>
   );

@@ -24,14 +24,14 @@ export const useFetchOutcomePageData = () => {
   };
 
   const baselineGenitoUrinaryBowelFunction: BaselineFunction = {
-    Leakage: answers.urine_leak || "Rarely or never",
-    "Urinary pad use": answers.pad_usage || "No pads",
-    "Bother with urinary function": answers.urine_problem || "Not a problem",
-    "Erectile function":
-      answers.erection_quality || "Sufficient erections for intercourse",
-    "Sexual medication or devices": answers.sex_medication || "None",
-    "Bother with erectile function": answers.erection_bother || "Not a problem",
-    "Bother with bowel function": answers.bowel_bother || "Not a problem",
+    Leakage: answers.urine_leak,
+    "Urinary pad use": answers.pad_usage,
+    "Bother with urinary function": answers.urine_problem,
+    "Erectile function": answers.erection_quality,
+    "Sexual medication or devices": answers.sex_medication,
+    "Bother with erectile function": answers.erection_bother,
+    "Problem with bowel urgency": answers.bowel_urgency,
+    "Bother with bowel function": answers.bowel_bother,
   };
 
   return {
