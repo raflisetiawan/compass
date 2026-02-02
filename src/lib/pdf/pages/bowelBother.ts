@@ -11,6 +11,21 @@ export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPagePr
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same degree of bother with their bowel function as you. The icon plot shows how the degree of their bowel bother changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Check if bowel bother question was answered
+    if (!answers.bowel_bother) {
+        // Display "Data not available" message
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(128, 128, 128);
+        doc.text('Data not available', margin, 50);
+        doc.setFontSize(10);
+        doc.text('The bowel bother question was not answered in the questionnaire.', margin, 60);
+        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        return;
+    }
+
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
         if (status === "No problem") return "No problem";
@@ -27,9 +42,9 @@ export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPagePr
     };
 
     const baselineBowelBotherStatus = (() => {
-        const bother = answers.bowel_bother || "Not a problem";
-        if (String(bother).includes("Moderate") || String(bother).includes("big")) return "Moderate/big problem";
-        if (String(bother).includes("Very") || String(bother).includes("small")) return "Very/small problem";
+        const bother = answers.bowel_bother;
+        if (String(bother).includes("Moderate") || String(bother).includes("big") || String(bother).includes("Big")) return "Moderate/big problem";
+        if (String(bother).includes("Very") || String(bother).includes("small") || String(bother).includes("Small")) return "Very/small problem";
         return "No problem";
     })();
 

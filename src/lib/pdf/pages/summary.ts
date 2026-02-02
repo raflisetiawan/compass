@@ -20,7 +20,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     // Define table headers
     // --- Helper functions for Current Status ---
     const getLeakageText = (a: typeof answers) => {
-        const val = String(a.urine_leak || "").toLowerCase();
+        if (!a.urine_leak) return "Not\nanswered";
+        const val = String(a.urine_leak).toLowerCase();
         if (val.includes("rarely") || val.includes("never")) return "No\nleakage";
         if (val.includes("day")) return "Daily\nleakage";
         if (val.includes("week")) return "Weekly\nleakage";
@@ -28,7 +29,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getPadText = (a: typeof answers) => {
-        const val = String(a.pad_usage || "").toLowerCase();
+        if (!a.pad_usage) return "Not\nanswered";
+        const val = String(a.pad_usage).toLowerCase();
         if (val.includes("0") || val.includes("no")) return "No pad";
         if (val.includes("1")) return "1 pad";
         if (val.includes("2")) return "2+ pads";
@@ -36,7 +38,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getUrinaryBotherText = (a: typeof answers) => {
-        const val = String(a.urine_problem || "").toLowerCase();
+        if (!a.urine_problem) return "Not\nanswered";
+        const val = String(a.urine_problem).toLowerCase();
         if (val.includes("no")) return "No\nbother";
         if (val.includes("small") || val.includes("very")) return "Small\nbother";
         if (val.includes("moderate") || val.includes("big")) return "Big\nbother";
@@ -44,7 +47,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getErectionText = (a: typeof answers) => {
-        const val = String(a.erection_quality || "").toLowerCase();
+        if (!a.erection_quality) return "Not\nanswered";
+        const val = String(a.erection_quality).toLowerCase();
         if (val.includes("intercourse")) return "Good\nerections";
         if (val.includes("masturbation")) return "Poor\nerections";
         if (val.includes("none") || val.includes("not firm")) return "None";
@@ -52,7 +56,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getSexualBotherText = (a: typeof answers) => {
-        const val = String(a.erection_bother || "").toLowerCase();
+        if (!a.erection_bother) return "Not\nanswered";
+        const val = String(a.erection_bother).toLowerCase();
         if (val.includes("no")) return "No\nproblem";
         if (val.includes("small") || val.includes("very")) return "Small\nproblem";
         if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";
@@ -60,7 +65,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getBowelUrgencyText = (a: typeof answers) => {
-        const val = String(a.bowel_urgency || "").toLowerCase();
+        if (!a.bowel_urgency) return "Not\nanswered";
+        const val = String(a.bowel_urgency).toLowerCase();
         if (val.includes("no")) return "No\nproblem";
         if (val.includes("small") || val.includes("very")) return "Small\nproblem";
         if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";
@@ -68,7 +74,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     };
 
     const getBowelBotherText = (a: typeof answers) => {
-        const val = String(a.bowel_bother || "").toLowerCase();
+        if (!a.bowel_bother) return "Not\nanswered";
+        const val = String(a.bowel_bother).toLowerCase();
         if (val.includes("no")) return "No\nproblem";
         if (val.includes("small") || val.includes("very")) return "Small\nproblem";
         if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";

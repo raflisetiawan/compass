@@ -11,6 +11,21 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same problem with bowel urgency as you. The icon plot show how their degree of problem with bowel urgency changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Check if bowel urgency question was answered
+    if (!answers.bowel_urgency) {
+        // Display "Data not available" message
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(128, 128, 128);
+        doc.text('Data not available', margin, 50);
+        doc.setFontSize(10);
+        doc.text('The bowel urgency question was not answered in the questionnaire.', margin, 60);
+        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        return;
+    }
+
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
         if (status === "No_problem") return "No problem";
@@ -27,10 +42,10 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
     };
 
     const baselineUrgencyStatus = (() => {
-        const urgency = answers.bowel_urgency || "No problem";
-        if (urgency === "No problem") return "No_problem";
-        if (urgency === "Very small" || urgency === "Small") return "Very_small_problem";
-        if (urgency === "Moderate" || urgency === "Big problem") return "Moderate_big_problem";
+        const urgency = answers.bowel_urgency;
+        if (String(urgency).includes("No problem") || String(urgency).includes("Not a problem")) return "No_problem";
+        if (String(urgency).includes("Very") || String(urgency).includes("small") || String(urgency).includes("Small")) return "Very_small_problem";
+        if (String(urgency).includes("Moderate") || String(urgency).includes("Big") || String(urgency).includes("big")) return "Moderate_big_problem";
         return "No_problem";
     })();
 

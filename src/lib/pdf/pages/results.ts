@@ -23,7 +23,7 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
     
     // Helper function to format value with unit
     const formatValueWithUnit = (value: string | number | undefined, unit: string): string => {
-        if (!value || value === 'Unknown') return 'Unknown';
+        if (!value || value === 'Unknown') return 'Not answered';
         return unit ? `${value} ${unit}` : String(value);
     };
     
@@ -57,7 +57,7 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
         { id: 'bowel_bother', label: 'Bother with bowel function' },
     ];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const baselineFunctionsBody = baselineFunctions.map(func => [func.label, (answers as any)[func.id] || 'Unknown']);
+    const baselineFunctionsBody = baselineFunctions.map(func => [func.label, (answers as any)[func.id] || 'Not answered']);
     autoTable(doc, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         startY: (doc as any).lastAutoTable.finalY + 10,

@@ -11,6 +11,21 @@ export const addUrinaryPadPage = ({ doc, answers, margin, pdfWidth }: PdfPagePro
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same pad usage as you. The icon plot shows how their pad usage changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Check if urinary pad usage question was answered
+    if (!answers.pad_usage) {
+        // Display "Data not available" message
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(128, 128, 128);
+        doc.text('Data not available', margin, 50);
+        doc.setFontSize(10);
+        doc.text('The urinary pad usage question was not answered in the questionnaire.', margin, 60);
+        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        return;
+    }
+
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
         if (status === "Not using pad") return "No use of pad; rarely or never leaking urine";
@@ -27,8 +42,8 @@ export const addUrinaryPadPage = ({ doc, answers, margin, pdfWidth }: PdfPagePro
     };
 
     const baselinePadStatus = (() => {
-        const padUsage = answers.pad_usage || 'No pads';
-        if (String(padUsage).includes("2 or more")) return "Using two or more pads a day";
+        const padUsage = answers.pad_usage;
+        if (String(padUsage).includes("2 or more") || String(padUsage).includes("3 or more")) return "Using two or more pads a day";
         if (String(padUsage).includes("1 pad")) return "Using one pad a day";
         return "Not using pad";
     })();

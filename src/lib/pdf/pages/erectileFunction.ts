@@ -11,8 +11,23 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Check if erectile function question was answered
+    if (!answers.erection_quality) {
+        // Display "Data not available" message
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(128, 128, 128);
+        doc.text('Data not available', margin, 50);
+        doc.setFontSize(10);
+        doc.text('The erectile function question was not answered in the questionnaire.', margin, 60);
+        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        return;
+    }
+
     const baselineErectileStatus = (() => {
-        const quality = answers.erection_quality || "Firm enough for intercourse";
+        const quality = answers.erection_quality;
         const useMedication = answers.sex_medication === "Yes";
 
         if (quality === "Firm enough for intercourse") {

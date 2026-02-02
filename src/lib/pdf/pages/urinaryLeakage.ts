@@ -11,6 +11,21 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     doc.setFontSize(10);
     doc.text('The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
+    // Check if urinary leakage question was answered
+    if (!answers.urine_leak) {
+        // Display "Data not available" message
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(128, 128, 128);
+        doc.text('Data not available', margin, 50);
+        doc.setFontSize(10);
+        doc.text('The urinary leakage question was not answered in the questionnaire.', margin, 60);
+        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        return;
+    }
+
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
         if (status === "Rarely or never") return "Rarely or never leaking";
@@ -27,7 +42,7 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     };
 
     const baselineLeakageStatus = (() => {
-        const leakage = answers.urine_leak || "Rarely or never";
+        const leakage = answers.urine_leak;
         if (String(leakage).includes("day")) return "At least once a day";
         if (String(leakage).includes("week")) return "At least once a week";
         return "Rarely or never";
@@ -142,3 +157,4 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
         summaryY += (splitText.length * 5) + 5;
     });
 };
+
