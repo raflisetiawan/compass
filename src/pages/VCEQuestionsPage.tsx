@@ -47,8 +47,8 @@ const VCEQuestionsPage = () => {
     setCurrentStep(2);
   };
 
-  const handleBackToIntro = () => {
-    navigate("/vce/intro");
+  const handleBackToQuestionnaire = () => {
+    navigate("/questionnaire");
   };
 
   const handleBackToStep1 = () => {
@@ -160,7 +160,7 @@ const VCEQuestionsPage = () => {
 
                 <div className="flex justify-start pt-4">
                   <button
-                    onClick={handleBackToIntro}
+                    onClick={handleBackToQuestionnaire}
                     className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     Back

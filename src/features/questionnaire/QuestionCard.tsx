@@ -65,7 +65,7 @@ const QuestionCard = () => {
 
     if (isLastQuestion && isLastSection) {
       await saveFinalAnswers();
-      navigate("/results");
+      navigate("/vce/intro");
     } else {
       nextQuestion();
     }
@@ -75,7 +75,7 @@ const QuestionCard = () => {
     const isLastSection = currentSectionIndex === sections.length - 1;
     if (isLastSection) {
       await saveFinalAnswers();
-      navigate("/results");
+      navigate("/vce/intro");
     } else {
       skipSection();
     }

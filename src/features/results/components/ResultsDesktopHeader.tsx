@@ -21,12 +21,12 @@ export const ResultsDesktopHeader = () => {
     setShowWarningDialog(true);
   };
 
-  const handleConfirmGenerate = async () => {
+  const handleConfirmGenerate = async (includeVce: boolean) => {
     setShowWarningDialog(false);
     setIsGenerating(true);
     setProgress(0);
     try {
-      await generatePdf((p) => setProgress(p));
+      await generatePdf((p) => setProgress(p), { includeVce });
     } catch (error) {
       console.error("Failed to generate PDF:", error);
     } finally {

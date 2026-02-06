@@ -67,7 +67,7 @@ const VCEResultsPage = () => {
 
   const handleStartOver = () => {
     reset();
-    navigate("/vce/intro");
+    navigate("/vce/questions");
   };
 
   const handleDownload = () => {
@@ -76,7 +76,7 @@ const VCEResultsPage = () => {
   };
 
   const handleNext = () => {
-    navigate("/treatment-options/definition");
+    navigate("/functional-outcome/survival-after-prostate-cancer-treatment");
   };
 
   return (

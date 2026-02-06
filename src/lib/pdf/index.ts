@@ -18,7 +18,12 @@ import { addBowelUrgencyPage } from './pages/bowelUrgency';
 import { addBowelBotherPage } from './pages/bowelBother';
 
 
-export const generatePdf = async (onProgress?: (progress: number) => void) => {
+export interface PdfGenerationOptions {
+    includeVce?: boolean;
+}
+
+export const generatePdf = async (onProgress?: (progress: number) => void, options?: PdfGenerationOptions) => {
+    const { includeVce = true } = options || {};
     const doc = new jsPDF({
         compress: true // Enable PDF compression
     });
@@ -70,7 +75,7 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
         vceAnswers,
     };
 
-    const totalSteps = 13;
+    const totalSteps = includeVce ? 13 : 12;
     let currentStep = 0;
 
     const updateProgress = () => {
@@ -86,18 +91,21 @@ export const generatePdf = async (onProgress?: (progress: number) => void) => {
     addIntroductionPage(pageProps);
     updateProgress();
 
-    // Page 2: VCE Results (What is most important to me?)
-    addVceResultsPage(pageProps);
-    updateProgress();
-
-    // === B) Information on treatment options (all four tables) ===
-    // Pages 3-4: Treatment Options tables
-    addTreatmentOptionsPages(pageProps);
-    updateProgress();
-
-    // === C) Answers to pre-treatment assessment questions ===
-    // Page 4: Results (no heavy processing)
+    // === B) Answers to pre-treatment assessment questions ===
+    // Page 2: Pre-treatment Assessment Results
     addResultsPage(pageProps);
+    updateProgress();
+
+    // === C) VCE Results (What is most important to me?) ===
+    // Page 3: VCE Results - comes after main questionnaire results (optional)
+    if (includeVce) {
+        addVceResultsPage(pageProps);
+        updateProgress();
+    }
+
+    // === D) Information on treatment options (all four tables) ===
+    // Pages 4-5: Treatment Options tables
+    addTreatmentOptionsPages(pageProps);
     updateProgress();
 
     // === D) Result of predicted outcomes ===

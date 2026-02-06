@@ -73,6 +73,7 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 ### 4. PDF Export
 - Comprehensive summary of patient data and predictions
 - **VCE Results**: Treatment preferences and importance ratings
+- **Optional VCE inclusion**: Checkbox option to include/exclude VCE results in PDF
 - Includes all visualizations and outcomes
 - Optimized for clinical consultation
 
@@ -83,9 +84,11 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 
 ### 6. Value Clarification Exercise (VCE)
 - Multi-step questionnaire to help patients reflect on treatment preferences
+- **Placement**: VCE now appears **after the main questionnaire** (not before)
 - **Question 1**: Treatment philosophy choice (active treatment vs. monitoring)
 - **Question 2**: Side effects importance ratings (5 items: urinary leakage, frequency, bowel issues, energy, erectile)
 - **Question 3**: Logistics importance ratings (3 items: daily travel, distant travel, time away from activities)
+- **Most Important Side Effect Dropdown**: Additional question to select the single most important side effect to avoid
 - **VCE Results Page**: Read-only summary of all answers sorted by importance level
 - Answers automatically saved to Firestore session
 - VCE answers included in PDF export with simplified, document-friendly layout
@@ -276,13 +279,25 @@ The application is fully responsive with specific optimizations for:
 ## 🎯 User Journey
 
 1. **Landing Page** - Introduction to the tool
-2. **Login** - Access code authentication
-3. **Value Clarification Exercise** - Reflect on treatment preferences (VCE)
-4. **Treatment Options** - Learn about available treatments
+2. **Login** - Access code authentication with reCAPTCHA
+3. **Personalized Info Intro** - Brief introduction to personalized information
+4. **Treatment Options** - Learn about available treatments (definitions, etc.)
 5. **Clinical Data Input** - Multi-step form for patient characteristics
-6. **Functional Baseline** - Current quality of life assessment
-7. **Results Dashboard** - Personalized predictions for all treatments
-8. **PDF Export** - Download comprehensive summary
+6. **Functional Baseline** - Current quality of life assessment (optional sections)
+7. **Value Clarification Exercise (VCE)** - Reflect on treatment preferences
+8. **VCE Results** - Summary of importance ratings and side effect preferences
+9. **Functional Outcomes** - Sequential pages with Back/Next navigation:
+   - Survival after prostate cancer treatment
+   - Risk & Retreatment Equations
+   - Leaking urine at 1 year
+   - Use of urinary pads at 1 year
+   - Urinary Bother
+   - Erectile function at 1 year
+   - Bother with erectile function at 1 year
+   - Problem with bowel urgency at 1 year
+   - Bowel bother at 1 year
+   - Final Summary Table
+10. **PDF Export** - Download comprehensive summary (with optional VCE inclusion)
 
 ## 🐛 Known Issues & Limitations
 
