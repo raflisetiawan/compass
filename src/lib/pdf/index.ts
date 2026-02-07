@@ -96,13 +96,6 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
     addResultsPage(pageProps);
     updateProgress();
 
-    // === C) VCE Results (What is most important to me?) ===
-    // Page 3: VCE Results - comes after main questionnaire results (optional)
-    if (includeVce) {
-        addVceResultsPage(pageProps);
-        updateProgress();
-    }
-
     // === D) Information on treatment options (all four tables) ===
     // Pages 4-5: Treatment Options tables
     addTreatmentOptionsPages(pageProps);
@@ -145,6 +138,13 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
     // Page 13: Summary table (Functional Outcomes summary)
     addSummaryPage(pageProps);
     updateProgress();
+
+       // === C) VCE Results (What is most important to me?) ===
+    // Page 3: VCE Results - comes after main questionnaire results (optional)
+    if (includeVce) {
+        addVceResultsPage(pageProps);
+        updateProgress();
+    }
 
     // Add User ID and Timestamp to all pages
     const totalPages = doc.getNumberOfPages();
