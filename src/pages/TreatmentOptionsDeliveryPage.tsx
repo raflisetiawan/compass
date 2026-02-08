@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import BeSpokeLogo from "@/components/BeSpokeLogo";
@@ -8,6 +9,10 @@ import { Button } from "@/components/ui/button";
 
 const TreatmentOptionsDeliveryPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Treatment Delivery | BeSpoke";
+  }, []);
 
   const treatments = [
     {
