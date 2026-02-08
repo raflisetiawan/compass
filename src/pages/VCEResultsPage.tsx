@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, RotateCcw, Download, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import BeSpokeLogo from "../components/BeSpokeLogo";
 import Footer from "../components/Footer";
 import { useVceStore } from "../stores/vceStore";
@@ -84,7 +84,6 @@ const VCEResultsPage = () => {
     mostImportantSideEffect,
     isLoading,
     loadVceAnswers,
-    reset,
   } = useVceStore();
 
   // Load VCE answers from Firebase on mount
@@ -105,16 +104,6 @@ const VCEResultsPage = () => {
     const bValue = logisticsImportance[b.key];
     return IMPORTANCE_ORDER[aValue ?? "null"] - IMPORTANCE_ORDER[bValue ?? "null"];
   });
-
-  const handleStartOver = () => {
-    reset();
-    navigate("/vce/questions");
-  };
-
-  const handleDownload = () => {
-    // TODO: Implement PDF download
-    console.log("Download functionality to be implemented");
-  };
 
   const handleNext = () => {
     navigate("/functional-outcome/survival-after-prostate-cancer-treatment");
