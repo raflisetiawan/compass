@@ -48,39 +48,39 @@ export const ResultsMobileHeader = ({
 
     return (
         <>
-            <div className="md:hidden mb-4 space-y-4">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Results</h1>
-                    <div className="flex gap-2">
-                        <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating}>
-                            <RefreshCw className="h-4 w-4" />
+            <div className="md:hidden mb-4 space-y-3 overflow-hidden">
+                <div className="flex justify-between items-center gap-2">
+                    <h2 className="text-xl font-bold flex-shrink-0">Results</h2>
+                    <div className="flex gap-1.5 flex-wrap justify-end">
+                        <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating} className="h-8 w-8">
+                            <RefreshCw className="h-3.5 w-3.5" />
                         </Button>
-                        <Button variant="outline" size="icon" onClick={handleSummaryClick} disabled={isGenerating}>
-                            <TableProperties className="h-4 w-4" />
+                        <Button variant="outline" size="icon" onClick={handleSummaryClick} disabled={isGenerating} className="h-8 w-8">
+                            <TableProperties className="h-3.5 w-3.5" />
                         </Button>
-                        <Button variant="outline" size="icon" onClick={handleQuestionnaireClick} disabled={isGenerating}>
-                            <ClipboardList className="h-4 w-4" />
+                        <Button variant="outline" size="icon" onClick={handleQuestionnaireClick} disabled={isGenerating} className="h-8 w-8">
+                            <ClipboardList className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                             variant="outline"
                             size="icon"
                             onClick={handleDownloadClick}
                             disabled={isGenerating}
-                            className="relative"
+                            className="relative h-8 w-8"
                         >
                             {isGenerating ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             ) : (
-                                <Download className="h-4 w-4" />
+                                <Download className="h-3.5 w-3.5" />
                             )}
                         </Button>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline" onClick={() => onModalOpen("clinical")} disabled={isGenerating} className="w-full">
+                    <Button variant="outline" onClick={() => onModalOpen("clinical")} disabled={isGenerating} className="w-full text-xs sm:text-sm py-2">
                         Clinical Parameters
                     </Button>
-                    <Button variant="outline" onClick={() => onModalOpen("baseline")} disabled={isGenerating} className="w-full">
+                    <Button variant="outline" onClick={() => onModalOpen("baseline")} disabled={isGenerating} className="w-full text-xs sm:text-sm py-2">
                         Baseline Function
                     </Button>
                 </div>

@@ -398,6 +398,81 @@ const FinalSummaryTablePageContent = () => {
 
       {/* Mobile Cards - shown only on mobile */}
       <div className="md:hidden space-y-4">
+        {/* Current Status Card */}
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-blue-600 text-white px-4 py-3 font-bold text-center text-sm">
+            Functional Outcomes at 1 year after treatment
+          </div>
+          <div className="px-4 py-3 bg-gray-50 border-b">
+            <h4 className="font-semibold text-sm text-gray-700 mb-2">Your Current Status*</h4>
+          </div>
+          <div className="p-4 space-y-3">
+            {/* Urinary Status */}
+            <div className="border-b border-gray-100 pb-3">
+              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Urinary</h5>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Leakage:</span>
+                  <span className={`font-medium ${baselineStatuses.leakageLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.leakageLabel}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Pad usage:</span>
+                  <span className={`font-medium ${baselineStatuses.padLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.padLabel}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Urinary bother:</span>
+                  <span className={`font-medium ${baselineStatuses.urinaryBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.urinaryBotherLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sexual Status */}
+            <div className="border-b border-gray-100 pb-3">
+              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Sexual</h5>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Erectile function:</span>
+                  <span className={`font-medium ${baselineStatuses.erectileLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.erectileLabel}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Sexual bother:</span>
+                  <span className={`font-medium ${baselineStatuses.erectileBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.erectileBotherLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bowel Status */}
+            <div>
+              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Bowel</h5>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Urgency:</span>
+                  <span className={`font-medium ${baselineStatuses.urgencyLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.urgencyLabel}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Bowel bother:</span>
+                  <span className={`font-medium ${baselineStatuses.bowelBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
+                    {baselineStatuses.bowelBotherLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Treatment Cards */}
         {tableData.map((row) => (
           <div
             key={row.treatment}

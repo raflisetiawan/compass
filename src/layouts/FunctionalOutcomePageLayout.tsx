@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Info, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Info, ChevronLeft, ChevronRight, Loader2, RefreshCw } from "lucide-react";
 import MainLayout from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -102,23 +102,35 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
               />
               <div className={`w-full transition-all duration-300 ${isSidebarExpanded ? "md:w-2/3" : "md:w-[calc(100%-5rem)]"}`}>
                 {/* Top navigation buttons */}
-                <div className="flex justify-between items-center mb-4">
-                  <Button variant="outline" onClick={handleBack}>
-                    <ChevronLeft className="h-4 w-4 mr-2" />
-                    {prevPage ? `Back to ${prevPage.title}` : "Back to VCE Results"}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between sm:items-center mb-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleBack}
+                    className="w-full sm:w-auto justify-center sm:justify-start text-sm"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">
+                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to VCE Results"}</span>
+                      <span className="sm:hidden">{prevPage ? prevPage.title : "VCE Results"}</span>
+                    </span>
                   </Button>
                   {nextPage ? (
-                    <Button onClick={handleNext} className="bg-[#C2E2E9] text-black hover:bg-[#a8d4de]">
-                      Next: {nextPage.title}
-                      <ChevronRight className="h-4 w-4 ml-2" />
+                    <Button 
+                      onClick={handleNext} 
+                      className="w-full sm:w-auto justify-center sm:justify-start bg-[#C2E2E9] text-black hover:bg-[#a8d4de] text-sm"
+                    >
+                      <span className="truncate">
+                        <span className="hidden sm:inline">Next: {nextPage.title}</span>
+                        <span className="sm:hidden">{nextPage.title}</span>
+                      </span>
+                      <ChevronRight className="h-4 w-4 ml-1 sm:ml-2 flex-shrink-0" />
                     </Button>
                   ) : (
-                    <Button 
-                      onClick={() => navigate("/questionnaire")} 
-                      className="bg-[#C2E2E9] text-black hover:bg-[#a8d4de]"
-                    >
-                      Finish
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <span className="hidden sm:flex items-center text-sm text-green-600 font-medium px-3">
+                        ✓ Final Page
+                      </span>
+                    </div>
                   )}
                 </div>
                 <Card>
@@ -138,23 +150,40 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
                     {children}
                   </CardContent>
                   {/* Navigation Footer */}
-                  <CardFooter className="flex justify-between border-t pt-4">
-                    <Button variant="outline" onClick={handleBack}>
-                      <ChevronLeft className="h-4 w-4 mr-2" />
+                  <CardFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between border-t pt-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleBack}
+                      className="w-full sm:w-auto justify-center sm:justify-start text-sm"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                       Back
                     </Button>
                     {nextPage ? (
-                      <Button onClick={handleNext} className="bg-[#C2E2E9] text-black hover:bg-[#a8d4de]">
-                        Next: {nextPage.title}
-                        <ChevronRight className="h-4 w-4 ml-2" />
+                      <Button 
+                        onClick={handleNext} 
+                        className="w-full sm:w-auto justify-center sm:justify-start bg-[#C2E2E9] text-black hover:bg-[#a8d4de] text-sm"
+                      >
+                        <span className="truncate">
+                          <span className="hidden sm:inline">Next: {nextPage.title}</span>
+                          <span className="sm:hidden">{nextPage.title}</span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 ml-1 sm:ml-2 flex-shrink-0" />
                       </Button>
                     ) : (
-                      <Button 
-                        onClick={() => navigate("/questionnaire")} 
-                        className="bg-[#C2E2E9] text-black hover:bg-[#a8d4de]"
-                      >
-                        Finish
-                      </Button>
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
+                        <span className="text-sm text-green-600 font-medium sm:px-3 text-center sm:text-left">
+                          ✓ You have completed viewing all outcome pages
+                        </span>
+                        <Button 
+                          onClick={handleStartOver}
+                          variant="outline"
+                          className="w-full sm:w-auto justify-center text-sm"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                          Start Over
+                        </Button>
+                      </div>
                     )}
                   </CardFooter>
                 </Card>
