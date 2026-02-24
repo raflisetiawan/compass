@@ -25,6 +25,7 @@ const FUNCTIONAL_OUTCOME_PAGES = [
   { slug: "problem-with-urgency", title: "Bowel Urgency" },
   { slug: "bowel-bother", title: "Bowel Bother" },
   { slug: "final-summary-table", title: "Summary" },
+  { slug: "vce-results", title: "Answers from Predictions" },
 ];
 
 interface FunctionalOutcomePageLayoutProps {
@@ -59,8 +60,8 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
     if (prevPage) {
       navigate(`/functional-outcome/${prevPage.slug}`);
     } else {
-      // First page - go back to VCE Results
-      navigate("/vce/results");
+      // First page - go back to VCE Questions
+      navigate("/vce/questions");
     }
   };
 
@@ -110,8 +111,8 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
                   >
                     <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                     <span className="truncate">
-                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to VCE Results"}</span>
-                      <span className="sm:hidden">{prevPage ? prevPage.title : "VCE Results"}</span>
+                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to VCE Questions"}</span>
+                      <span className="sm:hidden">{prevPage ? prevPage.title : "VCE Questions"}</span>
                     </span>
                   </Button>
                   {nextPage ? (

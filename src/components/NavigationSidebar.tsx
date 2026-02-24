@@ -180,6 +180,10 @@ const NAV_STRUCTURE: NavEntry[] = [
               label: "Survival and additional treatment",
               path: "/functional-outcome/final-summary-table",
             },
+            {
+              label: "Answers from predictions",
+              path: "/functional-outcome/vce-results",
+            },
           ],
         },
       ],

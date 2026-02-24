@@ -28,9 +28,10 @@ const LOGISTICS_QUESTIONS = [
 const VCEQuestionsPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+  
   
   const {
+    treatmentPhilosophy,
     sideEffectsImportance,
     logisticsImportance,
     mostImportantSideEffect,
@@ -42,9 +43,14 @@ const VCEQuestionsPage = () => {
     saveVceAnswers,
   } = useVceStore();
 
-  const handleTreatmentSelect = (option: "active" | "monitoring") => {
-    setTreatmentPhilosophy(option);
-    setCurrentStep(2);
+  // Local state to track selected option before advancing
+  const [selectedPhilosophy, setSelectedPhilosophy] = useState<"active" | "monitoring" | null>(treatmentPhilosophy);
+
+  const handleTreatmentNext = () => {
+    if (selectedPhilosophy) {
+      setTreatmentPhilosophy(selectedPhilosophy);
+      setCurrentStep(2);
+    }
   };
 
   const handleBackToQuestionnaire = () => {
@@ -65,7 +71,7 @@ const VCEQuestionsPage = () => {
 
   const handleLogisticsNext = async () => {
     await saveVceAnswers();
-    navigate("/vce/results");
+    navigate("/functional-outcome/survival-after-prostate-cancer-treatment");
   };
 
   const isSideEffectsComplete = Object.values(sideEffectsImportance).every(
@@ -116,54 +122,55 @@ const VCEQuestionsPage = () => {
 
                 {/* Option A */}
                 <div
-                  className="relative border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-[#F0F8FA] transition-colors"
-                  onMouseEnter={() => setHoveredOption("active")}
-                  onMouseLeave={() => setHoveredOption(null)}
-                  onClick={() => handleTreatmentSelect("active")}
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
+                    selectedPhilosophy === "active"
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-gray-200 hover:bg-[#F0F8FA]"
+                  }`}
+                  onClick={() => setSelectedPhilosophy("active")}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <span className="text-blue-600 font-medium">A.</span>
-                      <p className="text-gray-700">
-                        I would like to actively do something to treat my prostate cancer, even if I may have some side effects
-                      </p>
-                    </div>
-                    {hoveredOption === "active" && (
-                      <button className="ml-4 px-4 py-1 text-sm font-medium text-black bg-[#C2E2E9] rounded-md hover:bg-[#a8d4de] transition-colors whitespace-nowrap">
-                        Select
-                      </button>
-                    )}
+                  <div className="flex items-start gap-3">
+                    <span className={`font-medium ${selectedPhilosophy === "active" ? "text-blue-600" : "text-blue-600"}`}>A.</span>
+                    <p className={`${selectedPhilosophy === "active" ? "text-blue-800" : "text-gray-700"}`}>
+                      I would like to actively do something to treat my prostate cancer, even if I may have some side effects
+                    </p>
                   </div>
                 </div>
 
                 {/* Option B */}
                 <div
-                  className="relative border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-[#F0F8FA] transition-colors"
-                  onMouseEnter={() => setHoveredOption("monitoring")}
-                  onMouseLeave={() => setHoveredOption(null)}
-                  onClick={() => handleTreatmentSelect("monitoring")}
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
+                    selectedPhilosophy === "monitoring"
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-gray-200 hover:bg-[#F0F8FA]"
+                  }`}
+                  onClick={() => setSelectedPhilosophy("monitoring")}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <span className="text-blue-600 font-medium">B.</span>
-                      <p className="text-gray-700">
-                        I would like to hold off having treatment for as long as it is safe to do so
-                      </p>
-                    </div>
-                    {hoveredOption === "monitoring" && (
-                      <button className="ml-4 px-4 py-1 text-sm font-medium text-black bg-[#C2E2E9] rounded-md hover:bg-[#a8d4de] transition-colors whitespace-nowrap">
-                        Select
-                      </button>
-                    )}
+                  <div className="flex items-start gap-3">
+                    <span className={`font-medium ${selectedPhilosophy === "monitoring" ? "text-blue-600" : "text-blue-600"}`}>B.</span>
+                    <p className={`${selectedPhilosophy === "monitoring" ? "text-blue-800" : "text-gray-700"}`}>
+                      I would like to hold off having treatment for as long as it is safe to do so
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex justify-start pt-4">
+                <div className="flex justify-between pt-4">
                   <button
                     onClick={handleBackToQuestionnaire}
                     className="px-8 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     Back
+                  </button>
+                  <button
+                    onClick={handleTreatmentNext}
+                    disabled={!selectedPhilosophy}
+                    className={`px-8 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                      selectedPhilosophy
+                        ? "bg-[#C2E2E9] text-black hover:bg-[#a8d4de]"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
+                  >
+                    Next
                   </button>
                 </div>
               </div>

@@ -127,8 +127,8 @@ const RiskRetreatmentPageContent = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name} className="space-y-2">
-            <h3 className="font-bold text-md text-center">{treatment.name}</h3>
+          <div key={treatment.name} className="flex flex-col">
+            <h3 className="font-bold text-md text-center min-h-[3.5rem] flex items-end justify-center pb-2">{treatment.name}</h3>
             {treatment.error ? (
               <ErrorDisplay message={treatment.error} />
             ) : (

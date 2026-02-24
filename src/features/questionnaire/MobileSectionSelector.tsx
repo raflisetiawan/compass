@@ -50,14 +50,7 @@ const MobileSectionSelector = () => {
                       !isUnlocked && "cursor-not-allowed text-gray-400"
                     )}
                   >
-                    <div className="flex items-center gap-2">
-                      <span>{section.section}</span>
-                      {OPTIONAL_SECTIONS.includes(section.section) && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-500 rounded">
-                          Optional
-                        </span>
-                      )}
-                    </div>
+                    <span>{section.section}</span>
                     {isUnlocked ? 
                       (isCompleted && <CheckCircle2 className="h-5 w-5 text-green-500" />) : 
                       <Lock className="h-5 w-5 text-gray-400" />

@@ -50,6 +50,7 @@ const initialState: State = {
 
 type Actions = {
   setAnswer: (questionId: string, value: string | number) => void;
+  clearAnswer: (questionId: string) => void;
   setErrors: (errors: Errors) => void;
   setCurrentSectionIndex: (index: number) => void;
   goToSection: (index: number) => void;
@@ -99,6 +100,27 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
   setAnswer: (questionId, value) => {
     const { answers, errors, sessionId } = get();
     const newAnswers = { ...answers, [questionId]: value };
+    const newErrors = { ...errors };
+    if (newErrors[questionId]) {
+      delete newErrors[questionId];
+    }
+    set({ answers: newAnswers, errors: newErrors });
+    const accessCode = getActiveAccessCode();
+    if (accessCode && sessionId) {
+      const { answers, currentSectionIndex, currentQuestionIndex } = get();
+      debouncedUpdateSession(accessCode, sessionId, {
+        answers,
+        currentSectionIndex,
+        currentQuestionIndex,
+        updatedAt: Timestamp.now(),
+      });
+    }
+  },
+
+  clearAnswer: (questionId) => {
+    const { answers, errors, sessionId } = get();
+    const newAnswers = { ...answers };
+    delete newAnswers[questionId];
     const newErrors = { ...errors };
     if (newErrors[questionId]) {
       delete newErrors[questionId];

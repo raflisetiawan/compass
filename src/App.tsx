@@ -306,6 +306,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/functional-outcome/vce-results"
+            element={
+              <ProtectedRoute>
+                <VCEResultsPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
     </>
   );

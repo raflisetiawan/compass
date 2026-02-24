@@ -7,14 +7,12 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useQuestionnaireStore, OPTIONAL_SECTIONS } from "@/stores/questionnaireStore";
 import { useNavigate } from "react-router-dom";
 import { createQuestionSchema } from "@/lib/validation";
 import { type KeyboardEvent } from "react";
 import { cn } from "@/lib/utils";
-import { SkipForward } from "lucide-react";
+
 
 const QuestionCard = () => {
   const {
@@ -24,10 +22,10 @@ const QuestionCard = () => {
     answers,
     errors,
     setAnswer,
+    clearAnswer,
     setErrors,
     nextQuestion,
     prevQuestion,
-    skipSection,
     saveFinalAnswers,
   } = useQuestionnaireStore();
   const navigate = useNavigate();
@@ -70,16 +68,6 @@ const QuestionCard = () => {
       nextQuestion();
     }
   };
-  
-  const handleSkipSection = async () => {
-    const isLastSection = currentSectionIndex === sections.length - 1;
-    if (isLastSection) {
-      await saveFinalAnswers();
-      navigate("/vce/intro");
-    } else {
-      skipSection();
-    }
-  };
 
   const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -111,11 +99,7 @@ const QuestionCard = () => {
         );
       case "radio":
         return (
-          <RadioGroup
-            value={answer ? String(answer) : ""}
-            onValueChange={(value) => setAnswer(question.id, value)}
-            className="space-y-3"
-          >
+          <div className="space-y-3">
             {question.options?.map((option, index) => {
               const isStringOption = typeof option === "string";
               const value = isStringOption ? option : option.value;
@@ -124,19 +108,32 @@ const QuestionCard = () => {
               const isSelected = answer === value;
 
               return (
-                <Label
+                <div
                   key={id}
-                  htmlFor={id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    if (isSelected) {
+                      clearAnswer(question.id);
+                    } else {
+                      setAnswer(question.id, String(value));
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      if (isSelected) {
+                        clearAnswer(question.id);
+                      } else {
+                        setAnswer(question.id, String(value));
+                      }
+                    }
+                  }}
                   className={cn(
                     "flex cursor-pointer items-center gap-4 rounded-lg border bg-white p-4 transition-all hover:bg-slate-50",
                     isSelected && "border-blue-600 bg-blue-50"
                   )}
                 >
-                  <RadioGroupItem
-                    value={String(value)}
-                    id={id}
-                    className="sr-only"
-                  />
                   <span
                     className={cn(
                       "flex h-6 w-6 items-center justify-center rounded-md border bg-slate-100 text-sm font-semibold",
@@ -150,10 +147,10 @@ const QuestionCard = () => {
                   >
                     {label}
                   </span>
-                </Label>
+                </div>
               );
             })}
-          </RadioGroup>
+          </div>
         );
       default:
         return null;
@@ -175,17 +172,7 @@ const QuestionCard = () => {
         </p>
         <div className="flex items-center gap-3">
           <CardTitle className="text-3xl">{section.section}</CardTitle>
-          {isOptionalSection && (
-            <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
-              Optional
-            </span>
-          )}
         </div>
-        {isOptionalSection && currentQuestionIndex === 0 && (
-          <p className="text-sm text-gray-500 mt-2">
-            This section is optional. You can skip it or answer the questions for personalized predictions.
-          </p>
-        )}
       </CardHeader>
       <CardContent>
         <div className="mb-6">
@@ -220,26 +207,14 @@ const QuestionCard = () => {
         >
           Back
         </Button>
-        <div className="flex gap-2">
-          {isOptionalSection && (
-            <Button
-              variant="ghost"
-              onClick={handleSkipSection}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <SkipForward className="w-4 h-4 mr-1" />
-              Skip Section
-            </Button>
-          )}
-          <Button
-            size="lg"
-            onClick={handleNext}
-            disabled={!isOptionalSection && !isAnswered}
-            className="bg-[#e0f2f7] text-gray-700 hover:bg-cyan-200 disabled:bg-gray-100 disabled:text-gray-400"
-          >
-            {isLastQuestionOverall ? "View Results" : "Next"}
-          </Button>
-        </div>
+        <Button
+          size="lg"
+          onClick={handleNext}
+          disabled={!isOptionalSection && !isAnswered}
+          className="bg-[#e0f2f7] text-gray-700 hover:bg-cyan-200 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          {isLastQuestionOverall ? "Next Section: What is important to me" : isOptionalSection && !isAnswered ? "Skip Question" : "Next"}
+        </Button>
       </CardFooter>
     </Card>
   );

@@ -121,8 +121,8 @@ const UrinaryLeakagePageContent = () => {
           <Legend />
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {treatmentOutcomes.map((treatment) => (
-              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer">
-                <h3 className="font-bold text-md mb-2 text-center">{treatment.name}</h3>
+              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
+                <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>
                 <IconArray data={treatment.data} />
               </div>
             ))}

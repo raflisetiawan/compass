@@ -15,7 +15,6 @@ interface SidebarItemProps {
   isActive?: boolean;
   onClick?: () => void;
   isDisabled?: boolean;
-  isOptional?: boolean;
 }
 
 const statusStyles: Record<Status, string> = {
@@ -24,7 +23,7 @@ const statusStyles: Record<Status, string> = {
   LOCKED: 'bg-gray-100 text-gray-500 hover:bg-gray-100',
 };
 
-const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisabled, isOptional }: SidebarItemProps) => (
+const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisabled }: SidebarItemProps) => (
   <button
     onClick={onClick}
     disabled={isDisabled}
@@ -38,14 +37,7 @@ const SidebarItem = ({ icon, title, subtitle, status, isActive, onClick, isDisab
       {icon}
     </div>
     <div className="flex-grow">
-      <div className="flex items-center gap-2">
-        <p className="font-semibold">{title}</p>
-        {isOptional && (
-          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-500 rounded">
-            Optional
-          </span>
-        )}
-      </div>
+      <p className="font-semibold">{title}</p>
       <p className="text-sm text-gray-500">{subtitle}</p>
     </div>
     <Badge className={cn('font-bold', statusStyles[status])}>{status}</Badge>
@@ -116,7 +108,7 @@ const Sidebar = () => {
                 icon={getIcon(status)}
                 isActive={index === currentSectionIndex}
                 isDisabled={!isUnlocked}
-                isOptional={OPTIONAL_SECTIONS.includes(section.section)}
+
                 onClick={() => isUnlocked && goToSection(index)}
               />
             );
