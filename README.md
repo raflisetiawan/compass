@@ -103,6 +103,14 @@ The tool uses validated clinical data to present estimated outcomes based on pat
 - Shows "Not answered" for skipped optional questions
 - Includes all functional parameters: leakage, pad usage, urinary bother, erectile function, sexual medication, erectile bother, bowel urgency, and bowel bother
 
+### 9. Navigation Sidebar
+- **Global navigation panel** available on all pages (except Login and Select Patient)
+- Collapsible accordion sections matching the tool's information architecture
+- **Active page highlighting** with left border indicator
+- **Desktop**: Expanded by default, collapsible via "Hide menu" toggle
+- **Mobile**: Accessible via floating action button (hamburger menu) that opens a slide-out drawer
+- **Accessibility-optimized** for elderly users: large fonts (16px), minimum 44px touch targets, high-contrast text
+
 ## 📦 Installation
 
 ### Prerequisites
@@ -157,6 +165,7 @@ compass/
 │   │   ├── survival_calculation.json
 │   │   └── ...
 │   ├── components/          # Reusable UI components
+│   │   ├── NavigationSidebar.tsx  # Global navigation sidebar
 │   │   └── ui/             # ShadcnUI components
 │   ├── features/
 │   │   ├── questionnaire/  # Questionnaire-specific components
@@ -272,9 +281,9 @@ The application uses validated clinical data from research studies. Data is stor
 ## 📱 Responsive Design
 
 The application is fully responsive with specific optimizations for:
-- **Mobile** (< 640px): Simplified layouts, bottom sheets for modals
-- **Tablet** (640px - 1024px): Adaptive grid layouts
-- **Desktop** (> 1024px): Full sidebar navigation, multi-column layouts
+- **Mobile** (< 640px): Simplified layouts, bottom sheets for modals, navigation via floating hamburger button with slide-out drawer
+- **Tablet** (640px - 1024px): Adaptive grid layouts, navigation drawer
+- **Desktop** (> 1024px): Full sidebar navigation (expanded by default, collapsible), multi-column layouts
 
 ## 🎯 User Journey
 
