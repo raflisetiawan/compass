@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Info, ChevronLeft, ChevronRight, Loader2, RefreshCw } from "lucide-react";
-import MainLayout from "@/layouts/MainLayout";
+import AppLayout from "@/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useFetchOutcomePageData } from "@/hooks/useFetchOutcomePageData";
@@ -77,18 +77,18 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <AppLayout>
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
           <p className="text-lg text-gray-600">Loading details...</p>
         </div>
-      </MainLayout>
+      </AppLayout>
     );
   }
 
   return (
     <OutcomePageDataContext.Provider value={pageData}>
-      <MainLayout>
+      <AppLayout>
         <div className="flex flex-col min-h-screen">
           <main className="flex-grow p-4 md:p-8 bg-gray-50">
             <ResultsMobileHeader onModalOpen={setModalContent} onStartOver={handleStartOver} />
@@ -201,7 +201,7 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
           isOpen={isCategoryLegendOpen}
           onClose={() => setIsCategoryLegendOpen(false)}
         />
-      </MainLayout>
+      </AppLayout>
     </OutcomePageDataContext.Provider>
   );
 };

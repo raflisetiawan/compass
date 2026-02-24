@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import MainLayout from '@/layouts/MainLayout';
+import AppLayout from '@/layouts/AppLayout';
 import MobileSectionSelector from '@/features/questionnaire/MobileSectionSelector';
 import QuestionCard from '@/features/questionnaire/QuestionCard';
 import Sidebar from '@/features/questionnaire/Sidebar';
@@ -21,7 +21,7 @@ const QuestionnairePage = () => {
   const showLoading = isLoading;
 
   return (
-    <MainLayout>
+    <AppLayout>
       {showLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
@@ -47,7 +47,7 @@ const QuestionnairePage = () => {
           </div>
         </>
       )}
-    </MainLayout>
+    </AppLayout>
   );
 };
 

@@ -14,7 +14,7 @@ import AnimatedPage from "./components/AnimatedPage";
 import QuestionnairePage from "./pages/QuestionnairePage";
 import { Navigate, Route, Routes, useLocation } from "react-router";
 import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+
 import LoginPage from "./pages/LoginPage";
 import SelectPatientPage from "./pages/SelectPatientPage";
 import IntroductionPage from "./pages/IntroductionPage";
@@ -106,7 +106,6 @@ function App() {
   return (
     <>
       <Toaster />
-      <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route
@@ -121,19 +120,15 @@ function App() {
             path="/select-patient"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <SelectPatientPage />
-                </AnimatedPage>
+                <SelectPatientPage />
               </ProtectedRoute>
             }
           />
-            <Route
+          <Route
             path="/introduction"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <IntroductionPage />
-                </AnimatedPage>
+                <IntroductionPage />
               </ProtectedRoute>
             }
           />
@@ -141,9 +136,7 @@ function App() {
             path="/patient-info"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <PatientInfoPage />
-                </AnimatedPage>
+                <PatientInfoPage />
               </ProtectedRoute>
             }
           />
@@ -151,9 +144,7 @@ function App() {
             path="/personalised-info-intro"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <PersonalisedInfoIntroPage />
-                </AnimatedPage>
+                <PersonalisedInfoIntroPage />
               </ProtectedRoute>
             }
           />
@@ -161,9 +152,7 @@ function App() {
             path="/vce/intro"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <VCEIntroPage />
-                </AnimatedPage>
+                <VCEIntroPage />
               </ProtectedRoute>
             }
           />
@@ -171,9 +160,7 @@ function App() {
             path="/vce/questions"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <VCEQuestionsPage />
-                </AnimatedPage>
+                <VCEQuestionsPage />
               </ProtectedRoute>
             }
           />
@@ -181,9 +168,7 @@ function App() {
             path="/vce/results"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <VCEResultsPage />
-                </AnimatedPage>
+                <VCEResultsPage />
               </ProtectedRoute>
             }
           />
@@ -191,9 +176,7 @@ function App() {
             path="/treatment-options/definition"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <TreatmentOptionsDefinitionPage />
-                </AnimatedPage>
+                <TreatmentOptionsDefinitionPage />
               </ProtectedRoute>
             }
           />
@@ -201,9 +184,7 @@ function App() {
             path="/treatment-options/delivery"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <TreatmentOptionsDeliveryPage />
-                </AnimatedPage>
+                <TreatmentOptionsDeliveryPage />
               </ProtectedRoute>
             }
           />
@@ -211,9 +192,7 @@ function App() {
             path="/treatment-options/post-treatment"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <TreatmentOptionsPostTreatmentPage />
-                </AnimatedPage>
+                <TreatmentOptionsPostTreatmentPage />
               </ProtectedRoute>
             }
           />
@@ -221,9 +200,7 @@ function App() {
             path="/treatment-options/follow-up"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <TreatmentOptionsFollowUpPage />
-                </AnimatedPage>
+                <TreatmentOptionsFollowUpPage />
               </ProtectedRoute>
             }
           />
@@ -231,9 +208,7 @@ function App() {
             path="/questionnaire"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <QuestionnairePage />
-                </AnimatedPage>
+                <QuestionnairePage />
               </ProtectedRoute>
             }
           />
@@ -241,27 +216,21 @@ function App() {
             path="/results"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <ResultsPage />
-                </AnimatedPage>
+                <ResultsPage />
               </ProtectedRoute>
             }
           />
           <Route
             path="/about"
             element={
-              <AnimatedPage>
-                <AboutPage />
-              </AnimatedPage>
+              <AboutPage />
             }
           />
           <Route
             path="/functional-outcome/leaking-urine-at-one-year"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <UrinaryLeakagePage />
-                </AnimatedPage>
+                <UrinaryLeakagePage />
               </ProtectedRoute>
             }
           />
@@ -269,9 +238,7 @@ function App() {
             path="/functional-outcome/use-of-urinary-pads-at-one-year"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <UrinaryPadUsagePage />
-                </AnimatedPage>
+                <UrinaryPadUsagePage />
               </ProtectedRoute>
             }
           />
@@ -279,9 +246,7 @@ function App() {
             path="/functional-outcome/urinary-bother"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <UrinaryBotherPage />
-                </AnimatedPage>
+                <UrinaryBotherPage />
               </ProtectedRoute>
             }
           />
@@ -289,9 +254,7 @@ function App() {
             path="/functional-outcome/sexual-bother"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <SexualBotherPage />
-                </AnimatedPage>
+                <SexualBotherPage />
               </ProtectedRoute>
             }
           />
@@ -299,9 +262,7 @@ function App() {
             path="/functional-outcome/bowel-bother"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <BowelBotherPage />
-                </AnimatedPage>
+                <BowelBotherPage />
               </ProtectedRoute>
             }
           />
@@ -309,9 +270,7 @@ function App() {
             path="/functional-outcome/sufficient-erections-for-intercourse"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <ErectileFunctionPage />
-                </AnimatedPage>
+                <ErectileFunctionPage />
               </ProtectedRoute>
             }
           />
@@ -319,9 +278,7 @@ function App() {
             path="/functional-outcome/problem-with-urgency"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <ProblemWithUrgencyPage />
-                </AnimatedPage>
+                <ProblemWithUrgencyPage />
               </ProtectedRoute>
             }
           />
@@ -329,9 +286,7 @@ function App() {
             path="/functional-outcome/survival-after-prostate-cancer-treatment"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <SurvivalAfterTreatmentPage />
-                </AnimatedPage>
+                <SurvivalAfterTreatmentPage />
               </ProtectedRoute>
             }
           />
@@ -339,9 +294,7 @@ function App() {
             path="/functional-outcome/risk-retreatment-equations"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <RiskRetreatmentPage />
-                </AnimatedPage>
+                <RiskRetreatmentPage />
               </ProtectedRoute>
             }
           />
@@ -349,14 +302,11 @@ function App() {
             path="/functional-outcome/final-summary-table"
             element={
               <ProtectedRoute>
-                <AnimatedPage>
-                  <FinalSummaryTablePage />
-                </AnimatedPage>
+                <FinalSummaryTablePage />
               </ProtectedRoute>
             }
           />
         </Routes>
-      </AnimatePresence>
     </>
   );
 }

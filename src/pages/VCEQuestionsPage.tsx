@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import BeSpokeLogo from "../components/BeSpokeLogo";
-import Footer from "../components/Footer";
+import AppLayout from "@/layouts/AppLayout";
 import { useVceStore, type ImportanceLevel, type SideEffectKey } from "../stores/vceStore";
 
 const IMPORTANCE_OPTIONS: { value: ImportanceLevel; label: string }[] = [
@@ -79,8 +79,8 @@ const VCEQuestionsPage = () => {
   const totalSteps = 3;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#e0f2f7] p-4 sm:p-6 lg:p-8">
-      <main className="grow flex items-center justify-center">
+    <AppLayout>
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-5xl bg-white rounded-lg shadow-md">
           <div className="pt-6 pb-4 text-center">
             <BeSpokeLogo />
@@ -329,9 +329,8 @@ const VCEQuestionsPage = () => {
             )}
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

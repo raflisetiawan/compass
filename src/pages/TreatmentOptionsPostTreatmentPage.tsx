@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import BeSpokeLogo from "@/components/BeSpokeLogo";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import MainLayout from "@/layouts/MainLayout";
-import AnimatedPage from "@/components/AnimatedPage";
+import AppLayout from "@/layouts/AppLayout";
+
 import { Button } from "@/components/ui/button";
 
 const TreatmentOptionsPostTreatmentPage = () => {
@@ -52,8 +52,7 @@ const TreatmentOptionsPostTreatmentPage = () => {
   ];
 
   return (
-    <MainLayout>
-      <AnimatedPage>
+    <AppLayout>
         <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
           <div className="w-full max-w-6xl space-y-8">
             <Card className="w-full shadow-lg">
@@ -161,8 +160,8 @@ const TreatmentOptionsPostTreatmentPage = () => {
             </Card>
           </div>
         </div>
-      </AnimatedPage>
-    </MainLayout>
+
+    </AppLayout>
   );
 };
 

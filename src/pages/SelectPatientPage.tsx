@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuestionnaireStore } from "@/stores/questionnaireStore";
 import BeSpokeLogo from "@/components/BeSpokeLogo";
-import Footer from "@/components/Footer";
+import AppLayout from "@/layouts/AppLayout";
 
 const SelectPatientPage = () => {
   const [patientId, setPatientId] = useState("");
@@ -20,8 +20,8 @@ const SelectPatientPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#e0f2f7] p-4 sm:p-6 lg:p-8">
-      <main className="flex-grow flex items-center justify-center">
+    <AppLayout>
+      <div className="flex items-center justify-center">
         <div className="flex flex-col items-center space-y-8 w-full ">
           <BeSpokeLogo />
           <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 space-y-6">
@@ -68,9 +68,8 @@ const SelectPatientPage = () => {
             </form>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import BeSpokeLogo from "../components/BeSpokeLogo";
-import Footer from "../components/Footer";
+import AppLayout from "@/layouts/AppLayout";
 
 const PatientInfoPage = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-[#e0f2f7] p-4 sm:p-6 lg:p-8">
-      <main className="flex-grow flex items-center justify-center">
+    <AppLayout>
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-2xl bg-white rounded-lg shadow-md">
           <div className="pt-6 pb-4 text-center">
             <BeSpokeLogo />
@@ -113,9 +113,8 @@ const PatientInfoPage = () => {
             </div>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

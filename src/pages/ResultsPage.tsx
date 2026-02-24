@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import survivalData from "@/assets/survival_calculation.json";
-import MainLayout from "@/layouts/MainLayout";
+import AppLayout from "@/layouts/AppLayout";
 import { useQuestionnaireStore } from "@/stores/questionnaireStore";
 import { useUserStore } from "@/stores/userStore";
 import { getAgeGroup, getPSARange, getGradeGroup } from "@/services/prediction";
@@ -119,17 +119,17 @@ const ResultsPage = () => {
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <AppLayout>
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
           <p className="text-lg text-gray-600">Loading your results...</p>
         </div>
-      </MainLayout>
+      </AppLayout>
     );
   }
 
   return (
-    <MainLayout>
+    <AppLayout>
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow p-4 md:p-8 bg-gray-50">
           <ResultsMobileHeader
@@ -167,7 +167,7 @@ const ResultsPage = () => {
           }
         />
       </div>
-    </MainLayout>
+    </AppLayout>
   );
 };
 

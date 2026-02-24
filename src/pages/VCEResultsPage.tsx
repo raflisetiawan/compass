@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import BeSpokeLogo from "../components/BeSpokeLogo";
-import Footer from "../components/Footer";
+import AppLayout from "@/layouts/AppLayout";
 import { useVceStore } from "../stores/vceStore";
 
 const SIDE_EFFECTS_QUESTIONS = [
@@ -110,14 +110,9 @@ const VCEResultsPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#e0f2f7]">
-      {/* Header */}
-      <header className="px-4 sm:px-6 py-4 flex items-center justify-between">
-        <h6 className="text-xl sm:text-2xl font-bold text-gray-800">Results</h6>
-      </header>
-
+    <AppLayout>
       {/* Main Content */}
-      <main className="grow px-3 sm:px-6 pb-6">
+      <div className="w-full">
         <div className="w-full max-w-5xl mx-auto bg-white rounded-lg shadow-md">
           <div className="pt-4 sm:pt-6 pb-3 sm:pb-4 text-center">
             <BeSpokeLogo />
@@ -373,10 +368,8 @@ const VCEResultsPage = () => {
           </div>
           )}
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 
