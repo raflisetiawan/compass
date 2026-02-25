@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import survivalData from "@/assets/survival_calculation.json";
 import AppLayout from "@/layouts/AppLayout";
@@ -18,23 +17,17 @@ import type {
 } from "@/types";
 
 const ResultsPage = () => {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
   const { user } = useUserStore();
-  const { answers, reset, loadInitialData, isLoading } =
+  const { answers, loadInitialData, isLoading } =
     useQuestionnaireStore();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       loadInitialData();
     }
   }, [user, loadInitialData]);
-
-  const handleStartOver = () => {
-    reset();
-    navigate("/introduction");
-  };
 
   const survivalOutcome = useMemo(() => {
     // If answers are not loaded, the defaults will be used for a preview.
@@ -134,7 +127,6 @@ const ResultsPage = () => {
         <main className="flex-grow p-4 md:p-8 bg-gray-50">
           <ResultsMobileHeader
             onModalOpen={setModalContent}
-            onStartOver={handleStartOver}
           />
           <ResultsDesktopHeader />
 

@@ -101,15 +101,14 @@ const IconArray = ({ data }: IconArrayProps) => {
               .attr("width", iconSize)
               .attr("height", iconSize);
           } else if (item.Icon) {
-            const IconComponent = item.Icon;
-            const iconHtml = ReactDOMServer.renderToString(
-              <IconComponent color={item.color} size={iconSize} />
-            );
-            group
-              .append("foreignObject")
+            // Render the icon path directly as nested SVG for proper scaling
+            const wrapper = group.append("svg")
               .attr("width", iconSize)
               .attr("height", iconSize)
-              .html(iconHtml);
+              .attr("viewBox", "0 -960 960 960");
+            wrapper.append("path")
+              .attr("d", "M400-80v-280h-80v-240q0-33 23.5-56.5T400-680h160q33 0 56.5 23.5T640-600v240h-80v280H400Zm80-640q-33 0-56.5-23.5T400-800q0-33 23.5-56.5T480-880q33 0 56.5 23.5T560-800q0 33-23.5 56.5T480-720Z")
+              .attr("fill", item.color);
           } else {
             // Fallback: Simple circle (using LegendIcon without pill)
             const iconHtml = ReactDOMServer.renderToString(

@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Loader2, ClipboardList, TableProperties } from "lucide-react";
+import { Download, Loader2, ClipboardList, TableProperties } from "lucide-react";
 import { generatePdf } from "@/lib/pdf";
 import type { ModalContentType } from "@/types";
 import { PdfGenerationWarningDialog } from "@/components/PdfGenerationWarningDialog";
 
 interface ResultsMobileHeaderProps {
     onModalOpen: (content: ModalContentType) => void;
-    onStartOver: () => void;
 }
 
 export const ResultsMobileHeader = ({
     onModalOpen,
-    onStartOver,
 }: ResultsMobileHeaderProps) => {
     const navigate = useNavigate();
     const [isGenerating, setIsGenerating] = useState(false);
@@ -52,9 +50,7 @@ export const ResultsMobileHeader = ({
                 <div className="flex justify-between items-center gap-2">
                     <h2 className="text-xl font-bold flex-shrink-0">Results</h2>
                     <div className="flex gap-1.5 flex-wrap justify-end">
-                        <Button variant="outline" size="icon" onClick={onStartOver} disabled={isGenerating} className="h-8 w-8">
-                            <RefreshCw className="h-3.5 w-3.5" />
-                        </Button>
+
                         <Button variant="outline" size="icon" onClick={handleSummaryClick} disabled={isGenerating} className="h-8 w-8">
                             <TableProperties className="h-3.5 w-3.5" />
                         </Button>

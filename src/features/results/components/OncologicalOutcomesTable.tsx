@@ -1,4 +1,4 @@
-import LegendIcon from "./LegendIcon";
+import StickManIcon from "./StickManIcon";
 
 type OutcomeData = {
   name: string;
@@ -43,7 +43,7 @@ const OncologicalOutcomesTable = ({ data }: OncologicalOutcomesTableProps) => {
             <tr key={item.name} className="bg-[#F8E5F1]">
               <td className="py-2 px-4 border border-gray-400">
                 <div className="flex items-center gap-2">
-                  <LegendIcon color={item.color} name={item.name} />
+                  <StickManIcon color={item.color} size={16} />
                   <span className="font-bold text-sm">{item.name}</span>
                 </div>
               </td>

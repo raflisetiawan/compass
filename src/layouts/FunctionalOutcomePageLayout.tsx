@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Info, ChevronLeft, ChevronRight, Loader2, RefreshCw } from "lucide-react";
+import { Info, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import AppLayout from "@/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -37,14 +37,13 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
   const pageData = useFetchOutcomePageData();
   const {
     isLoading,
-    reset,
     clinicalParameters,
     baselineGenitoUrinaryBowelFunction,
   } = pageData;
   const navigate = useNavigate();
   const location = useLocation();
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isCategoryLegendOpen, setIsCategoryLegendOpen] = useState(false);
 
   // Get current page index from URL
@@ -60,8 +59,8 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
     if (prevPage) {
       navigate(`/functional-outcome/${prevPage.slug}`);
     } else {
-      // First page - go back to VCE Questions
-      navigate("/vce/questions");
+      // First page - go back to Questionnaire
+      navigate("/questionnaire");
     }
   };
 
@@ -69,11 +68,6 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
     if (nextPage) {
       navigate(`/functional-outcome/${nextPage.slug}`);
     }
-  };
-
-  const handleStartOver = () => {
-    reset();
-    navigate("/introduction");
   };
 
   if (isLoading) {
@@ -92,7 +86,7 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
       <AppLayout>
         <div className="flex flex-col min-h-screen">
           <main className="flex-grow p-4 md:p-8 bg-gray-50">
-            <ResultsMobileHeader onModalOpen={setModalContent} onStartOver={handleStartOver} />
+            <ResultsMobileHeader onModalOpen={setModalContent} />
             <ResultsDesktopHeader />
             <div className="flex md:gap-8">
               <ResultsSidebar
@@ -111,8 +105,8 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
                   >
                     <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                     <span className="truncate">
-                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to VCE Questions"}</span>
-                      <span className="sm:hidden">{prevPage ? prevPage.title : "VCE Questions"}</span>
+                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to Questionnaire"}</span>
+                      <span className="sm:hidden">{prevPage ? prevPage.title : "Questionnaire"}</span>
                     </span>
                   </Button>
                   {nextPage ? (
@@ -176,14 +170,6 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
                         <span className="text-sm text-green-600 font-medium sm:px-3 text-center sm:text-left">
                           ✓ You have completed viewing all outcome pages
                         </span>
-                        <Button 
-                          onClick={handleStartOver}
-                          variant="outline"
-                          className="w-full sm:w-auto justify-center text-sm"
-                        >
-                          <RefreshCw className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                          Start Over
-                        </Button>
                       </div>
                     )}
                   </CardFooter>

@@ -6,7 +6,7 @@ import OncologicalOutcomesTable from "@/features/results/components/OncologicalO
 import { getAgeGroup, getPSARange, getGradeGroup } from "@/services/prediction";
 import survivalData from "@/assets/survival_calculation.json";
 import type { SurvivalData } from "@/types";
-import LegendIcon from "@/features/results/components/LegendIcon";
+import StickManIcon from "@/features/results/components/StickManIcon";
 import {
   Accordion,
   AccordionContent,
@@ -22,7 +22,6 @@ const SurvivalAfterTreatmentPageContent = () => {
     const psa = parseFloat(String(answers.psa || "8"));
     let tStage = String(answers.cancer_stage || "T2").replace("T", "");
 
-    console.log(tStage)
     // Apply T-stage fixes to match PDF logic
     if (tStage === "4") {
       tStage = "3b"; // Map T4 to 3b as T4 is not in the dataset
@@ -88,16 +87,18 @@ const SurvivalAfterTreatmentPageContent = () => {
     const otherDeath = Number(survivalOutcome["Other Death (%)"]);
 
     return [
-      { name: "Alive", value: alive, color: "#1B5E20" },
+      { name: "Alive", value: alive, color: "#6B8E23", Icon: StickManIcon },
       {
         name: "Death (from prostate cancer)",
         value: pcaDeath,
         color: "#D32F2F",
+        Icon: StickManIcon,
       },
       {
         name: "Death (from other causes)",
         value: otherDeath,
         color: "#9E9E9E",
+        Icon: StickManIcon,
       },
     ];
   }, [survivalOutcome]);
@@ -115,14 +116,37 @@ const SurvivalAfterTreatmentPageContent = () => {
           The following graph represents 100 men with a cancer like yours. The icon plot shows what happens to those men 5 years after receiving a diagnosis of prostate cancer.
         </p>
       </div>
+      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="font-bold mb-2 text-lg">Summary of clinical parameters used for this section:</h3>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div>
+            <span className="text-gray-600">Age:</span>{" "}
+            <span className="font-medium">{answers.age || "Not specified"}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Gleason Score:</span>{" "}
+            <span className="font-medium">{answers.gleason_score || "Not specified"}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">T Stage:</span>{" "}
+            <span className="font-medium">{answers.cancer_stage || "Not specified"}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">PSA:</span>{" "}
+            <span className="font-medium">{answers.psa || "Not specified"} ng/mL</span>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-col md:flex-row md:items-start gap-6">
-        <IconArray data={iconArrayData} />
+        <div className="max-w-[200px]">
+          <IconArray data={iconArrayData} />
+        </div>
         <div className="flex-shrink-0">
           <h3 className="font-bold mb-3 text-lg">What the icons mean</h3>
           <div className="flex flex-col space-y-2">
             {iconArrayData.map((item) => (
               <div key={item.name} className="flex items-center gap-2">
-                <LegendIcon color={item.color} name={item.name} />
+                <StickManIcon color={item.color} size={20} />
                 <span className="text-sm text-gray-700">
                   {item.name}: {item.value.toFixed(1)}%
                 </span>
