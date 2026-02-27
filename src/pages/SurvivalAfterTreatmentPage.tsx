@@ -135,6 +135,20 @@ const SurvivalAfterTreatmentPageContent = () => {
             <span className="text-gray-600">PSA:</span>{" "}
             <span className="font-medium">{answers.psa || "Not specified"} ng/mL</span>
           </div>
+          <div>
+            <span className="text-gray-600">PSA Density:</span>{" "}
+            <span className="font-medium">
+              {answers.psa && answers.prostate_volume
+                ? (parseFloat(String(answers.psa)) / parseFloat(String(answers.prostate_volume))).toFixed(2)
+                : "Not specified"}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-600">Maximum Cancer Core Length:</span>{" "}
+            <span className="font-medium">
+              {answers.max_cancer_core_length ? `${answers.max_cancer_core_length} mm` : "Not specified"}
+            </span>
+          </div>
         </div>
       </div>
       <div className="flex flex-col md:flex-row md:items-start gap-6">

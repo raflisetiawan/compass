@@ -36,6 +36,7 @@ const LegendIcon: React.FC<LegendIconProps> = ({ color, name, showPill = false, 
         fill={color}
         stroke={borderColor}
         strokeWidth={strokeWidth}
+        strokeDasharray={borderColor ? "3 2" : undefined}
       />
       {/* Pill icon if showPill is true */}
       {showPill && (

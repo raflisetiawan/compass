@@ -6,7 +6,9 @@ import IconArray from "@/features/results/components/IconArray";
 import padUsageData from "@/assets/use_of_urinary_pads_at_one_year.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import UrinaryPadUsageTable from "@/features/results/components/UrinaryPadUsageTable";
-import LegendIcon from "@/features/results/components/LegendIcon";
+import underwearIcon from "@/assets/img/icons/underwear.svg";
+import padIcon from "@/assets/img/icons/pad.svg";
+import darkPadIcon from "@/assets/img/icons/dark-pad.svg";
 import {
   Accordion,
   AccordionContent,
@@ -71,9 +73,9 @@ const UrinaryPadUsagePageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No use of pad; rarely or never leaking urine", value: notUsing, color: "#1B5E20" },
-          { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#FBC02D" },
-          { name: "≥2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#D32F2F" },
+          { name: "No use of pad; rarely or never leaking urine", value: notUsing, color: "#FFFFFF", iconUrl: underwearIcon },
+          { name: "1 pad used per day; any degree of leaking urine", value: onePad, color: "#64B5F6", iconUrl: padIcon },
+          { name: "≥2 pad used per day; any degree of leaking urine", value: twoOrMorePads, color: "#1976D2", iconUrl: darkPadIcon },
         ],
       };
     });
@@ -84,16 +86,16 @@ const UrinaryPadUsagePageContent = () => {
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
         <div className="flex items-center">
-          <LegendIcon color="#1B5E20" name="No use of pad" />
-          <span className="ml-2">No use of pad; rarely or never leaking urine</span>
+          <img src={underwearIcon} alt="No use of pad" className="w-5 h-5 mr-2" />
+          <span>No use of pad; rarely or never leaking urine</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#FBC02D" name="1 pad used" />
-          <span className="ml-2">1 pad used per day; any degree of leaking urine</span>
+          <img src={padIcon} alt="1 pad used" className="w-5 h-5 mr-2" />
+          <span>1 pad used per day; any degree of leaking urine</span>
         </div>
         <div className="flex items-center">
-          <LegendIcon color="#D32F2F" name="≥2 pad used" />
-          <span className="ml-2">≥2 pad used per day; any degree of leaking urine</span>
+          <img src={darkPadIcon} alt="≥2 pad used" className="w-5 h-5 mr-2" />
+          <span>≥2 pad used per day; any degree of leaking urine</span>
         </div>
       </div>
     </div>
@@ -111,15 +113,16 @@ const UrinaryPadUsagePageContent = () => {
           <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
             <h3 className="font-bold mb-2 text-lg">Your current use of pad and leaking status:</h3>
             <div className="flex items-center bg-pink-100 p-2 rounded">
-              <LegendIcon
-                color={
-                  baselinePadStatus.includes("two or more") ? "#D32F2F" :
-                    baselinePadStatus.includes("one pad") ? "#FBC02D" :
-                      "#1B5E20"
+              <img
+                src={
+                  baselinePadStatus.includes("two or more") ? darkPadIcon :
+                    baselinePadStatus.includes("one pad") ? padIcon :
+                      underwearIcon
                 }
-                name={baselinePadStatus}
+                alt={baselinePadStatus}
+                className="w-5 h-5 mr-2"
               />
-              <span className="ml-2">{getBaselineDisplayName(baselinePadStatus)}</span>
+              <span>{getBaselineDisplayName(baselinePadStatus)}</span>
             </div>
           </div>
           <Legend />
