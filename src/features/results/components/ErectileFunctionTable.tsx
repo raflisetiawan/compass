@@ -6,13 +6,16 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
+  import LegendIcon from "./LegendIcon";
 
   
   interface OutcomeData {
     name: string;
     data: {
       name: string;
+      displayName?: string;
       value: number;
+      color?: string;
       showPill?: boolean;
     }[];
   }
@@ -41,7 +44,14 @@ import {
           <TableBody>
             {headers.map((header, outcomeIndex) => (
               <TableRow key={header.name}>
-                <TableCell className="font-medium break-words whitespace-normal">{header.name}</TableCell>
+                <TableCell className="font-medium break-words whitespace-normal">
+                  <div className="flex items-center gap-2">
+                    {header.color && (
+                      <LegendIcon color={header.color} name={header.displayName || header.name} showPill={header.showPill} size={16} />
+                    )}
+                    <span>{header.displayName || header.name}</span>
+                  </div>
+                </TableCell>
                 {data.map((treatment) => (
                   <TableCell key={treatment.name} className="text-center">
                     {treatment.data[outcomeIndex]?.value?.toFixed(0) ?? 0}%

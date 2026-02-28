@@ -10,6 +10,8 @@ import {
 type OutcomeData = {
   name: string;
   value: number;
+  color?: string;
+  iconUrl?: string;
 };
 
 type TreatmentOutcome = {
@@ -47,7 +49,12 @@ const UrinaryPadUsageTable = ({ data }: UrinaryPadUsageTableProps) => {
           {outcomeNames.map((outcomeName, outcomeIndex) => (
             <TableRow key={outcomeName}>
               <TableCell className="font-medium break-words whitespace-normal">
-                {outcomeName}
+                <div className="flex items-center gap-2">
+                  {data[0]?.data[outcomeIndex]?.iconUrl && (
+                    <img src={data[0].data[outcomeIndex].iconUrl} alt={outcomeName} className="w-4 h-4 shrink-0" />
+                  )}
+                  <span>{outcomeName}</span>
+                </div>
               </TableCell>
               {data.map((treatment) => (
                 <TableCell key={treatment.name} className="text-right">

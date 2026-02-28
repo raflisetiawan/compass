@@ -6,12 +6,15 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
+  import LegendIcon from "./LegendIcon";
   
   interface OutcomeData {
     name: string;
     data: {
       name:string;
       value: number;
+      color?: string;
+      Icon?: React.ElementType;
     }[];
   }
   
@@ -40,7 +43,22 @@ import {
           <TableBody>
             {headers.map((outcomeName, outcomeIndex) => (
               <TableRow key={outcomeName}>
-                <TableCell className="font-medium break-words whitespace-normal">{outcomeName}</TableCell>
+                <TableCell className="font-medium break-words whitespace-normal">
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                      const outcomeData = data[0]?.data[outcomeIndex];
+                      if (outcomeData?.Icon) {
+                        const IconComp = outcomeData.Icon;
+                        return <IconComp color={outcomeData.color} size={16} />;
+                      }
+                      if (outcomeData?.color) {
+                        return <LegendIcon color={outcomeData.color} name={outcomeName} size={16} />;
+                      }
+                      return null;
+                    })()}
+                    <span>{outcomeName}</span>
+                  </div>
+                </TableCell>
                 {data.map(treatment => (
                   <TableCell key={treatment.name} className="text-right">
                     {treatment.data[outcomeIndex]?.value?.toFixed(0) ?? 0}%

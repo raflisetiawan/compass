@@ -6,10 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import LegendIcon from "./LegendIcon";
 
 type OutcomeData = {
   name: string;
   value: number;
+  color?: string;
 };
 
 type TreatmentOutcome = {
@@ -47,7 +49,12 @@ const SexualBotherTable = ({ data }: SexualBotherTableProps) => {
           {outcomeNames.map((outcomeName, outcomeIndex) => (
             <TableRow key={outcomeName}>
               <TableCell className="font-medium break-words whitespace-normal">
-                {outcomeName}
+                <div className="flex items-center gap-2">
+                  {data[0]?.data[outcomeIndex]?.color && (
+                    <LegendIcon color={data[0].data[outcomeIndex].color!} name={outcomeName} size={16} />
+                  )}
+                  <span>{outcomeName}</span>
+                </div>
               </TableCell>
               {data.map((treatment) => (
                 <TableCell key={treatment.name} className="text-right">

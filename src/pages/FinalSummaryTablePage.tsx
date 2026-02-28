@@ -276,8 +276,43 @@ const FinalSummaryTablePageContent = () => {
 
   return (
     <>
+      {/* Clinical Parameters Box */}
+      <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="font-bold mb-3 text-lg">Your Current Function:</h3>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          <div>
+            <span className="text-gray-600">Urinary leakage:</span>{" "}
+            <span className="font-medium">{baselineStatuses.leakageLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Erectile function:</span>{" "}
+            <span className="font-medium">{baselineStatuses.erectileLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Pad usage:</span>{" "}
+            <span className="font-medium">{baselineStatuses.padLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Sexual bother:</span>{" "}
+            <span className="font-medium">{baselineStatuses.erectileBotherLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Urinary bother:</span>{" "}
+            <span className="font-medium">{baselineStatuses.urinaryBotherLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Bowel urgency:</span>{" "}
+            <span className="font-medium">{baselineStatuses.urgencyLabel}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Bowel bother:</span>{" "}
+            <span className="font-medium">{baselineStatuses.bowelBotherLabel}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Desktop Table - hidden on mobile */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block">
         <table className="w-full border-collapse text-sm">
           {/* Main Header */}
           <thead>
@@ -299,31 +334,7 @@ const FinalSummaryTablePageContent = () => {
                 BOWEL
               </th>
             </tr>
-            {/* Current Status Row */}
-            <tr className="bg-gray-50 text-xs">
-              <td className="border border-gray-300 p-2 font-medium">Current status*</td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.leakageLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.padLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.urinaryBotherLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.erectileLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.erectileBotherLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.urgencyLabel}
-              </td>
-              <td className="border border-gray-300 p-2 text-center">
-                {baselineStatuses.bowelBotherLabel}
-              </td>
-            </tr>
+
             {/* Column Headers */}
             <tr className="bg-gray-100 text-xs">
               <th className="border border-gray-300 p-2 font-bold">TREATMENT</th>
@@ -397,82 +408,9 @@ const FinalSummaryTablePageContent = () => {
       </div>
 
       {/* Mobile Cards - shown only on mobile */}
+
+
       <div className="md:hidden space-y-4">
-        {/* Current Status Card */}
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-blue-600 text-white px-4 py-3 font-bold text-center text-sm">
-            Functional Outcomes at 1 year after treatment
-          </div>
-          <div className="px-4 py-3 bg-gray-50 border-b">
-            <h4 className="font-semibold text-sm text-gray-700 mb-2">Your Current Status*</h4>
-          </div>
-          <div className="p-4 space-y-3">
-            {/* Urinary Status */}
-            <div className="border-b border-gray-100 pb-3">
-              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Urinary</h5>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Leakage:</span>
-                  <span className={`font-medium ${baselineStatuses.leakageLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.leakageLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Pad usage:</span>
-                  <span className={`font-medium ${baselineStatuses.padLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.padLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Urinary bother:</span>
-                  <span className={`font-medium ${baselineStatuses.urinaryBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.urinaryBotherLabel}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Sexual Status */}
-            <div className="border-b border-gray-100 pb-3">
-              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Sexual</h5>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Erectile function:</span>
-                  <span className={`font-medium ${baselineStatuses.erectileLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.erectileLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Sexual bother:</span>
-                  <span className={`font-medium ${baselineStatuses.erectileBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.erectileBotherLabel}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bowel Status */}
-            <div>
-              <h5 className="font-semibold text-xs text-gray-500 mb-2 uppercase">Bowel</h5>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Urgency:</span>
-                  <span className={`font-medium ${baselineStatuses.urgencyLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.urgencyLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Bowel bother:</span>
-                  <span className={`font-medium ${baselineStatuses.bowelBotherLabel === "Not answered" ? "text-orange-500 italic" : "text-gray-800"}`}>
-                    {baselineStatuses.bowelBotherLabel}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Treatment Cards */}
         {tableData.map((row) => (
           <div
             key={row.treatment}
