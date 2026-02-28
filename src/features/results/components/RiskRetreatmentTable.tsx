@@ -39,13 +39,13 @@ const RiskRetreatmentTable = ({ data }: RiskRetreatmentTableProps) => {
   );
 
   return (
-    <div className="overflow-x-auto">
-      <Table className="table-fixed w-full">
+    <div>
+      <Table className="w-full table-fixed">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            <TableHead className="w-2/5 break-words whitespace-normal">Outcome</TableHead>
             {validTreatments.map((treatment) => (
-              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+              <TableHead key={treatment.name} className="text-right break-words whitespace-normal">
                 {treatment.name}
               </TableHead>
             ))}
@@ -54,7 +54,7 @@ const RiskRetreatmentTable = ({ data }: RiskRetreatmentTableProps) => {
         <TableBody>
           {allOutcomeNames.map((outcomeName) => (
             <TableRow key={outcomeName}>
-              <TableCell className="font-medium">
+              <TableCell className="font-medium break-words whitespace-normal">
                 {outcomeName}
               </TableCell>
               {validTreatments.map((treatment) => {

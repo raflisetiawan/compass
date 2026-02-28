@@ -23,13 +23,13 @@ import {
     const headers = data[0]?.data.map(d => d.name) || [];
   
     return (
-      <div className="overflow-x-auto">
+      <div>
         <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            <TableHead className="w-2/5 break-words whitespace-normal">Outcome</TableHead>
             {data.map((treatment) => (
-              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+              <TableHead key={treatment.name} className="text-right break-words whitespace-normal">
                 {treatment.name === "Radiotherapy"
                   ? "Radiotherapy"
                   : treatment.name}
@@ -40,7 +40,7 @@ import {
           <TableBody>
             {headers.map((outcomeName, outcomeIndex) => (
               <TableRow key={outcomeName}>
-                <TableCell className="font-medium">{outcomeName}</TableCell>
+                <TableCell className="font-medium break-words whitespace-normal">{outcomeName}</TableCell>
                 {data.map(treatment => (
                   <TableCell key={treatment.name} className="text-right">
                     {treatment.data[outcomeIndex]?.value?.toFixed(0) ?? 0}%

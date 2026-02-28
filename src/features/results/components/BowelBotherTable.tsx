@@ -29,13 +29,13 @@ const BowelBotherTable = ({ data }: BowelBotherTableProps) => {
   const outcomeNames = data[0].data.map((item) => item.name);
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            <TableHead className="w-2/5 break-words whitespace-normal">Outcome</TableHead>
             {data.map((treatment) => (
-              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+              <TableHead key={treatment.name} className="text-right break-words whitespace-normal">
                 {treatment.name === "Radiotherapy"
                   ? "Radiotherapy"
                   : treatment.name}
@@ -46,7 +46,7 @@ const BowelBotherTable = ({ data }: BowelBotherTableProps) => {
         <TableBody>
           {outcomeNames.map((outcomeName, outcomeIndex) => (
             <TableRow key={outcomeName}>
-              <TableCell className="font-medium">
+              <TableCell className="font-medium break-words whitespace-normal">
                 {outcomeName}
               </TableCell>
               {data.map((treatment) => (

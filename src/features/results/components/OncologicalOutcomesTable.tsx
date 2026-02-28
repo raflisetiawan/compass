@@ -16,7 +16,7 @@ const OncologicalOutcomesTable = ({ data }: OncologicalOutcomesTableProps) => {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <table className="w-full border-collapse border border-gray-400">
         {/* Header */}
         <thead>

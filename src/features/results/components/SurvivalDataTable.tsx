@@ -52,7 +52,7 @@ const SurvivalDataTable = ({ data }: SurvivalDataTableProps) => {
   return (
     <>
       {/* Desktop Table */}
-      <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
+      <div className="hidden md:block rounded-lg border border-gray-200">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
@@ -69,7 +69,7 @@ const SurvivalDataTable = ({ data }: SurvivalDataTableProps) => {
               <tr key={row.label} className="bg-white border-b last:border-b-0">
                 <th
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  className="px-6 py-4 font-medium text-gray-900"
                 >
                   {row.label}
                 </th>

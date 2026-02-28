@@ -24,7 +24,8 @@ const FUNCTIONAL_OUTCOME_PAGES = [
   { slug: "sexual-bother", title: "Sexual Bother" },
   { slug: "problem-with-urgency", title: "Bowel Urgency" },
   { slug: "bowel-bother", title: "Bowel Bother" },
-  { slug: "final-summary-table", title: "Summary" },
+  { slug: "survival-retreatment-summary", title: "Survival & Treatment Summary" },
+  { slug: "final-summary-table", title: "Functional Outcomes Summary" },
   { slug: "vce-results", title: "Answers from Predictions" },
 ];
 

@@ -8,6 +8,7 @@ import BowelBotherPage from "./pages/BowelBotherPage";
 import ErectileFunctionPage from "./pages/ErectileFunctionPage";
 import ProblemWithUrgencyPage from "./pages/ProblemWithUrgencyPage";
 import FinalSummaryTablePage from "./pages/FinalSummaryTablePage";
+import SurvivalRetreatmentSummaryPage from "./pages/SurvivalRetreatmentSummaryPage";
 import { Toaster } from "@/components/ui/sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AnimatedPage from "./components/AnimatedPage";
@@ -295,6 +296,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <RiskRetreatmentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/functional-outcome/survival-retreatment-summary"
+            element={
+              <ProtectedRoute>
+                <SurvivalRetreatmentSummaryPage />
               </ProtectedRoute>
             }
           />
