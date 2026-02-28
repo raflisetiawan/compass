@@ -29,34 +29,36 @@ const UrinaryLeakageTable = ({ data }: UrinaryLeakageTableProps) => {
   const outcomeNames = data[0].data.map((item) => item.name);
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Treatment</TableHead>
-          {outcomeNames.map((name) => (
-            <TableHead key={name} className="text-right">
-              {name}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((treatment) => (
-          <TableRow key={treatment.name}>
-            <TableCell>
-              {treatment.name === "RadioTherapy"
-                ? "Radiotherapy"
-                : treatment.name}
-            </TableCell>
-            {treatment.data.map((outcome) => (
-              <TableCell key={outcome.name} className="text-right">
-                {outcome.value}%
-              </TableCell>
+    <div className="overflow-x-auto">
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            {data.map((treatment) => (
+              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+                {treatment.name === "Radiotherapy"
+                  ? "Radiotherapy"
+                  : treatment.name}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {outcomeNames.map((outcomeName, outcomeIndex) => (
+            <TableRow key={outcomeName}>
+              <TableCell className="font-medium">
+                {outcomeName}
+              </TableCell>
+              {data.map((treatment) => (
+                <TableCell key={treatment.name} className="text-right">
+                  {treatment.data[outcomeIndex]?.value ?? 0}%
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

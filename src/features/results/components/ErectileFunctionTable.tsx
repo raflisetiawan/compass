@@ -27,26 +27,24 @@ import {
   
     return (
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="font-bold">Treatment</TableHead>
-              {headers.map((header, idx) => (
-                <TableHead key={idx} className="text-center min-w-[150px]">
-                  <div className="flex flex-col items-center gap-1">
-                    <span>{header.name}</span>
-                  </div>
+              <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+              {data.map((treatment) => (
+                <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+                  {treatment.name === "Radiotherapy" ? "Radiotherapy" : treatment.name}
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell className="font-medium">{row.name}</TableCell>
-                {row.data.map((d, idx) => (
-                  <TableCell key={idx} className="text-center">
-                    {d.value.toFixed(0)}%
+            {headers.map((header, outcomeIndex) => (
+              <TableRow key={header.name}>
+                <TableCell className="font-medium">{header.name}</TableCell>
+                {data.map((treatment) => (
+                  <TableCell key={treatment.name} className="text-center">
+                    {treatment.data[outcomeIndex]?.value?.toFixed(0) ?? 0}%
                   </TableCell>
                 ))}
               </TableRow>

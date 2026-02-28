@@ -119,7 +119,8 @@ const UrinaryLeakagePageContent = () => {
             </div>
           </div>
           <Legend />
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div className="hidden lg:block"></div>
             {treatmentOutcomes.map((treatment) => (
               <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
                 <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>

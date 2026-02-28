@@ -6,7 +6,7 @@ import IconArray from "@/features/results/components/IconArray";
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import ProblemWithUrgencyTable from "@/features/results/components/ProblemWithUrgencyTable";
-import LegendIcon from "@/features/results/components/LegendIcon";
+import PaperRollIcon from "@/features/results/components/PaperRollIcon";
 import {
   Accordion,
   AccordionContent,
@@ -78,9 +78,9 @@ const ProblemWithUrgencyPageContent = () => {
       return {
         name: treatment,
         data: [
-          { name: "No problem", value: noProblem, color: "#1b5e20" },
-          { name: "Very small or small problem", value: smallProblem, color: "#ffc107" },
-          { name: "Moderate or big problem", value: bigProblem, color: "#dc3545" },
+          { name: "No problem", value: noProblem, color: "#1b5e20", Icon: PaperRollIcon, iconScale: 1.15 },
+          { name: "Very small or small problem", value: smallProblem, color: "#ffc107", Icon: PaperRollIcon, iconScale: 1.15 },
+          { name: "Moderate or big problem", value: bigProblem, color: "#dc3545", Icon: PaperRollIcon, iconScale: 1.15 },
         ],
       };
     });
@@ -90,9 +90,9 @@ const ProblemWithUrgencyPageContent = () => {
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><LegendIcon color="#1b5e20" name="No problem" /><span className="ml-2">No problem</span></div>
-        <div className="flex items-center"><LegendIcon color="#ffc107" name="Small problem" /><span className="ml-2">Very small or small problem</span></div>
-        <div className="flex items-center"><LegendIcon color="#dc3545" name="Big problem" /><span className="ml-2">Moderate or big problem</span></div>
+        <div className="flex items-center"><PaperRollIcon color="#1b5e20" size={24} /><span className="ml-2">No problem</span></div>
+        <div className="flex items-center"><PaperRollIcon color="#ffc107" size={24} /><span className="ml-2">Very small or small problem</span></div>
+        <div className="flex items-center"><PaperRollIcon color="#dc3545" size={24} /><span className="ml-2">Moderate or big problem</span></div>
       </div>
     </div>
   );
@@ -114,26 +114,27 @@ const ProblemWithUrgencyPageContent = () => {
           <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
             <h3 className="font-bold mb-2 text-lg">Your current problem with bowel urgency status:</h3>
             <div className="flex items-center bg-pink-100 p-2 rounded">
-              <LegendIcon
+              <PaperRollIcon
                 color={
                   baselineStatus === "No_problem" ? "#1b5e20" :
                     baselineStatus === "Very_small_problem" ? "#ffc107" :
                       "#dc3545"
                 }
-                name={baselineStatus}
+                size={24}
               />
               <span className="ml-2">{getBaselineDisplayName(baselineStatus)}</span>
             </div>
           </div>
           <Legend />
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
-            <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>
-            <IconArray data={treatment.data} />
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div className="hidden lg:block"></div>
+            {treatmentOutcomes.map((treatment) => (
+              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
+                <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>
+                <IconArray data={treatment.data} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
       <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
       <ProblemWithUrgencyTable data={treatmentOutcomes} />
       <Accordion type="single" collapsible className="w-full mt-6">

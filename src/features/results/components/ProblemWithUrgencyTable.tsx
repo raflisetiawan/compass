@@ -23,22 +23,34 @@ import {
     const headers = data[0]?.data.map(d => d.name) || [];
   
     return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Treatment</TableHead>
-            {headers.map(header => <TableHead key={header}>{header}</TableHead>)}
+      <div className="overflow-x-auto">
+        <Table className="table-fixed w-full">
+          <TableHeader>
+            <TableRow>
+            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            {data.map((treatment) => (
+              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+                {treatment.name === "Radiotherapy"
+                  ? "Radiotherapy"
+                  : treatment.name}
+              </TableHead>
+            ))}
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell className="font-medium">{row.name}</TableCell>
-              {row.data.map(d => <TableCell key={d.name}>{d.value.toFixed(0)}%</TableCell>)}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {headers.map((outcomeName, outcomeIndex) => (
+              <TableRow key={outcomeName}>
+                <TableCell className="font-medium">{outcomeName}</TableCell>
+                {data.map(treatment => (
+                  <TableCell key={treatment.name} className="text-right">
+                    {treatment.data[outcomeIndex]?.value?.toFixed(0) ?? 0}%
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     );
   };
   

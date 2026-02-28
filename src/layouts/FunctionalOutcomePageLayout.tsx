@@ -98,17 +98,19 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
               <div className={`w-full transition-all duration-300 ${isSidebarExpanded ? "md:w-2/3" : "md:w-[calc(100%-5rem)]"}`}>
                 {/* Top navigation buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between sm:items-center mb-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleBack}
-                    className="w-full sm:w-auto justify-center sm:justify-start text-sm"
-                  >
-                    <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="truncate">
-                      <span className="hidden sm:inline">{prevPage ? `Back to ${prevPage.title}` : "Back to Questionnaire"}</span>
-                      <span className="sm:hidden">{prevPage ? prevPage.title : "Questionnaire"}</span>
-                    </span>
-                  </Button>
+                  {prevPage && (
+                    <Button 
+                      variant="outline" 
+                      onClick={handleBack}
+                      className="w-full sm:w-auto justify-center sm:justify-start text-sm"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="truncate">
+                        <span className="hidden sm:inline">Back to {prevPage.title}</span>
+                        <span className="sm:hidden">{prevPage.title}</span>
+                      </span>
+                    </Button>
+                  )}
                   {nextPage ? (
                     <Button 
                       onClick={handleNext} 
@@ -146,14 +148,16 @@ export const FunctionalOutcomePageLayout = ({ title, children }: FunctionalOutco
                   </CardContent>
                   {/* Navigation Footer */}
                   <CardFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between border-t pt-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={handleBack}
-                      className="w-full sm:w-auto justify-center sm:justify-start text-sm"
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                      Back
-                    </Button>
+                    {prevPage && (
+                      <Button 
+                        variant="outline" 
+                        onClick={handleBack}
+                        className="w-full sm:w-auto justify-center sm:justify-start text-sm"
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                        Back
+                      </Button>
+                    )}
                     {nextPage ? (
                       <Button 
                         onClick={handleNext} 

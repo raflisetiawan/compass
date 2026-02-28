@@ -1,3 +1,12 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 interface TableData {
   name: string;
   data: {
@@ -31,33 +40,35 @@ const RiskRetreatmentTable = ({ data }: RiskRetreatmentTableProps) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-2 font-semibold text-teal-600">Treatment</th>
-            {allOutcomeNames.map((name) => (
-              <th key={name} className="text-center p-2 font-semibold text-gray-600">
-                {name}
-              </th>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/5 min-w-[120px]">Outcome</TableHead>
+            {validTreatments.map((treatment) => (
+              <TableHead key={treatment.name} className="text-right w-1/5 min-w-[120px]">
+                {treatment.name}
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {validTreatments.map((treatment) => (
-            <tr key={treatment.name} className="border-b hover:bg-gray-50">
-              <td className="p-2 font-medium text-teal-600">{treatment.name}</td>
-              {allOutcomeNames.map((outcomeName) => {
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {allOutcomeNames.map((outcomeName) => (
+            <TableRow key={outcomeName}>
+              <TableCell className="font-medium">
+                {outcomeName}
+              </TableCell>
+              {validTreatments.map((treatment) => {
                 const outcomeData = treatment.data.find((d) => d.name === outcomeName);
                 return (
-                  <td key={outcomeName} className="text-center p-2">
+                  <TableCell key={treatment.name} className="text-right">
                     {outcomeData ? `${outcomeData.value}%` : "-"}
-                  </td>
+                  </TableCell>
                 );
               })}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

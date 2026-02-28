@@ -12,6 +12,7 @@ interface IconArrayProps {
     Icon?: React.ElementType;
     iconUrl?: string;
     borderColor?: string;
+    iconScale?: number;
   }[];
 }
 
@@ -53,6 +54,7 @@ const IconArray = ({ data }: IconArrayProps) => {
         Icon?: React.ElementType;
         iconUrl?: string;
         borderColor?: string;
+        iconScale?: number;
       }[] = [];
       data.forEach((d) => {
         for (let i = 0; i < d.value; i++) {
@@ -63,6 +65,7 @@ const IconArray = ({ data }: IconArrayProps) => {
             Icon: d.Icon,
             iconUrl: d.iconUrl,
             borderColor: d.borderColor,
+            iconScale: d.iconScale,
           });
         }
       });
@@ -101,14 +104,24 @@ const IconArray = ({ data }: IconArrayProps) => {
               .attr("width", iconSize)
               .attr("height", iconSize);
           } else if (item.Icon) {
-            // Render the icon path directly as nested SVG for proper scaling
-            const wrapper = group.append("svg")
-              .attr("width", iconSize)
-              .attr("height", iconSize)
-              .attr("viewBox", "0 -960 960 960");
-            wrapper.append("path")
-              .attr("d", "M400-80v-280h-80v-240q0-33 23.5-56.5T400-680h160q33 0 56.5 23.5T640-600v240h-80v280H400Zm80-640q-33 0-56.5-23.5T400-800q0-33 23.5-56.5T480-880q33 0 56.5 23.5T560-800q0 33-23.5 56.5T480-720Z")
-              .attr("fill", item.color);
+            // Render the actual Icon component (e.g., FilledSun, FilledDroplet, PaperRoll)
+            const IconComponent = item.Icon;
+            
+            const scale = item.iconScale || 1;
+            const renderSize = iconSize * scale;
+            const offset = -(renderSize - iconSize) / 2;
+
+            const iconHtml = ReactDOMServer.renderToString(
+              <IconComponent color={item.color} size={renderSize} />
+            );
+            group
+              .append("foreignObject")
+              .attr("x", offset)
+              .attr("y", offset)
+              .attr("width", renderSize)
+              .attr("height", renderSize)
+              .style("overflow", "visible")
+              .html(iconHtml);
           } else {
             // Fallback: Simple circle (using LegendIcon without pill)
             const iconHtml = ReactDOMServer.renderToString(

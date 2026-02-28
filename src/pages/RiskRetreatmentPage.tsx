@@ -96,8 +96,8 @@ const RiskRetreatmentPageContent = () => {
   return (
     <>
       <p className="text-sm text-gray-600 mb-4">
-        The following graphs show the predicted treatment outcomes based on your clinical parameters. 
-        Each icon plot represents 100 patients with similar characteristics, showing the probability 
+        The following graphs show the predicted treatment outcomes based on your clinical parameters.
+        Each icon plot represents 100 patients with similar characteristics, showing the probability
         distribution of requiring additional treatment or retreatment.
       </p>
 
@@ -120,12 +120,28 @@ const RiskRetreatmentPageContent = () => {
             <span className="text-gray-600">MRI Visibility:</span>{" "}
             <span className="font-medium">{answers.mri_pirad_score || answers.mri_visibility || "Not specified"}</span>
           </div>
+           <div>
+              <span className="text-gray-600">Maximum Cancer Core Length:</span>{" "}
+              <span className="font-medium">
+                {answers.max_cancer_core_length ? `${answers.max_cancer_core_length} mm` : "Not specified"}
+              </span>
+            </div>
+          <div>
+           
+            <span className="text-gray-600">PSA Density:</span>{" "}
+            <span className="font-medium">
+              {answers.psa && answers.prostate_volume
+                ? (parseFloat(String(answers.psa)) / parseFloat(String(answers.prostate_volume))).toFixed(2)
+                : "Not specified"}
+            </span>
+          </div>
         </div>
       </div>
 
       <Legend />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="hidden lg:block"></div>
         {treatmentOutcomes.map((treatment) => (
           <div key={treatment.name} className="flex flex-col">
             <h3 className="font-bold text-md text-center min-h-[3.5rem] flex items-end justify-center pb-2">{treatment.name}</h3>
@@ -155,7 +171,7 @@ const RiskRetreatmentPageContent = () => {
           <AccordionContent>
             <div className="text-sm text-gray-600 space-y-4">
               <p>
-                Based on your clinical parameters, here is the predicted probability of requiring 
+                Based on your clinical parameters, here is the predicted probability of requiring
                 additional treatment for each treatment option:
               </p>
               {treatmentOutcomes.map((treatment) => (

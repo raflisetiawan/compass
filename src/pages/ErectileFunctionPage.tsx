@@ -7,7 +7,6 @@ import erectileFunctionData from "@/assets/erectile_function_with_assist.json";
 import { IconLegendModal } from "@/features/results/components/IconLegendModal";
 import ErectileFunctionTable from "@/features/results/components/ErectileFunctionTable";
 import LegendIcon from "@/features/results/components/LegendIcon";
-import PillIcon from "@/features/results/components/PillIcon";
 import {
   Accordion,
   AccordionContent,
@@ -53,25 +52,17 @@ interface CategoryData {
 
 // Helper function to get user-friendly baseline name
 const getBaselineDisplayName = (baselineStatus: string): string => {
+  const isAssist = baselineStatus.includes("with assist");
+  const suffix = isAssist ? " (using medication or a device)" : "";
+
   if (baselineStatus.includes("Firm for intercourse")) {
-    return baselineStatus.includes("with assist") 
-      ? "firm enough for intercourse "
-      : "firm enough for intercourse";
+    return `firm enough for intercourse${suffix}`;
   }
   if (baselineStatus.includes("Firm for masturbation")) {
-    return baselineStatus.includes("with assist")
-      ? "firm enough for masturbation only "
-      : "firm enough for masturbation only";
+    return `firm enough for masturbation only${suffix}`;
   }
-  if (baselineStatus.includes("Not firm")) {
-    return baselineStatus.includes("with assist")
-      ? "not firm enough for any sexual activity"
-      : "not firm enough for any sexual activity";
-  }
-  if (baselineStatus.includes("None at all")) {
-    return baselineStatus.includes("with assist")
-      ? "none at all (with medication/device)"
-      : "none at all";
+  if (baselineStatus.includes("Not firm") || baselineStatus.includes("None at all")) {
+    return `not firm enough for any sexual activity or none at all${suffix}`;
   }
   return baselineStatus.toLowerCase();
 };
@@ -221,13 +212,34 @@ const ErectileFunctionPageContent = () => {
   const Legend = () => (
     <div className="mb-6 p-4 rounded-lg">
       <h3 className="font-bold mb-2 text-lg">What the icons mean</h3>
-      <div className="flex flex-col space-y-2">
-        <div className="flex items-center"><LegendIcon color="#1b5e20" name="Firm intercourse" /><span className="ml-2">Firm enough for intercourse</span></div>
-        <div className="flex items-center"><LegendIcon color="#ffc107" name="Firm masturbation" /><span className="ml-2">Firm enough for masturbation only</span></div>
-        <div className="flex items-center"><LegendIcon color="#dc3545" name="Not firm" /><span className="ml-2">Not firm enough for any sexual activity or none at all</span></div>
-        <div className="flex items-center">
-          <PillIcon size={16} />
-          <span className="ml-2">Using sexual medication or device</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#1b5e20" name="Firm intercourse" /></div>
+            <span className="ml-2">Firm enough for intercourse</span>
+          </div>
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#ffc107" name="Firm masturbation" /></div>
+            <span className="ml-2">Firm enough for masturbation only</span>
+          </div>
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#dc3545" name="Not firm" /></div>
+            <span className="ml-2">Not firm enough for any sexual activity or none at all</span>
+          </div>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#1b5e20" name="Firm intercourse assist" showPill /></div>
+            <span className="ml-2">Firm enough for intercourse (using medication or a device)</span>
+          </div>
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#ffc107" name="Firm masturbation assist" showPill /></div>
+            <span className="ml-2">Firm enough for masturbation only (using medication or a device)</span>
+          </div>
+          <div className="flex items-start">
+            <div className="shrink-0 mt-1"><LegendIcon color="#dc3545" name="Not firm assist" showPill /></div>
+            <span className="ml-2">Not firm enough for any sexual activity or none at all (using medication or a device)</span>
+          </div>
         </div>
       </div>
     </div>
@@ -265,14 +277,15 @@ const ErectileFunctionPageContent = () => {
         </div>
       </div>
       <Legend />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {treatmentOutcomes.map((treatment) => (
-          <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
-            <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>
-            <IconArray data={treatment.data} />
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div className="hidden lg:block"></div>
+            {treatmentOutcomes.map((treatment) => (
+              <div key={treatment.name} onClick={() => setLegendModalData(treatment)} className="cursor-pointer flex flex-col">
+                <h3 className="font-bold text-md text-center min-h-[3rem] flex items-end justify-center pb-2">{treatment.name}</h3>
+                <IconArray data={treatment.data} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
       <h3 className="font-bold mt-6 mb-2 text-lg">Table</h3>
       <ErectileFunctionTable data={treatmentOutcomes} />
       <Accordion type="single" collapsible className="w-full mt-6">
