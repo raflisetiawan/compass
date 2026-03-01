@@ -14,6 +14,10 @@ export {
   drawCircleWithPill,
   drawSunIcon,
   drawDropletIcon,
+  drawStickMan,
+  drawImageIcon,
+  drawPaperRoll,
+  drawDashedBorder,
   drawIcon,
   type IconType,
   type IconRenderOptions

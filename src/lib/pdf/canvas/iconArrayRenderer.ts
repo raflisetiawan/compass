@@ -10,6 +10,8 @@ export interface IconData {
   value: number;
   color: string;
   iconType?: IconType;
+  imageElement?: HTMLImageElement | null;
+  borderColor?: string;
 }
 
 export interface RenderOptions {
@@ -71,11 +73,11 @@ export function renderIconArrayToCanvas(
   ctx.fillRect(0, 0, gridWidth, gridHeight);
 
   // Build icon array from data
-  const icons: Array<{ color: string; iconType: IconType }> = [];
+  const icons: Array<{ color: string; iconType: IconType; imageElement?: HTMLImageElement | null; borderColor?: string }> = [];
   for (const item of data) {
     const iconType = getIconType(item.iconType);
     for (let i = 0; i < item.value; i++) {
-      icons.push({ color: item.color, iconType });
+      icons.push({ color: item.color, iconType, imageElement: item.imageElement, borderColor: item.borderColor });
     }
   }
 
@@ -91,7 +93,7 @@ export function renderIconArrayToCanvas(
       y,
       size: iconSize,
       color: icons[i].color,
-    });
+    }, icons[i].imageElement, icons[i].borderColor);
   }
 
   return canvas;
@@ -160,11 +162,11 @@ export function renderChartWithTitleToCanvas(
   ctx.fillText(title, canvasWidth / 2, titleHeight / 2);
 
   // Build and draw icon array
-  const icons: Array<{ color: string; iconType: IconType }> = [];
+  const icons: Array<{ color: string; iconType: IconType; imageElement?: HTMLImageElement | null; borderColor?: string }> = [];
   for (const item of data) {
     const iconType = getIconType(item.iconType);
     for (let i = 0; i < item.value; i++) {
-      icons.push({ color: item.color, iconType });
+      icons.push({ color: item.color, iconType, imageElement: item.imageElement, borderColor: item.borderColor });
     }
   }
 
@@ -180,7 +182,7 @@ export function renderChartWithTitleToCanvas(
       y,
       size: iconSize,
       color: icons[i].color,
-    });
+    }, icons[i].imageElement, icons[i].borderColor);
   }
 
   return canvas;

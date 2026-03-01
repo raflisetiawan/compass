@@ -1,13 +1,33 @@
 import autoTable from 'jspdf-autotable';
 import { type PdfPageProps } from '../types';
-import { calculateOutcomes } from '@/services/outcomes';
+
+// Import all data files directly (same as FinalSummaryTablePage.tsx)
+import urinaryLeakageData from '@/assets/leaking_urine_at_one_year.json';
+import urinaryPadData from '@/assets/use_of_urinary_pads_at_one_year.json';
+import urinaryBotherData from '@/assets/urinary_bother.json';
+import erectileFunctionData from '@/assets/erectile_function_with_assist.json';
+import erectileBotherData from '@/assets/erectile_bother.json';
+import bowelUrgencyData from '@/assets/problem_with_bowel_urgency.json';
+import bowelBotherData from '@/assets/bowel_bother.json';
+
+// Type aliases matching FinalSummaryTablePage.tsx
+type LeakageData = typeof urinaryLeakageData;
+type PadData = typeof urinaryPadData;
+type UrinaryBotherData = typeof urinaryBotherData;
+type ErectileFunctionDataType = typeof erectileFunctionData;
+type ErectileBotherData = typeof erectileBotherData;
+type BowelUrgencyDataType = typeof bowelUrgencyData;
+type BowelBotherDataType = typeof bowelBotherData;
+
+const treatments = [
+    { key: "Active Surveillance", urgencyKey: "Active_Surveillance", label: "ACTIVE\nSURVEILLANCE", fillColor: [224, 242, 254] },  // bg-sky-100
+    { key: "Focal Therapy", urgencyKey: "Focal", label: "FOCAL\nTHERAPY", fillColor: [220, 252, 231] },  // bg-green-100
+    { key: "Surgery", urgencyKey: "Surgery", label: "SURGERY", fillColor: [255, 237, 213] },  // bg-orange-100
+    { key: "Radiotherapy", urgencyKey: "EBRT", label: "RADIOTHERAPY", fillColor: [254, 226, 226] },  // bg-red-100
+] as const;
 
 export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
-    // Add new page for summary
     doc.addPage();
-
-    // Recalculate outcomes to ensure fresh data
-    const outcomes = calculateOutcomes(answers);
 
     // Page title
     doc.setFontSize(18);
@@ -17,220 +37,351 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
     const xPosition = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
     doc.text(title, xPosition, 20);
 
-    // Define table headers
-    // --- Helper functions for Current Status ---
-    const getLeakageText = (a: typeof answers) => {
-        if (!a.urine_leak) return "Not\nanswered";
-        const val = String(a.urine_leak).toLowerCase();
-        if (val.includes("rarely") || val.includes("never")) return "No\nleakage";
-        if (val.includes("day")) return "Daily\nleakage";
-        if (val.includes("week")) return "Weekly\nleakage";
-        return "No\nleakage";
-    };
+    // --- Calculate baseline statuses (same logic as FinalSummaryTablePage.tsx) ---
 
-    const getPadText = (a: typeof answers) => {
-        if (!a.pad_usage) return "Not\nanswered";
-        const val = String(a.pad_usage).toLowerCase();
-        if (val.includes("0") || val.includes("no")) return "No pad";
-        if (val.includes("1")) return "1 pad";
-        if (val.includes("2")) return "2+ pads";
-        return "No pad";
-    };
+    // Urinary Leakage
+    const leakage = answers.urine_leak;
+    let leakageStatus: string | null = null;
+    let leakageLabel = "Not answered";
+    if (leakage) {
+        if (String(leakage).includes("day")) {
+            leakageStatus = "At least once a day";
+            leakageLabel = "Leaks daily";
+        } else if (String(leakage).includes("week")) {
+            leakageStatus = "At least once a week";
+            leakageLabel = "Leaks weekly";
+        } else {
+            leakageStatus = "Rarely or never";
+            leakageLabel = "No leakage";
+        }
+    }
 
-    const getUrinaryBotherText = (a: typeof answers) => {
-        if (!a.urine_problem) return "Not\nanswered";
-        const val = String(a.urine_problem).toLowerCase();
-        if (val.includes("no")) return "No\nbother";
-        if (val.includes("small") || val.includes("very")) return "Small\nbother";
-        if (val.includes("moderate") || val.includes("big")) return "Big\nbother";
-        return "No\nbother";
-    };
+    // Pad Usage
+    const padUsage = answers.pad_usage;
+    let padStatus: string | null = null;
+    let padLabel = "Not answered";
+    if (padUsage) {
+        if (String(padUsage).includes("2 or more") || String(padUsage).includes("3 or more")) {
+            padStatus = "Using two or more pads a day";
+            padLabel = "2+ pads/day";
+        } else if (String(padUsage).includes("1 pad")) {
+            padStatus = "Using one pad a day";
+            padLabel = "1 pad/day";
+        } else {
+            padStatus = "Not using pad";
+            padLabel = "No pad";
+        }
+    }
 
-    const getErectionText = (a: typeof answers) => {
-        if (!a.erection_quality) return "Not\nanswered";
-        const val = String(a.erection_quality).toLowerCase();
-        if (val.includes("intercourse")) return "Good\nerections";
-        if (val.includes("masturbation")) return "Poor\nerections";
-        if (val.includes("none") || val.includes("not firm")) return "None";
-        return "None";
-    };
+    // Urinary Bother
+    const urinaryBother = answers.urine_problem;
+    let urinaryBotherStatus: string | null = null;
+    let urinaryBotherLabel = "Not answered";
+    if (urinaryBother) {
+        if (String(urinaryBother).includes("Moderate") || String(urinaryBother).includes("big") || String(urinaryBother).includes("Big")) {
+            urinaryBotherStatus = "Moderate/big problem";
+            urinaryBotherLabel = "Moderate/big problem";
+        } else if (String(urinaryBother).includes("Small") || String(urinaryBother).includes("small")) {
+            urinaryBotherStatus = "Very/small problem";
+            urinaryBotherLabel = "Small problem";
+        } else if (String(urinaryBother).includes("Very")) {
+            urinaryBotherStatus = "Very/small problem";
+            urinaryBotherLabel = "Very small problem";
+        } else {
+            urinaryBotherStatus = "No problem";
+            urinaryBotherLabel = "No problem";
+        }
+    }
 
-    const getSexualBotherText = (a: typeof answers) => {
-        if (!a.erection_bother) return "Not\nanswered";
-        const val = String(a.erection_bother).toLowerCase();
-        if (val.includes("no")) return "No\nproblem";
-        if (val.includes("small") || val.includes("very")) return "Small\nproblem";
-        if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";
-        return "No\nproblem";
-    };
+    // Erectile Function
+    const quality = answers.erection_quality;
+    const useMedication = answers.sex_medication === "Yes";
+    let erectileStatus: string | null = null;
+    let erectileLabel = "Not answered";
+    if (quality) {
+        if (quality === "Firm enough for intercourse") {
+            erectileStatus = useMedication ? "Firm for intercourse - with assist" : "Firm for intercourse - no assist";
+            erectileLabel = "Firm for intercourse";
+        } else if (quality === "Firm enough for masturbation and foreplay only") {
+            erectileStatus = useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
+            erectileLabel = "Firm for masturbation only";
+        } else if (quality === "Not firm enough for any sexual activity") {
+            erectileStatus = useMedication ? "Not firm - with assist" : "Not firm - no assist";
+            erectileLabel = "Not firm enough";
+        } else {
+            erectileStatus = useMedication ? "None at all - with assist" : "None at all - no assist";
+            erectileLabel = "No erections";
+        }
+    }
 
-    const getBowelUrgencyText = (a: typeof answers) => {
-        if (!a.bowel_urgency) return "Not\nanswered";
-        const val = String(a.bowel_urgency).toLowerCase();
-        if (val.includes("no")) return "No\nproblem";
-        if (val.includes("small") || val.includes("very")) return "Small\nproblem";
-        if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";
-        return "No\nproblem";
-    };
+    // Erectile Bother (Sexual Bother)
+    const erectileBother = answers.erection_bother;
+    let erectileBotherStatus: string | null = null;
+    let erectileBotherLabel = "Not answered";
+    if (erectileBother) {
+        if (String(erectileBother).includes("Moderate") || String(erectileBother).includes("big") || String(erectileBother).includes("Big")) {
+            erectileBotherStatus = "Moderate/big problem";
+            erectileBotherLabel = "Moderate/big problem";
+        } else if (String(erectileBother).includes("Small") || String(erectileBother).includes("small")) {
+            erectileBotherStatus = "Very/small problem";
+            erectileBotherLabel = "Small problem";
+        } else if (String(erectileBother).includes("Very")) {
+            erectileBotherStatus = "Very/small problem";
+            erectileBotherLabel = "Very small problem";
+        } else {
+            erectileBotherStatus = "No problem";
+            erectileBotherLabel = "No problem";
+        }
+    }
 
-    const getBowelBotherText = (a: typeof answers) => {
-        if (!a.bowel_bother) return "Not\nanswered";
-        const val = String(a.bowel_bother).toLowerCase();
-        if (val.includes("no")) return "No\nproblem";
-        if (val.includes("small") || val.includes("very")) return "Small\nproblem";
-        if (val.includes("moderate") || val.includes("big")) return "Big\nproblem";
-        return "No\nproblem";
-    };
+    // Bowel Urgency
+    const urgency = answers.bowel_urgency;
+    let urgencyStatus: string | null = null;
+    let urgencyLabel = "Not answered";
+    if (urgency) {
+        if (urgency === "No problem") {
+            urgencyStatus = "No_problem";
+            urgencyLabel = "No problem";
+        } else if (String(urgency).includes("Very small")) {
+            urgencyStatus = "Very_small_problem";
+            urgencyLabel = "Very small problem";
+        } else if (String(urgency).includes("Small")) {
+            urgencyStatus = "Very_small_problem";
+            urgencyLabel = "Small problem";
+        } else if (String(urgency).includes("Moderate")) {
+            urgencyStatus = "Moderate_big_problem";
+            urgencyLabel = "Moderate problem";
+        } else if (String(urgency).includes("Big") || String(urgency).includes("big")) {
+            urgencyStatus = "Moderate_big_problem";
+            urgencyLabel = "Big problem";
+        }
+    }
 
-    // --- Table Headers ---
-    const headers = [
-        [
-            { content: '', styles: { fillColor: [220, 230, 240] } }, // Empty top-left
-            { content: 'URINARY', colSpan: 3, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [220, 230, 240] } },
-            { content: 'SEXUAL', colSpan: 2, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [220, 230, 240] } },
-            { content: 'BOWEL', colSpan: 2, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [220, 230, 240] } }
-        ],
-        [
-            { content: 'Current status*', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [230, 235, 245] } },
-            { content: getLeakageText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getPadText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getUrinaryBotherText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getErectionText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getSexualBotherText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getBowelUrgencyText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-            { content: getBowelBotherText(answers), styles: { halign: 'center', valign: 'middle', fillColor: [255, 240, 245] } },
-        ],
-        [
-            { content: 'TREATMENT', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [210, 220, 235] } },
-            { content: 'No\nLeaking', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'No\nPad\nused', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'No\nproblem\nwith\nurinary\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'Erections\nsufficient\nfor\nintercourse', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'No\nproblem\nwith\nerectile\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'No\nbowel\nurgency', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-            { content: 'No\nproblem\nwith\nbowel\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [255, 235, 235] } },
-        ]
+    // Bowel Bother
+    const bowelBother = answers.bowel_bother;
+    let bowelBotherStatus: string | null = null;
+    let bowelBotherLabel = "Not answered";
+    if (bowelBother) {
+        if (String(bowelBother).includes("Moderate") || String(bowelBother).includes("big") || String(bowelBother).includes("Big")) {
+            bowelBotherStatus = "Moderate/big problem";
+            bowelBotherLabel = "Moderate/big problem";
+        } else if (String(bowelBother).includes("Small") || String(bowelBother).includes("small")) {
+            bowelBotherStatus = "Very/small problem";
+            bowelBotherLabel = "Small problem";
+        } else if (String(bowelBother).includes("Very")) {
+            bowelBotherStatus = "Very/small problem";
+            bowelBotherLabel = "Very small problem";
+        } else {
+            bowelBotherStatus = "No problem";
+            bowelBotherLabel = "No problem";
+        }
+    }
+
+    // --- "Your Current Function" section above the table ---
+    const margin = 14;
+    let currentY = 28;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your Current Function:', margin, currentY);
+    currentY += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+
+    const statusItems = [
+        { label: 'Urinary leakage', value: leakageLabel },
+        { label: 'Pad usage', value: padLabel },
+        { label: 'Urinary bother', value: urinaryBotherLabel },
+        { label: 'Erectile function', value: erectileLabel },
+        { label: 'Sexual bother', value: erectileBotherLabel },
+        { label: 'Bowel urgency', value: urgencyLabel },
+        { label: 'Bowel bother', value: bowelBotherLabel },
     ];
 
-    // Helper to get formatted percentage
-    const getVal = (val: number | undefined) => (val !== undefined ? `${val}%` : '-');
+    // Draw in two columns
+    const colWidth = (doc.internal.pageSize.getWidth() - margin * 2) / 2;
+    const startY = currentY;
+    statusItems.forEach((item, idx) => {
+        const col = idx < 4 ? 0 : 1;
+        const row = idx < 4 ? idx : idx - 4;
+        const x = margin + col * colWidth;
+        const y = startY + row * 5;
+        doc.setFont('helvetica', 'normal');
+        doc.text(`${item.label}: `, x, y);
+        const labelWidth = doc.getTextWidth(`${item.label}: `);
+        doc.setFont('helvetica', 'bold');
+        doc.text(item.value, x + labelWidth, y);
+    });
 
-    // Prepare table data
-    const tableData = [
+    currentY = startY + 4 * 5 + 4;
+
+    // --- Calculate outcomes from JSON data (same as FinalSummaryTablePage.tsx) ---
+    const formatVal = (val: number | null) => (val !== null ? `${val}%` : '-');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tableData: any[][] = treatments.map(({ key: treatmentName, urgencyKey, label, fillColor }) => {
+        // No Leaking
+        let noLeaking: number | null = null;
+        if (leakageStatus) {
+            const leakageResult = (urinaryLeakageData as LeakageData)[treatmentName as keyof LeakageData];
+            noLeaking = leakageResult?.["Baseline urine leakage"]?.[leakageStatus as keyof typeof leakageResult["Baseline urine leakage"]]?.["Rarely or never"] ?? null;
+        }
+
+        // No Pad Used
+        let noPadUsed: number | null = null;
+        if (padStatus) {
+            const padOutcome = (urinaryPadData as PadData)[treatmentName as keyof PadData];
+            noPadUsed = padOutcome?.["Pad status at baseline"]?.[padStatus as keyof typeof padOutcome["Pad status at baseline"]]?.["Not using pad"] ?? null;
+        }
+
+        // No Urinary Problem
+        let noUrinaryProblem: number | null = null;
+        if (urinaryBotherStatus) {
+            const urinaryBotherOutcome = (urinaryBotherData as UrinaryBotherData)[treatmentName as keyof UrinaryBotherData];
+            noUrinaryProblem = urinaryBotherOutcome?.["Baseline urinary bother"]?.[urinaryBotherStatus as keyof typeof urinaryBotherOutcome["Baseline urinary bother"]]?.["No problem"] ?? null;
+        }
+
+        // Erections Sufficient (sum of with assist + no assist)
+        let erectionsSufficient: number | null = null;
+        if (erectileStatus) {
+            const erectileOutcome = (erectileFunctionData as ErectileFunctionDataType)[treatmentName as keyof ErectileFunctionDataType];
+            const baselineErection = erectileOutcome?.["Baseline quality of erection"]?.[erectileStatus as keyof typeof erectileOutcome["Baseline quality of erection"]];
+            if (baselineErection) {
+                erectionsSufficient = (baselineErection["Firm for intercourse - no assist"] ?? 0) + (baselineErection["Firm for intercourse - with assist"] ?? 0);
+            }
+        }
+
+        // No Erectile Problem
+        let noErectileProblem: number | null = null;
+        if (erectileBotherStatus) {
+            const erectileBotherOutcome = (erectileBotherData as ErectileBotherData)[treatmentName as keyof ErectileBotherData];
+            noErectileProblem = erectileBotherOutcome?.["Baseline sexual bother"]?.[erectileBotherStatus as keyof typeof erectileBotherOutcome["Baseline sexual bother"]]?.["No problem"] ?? null;
+        }
+
+        // No Bowel Urgency
+        let noBowelUrgency: number | null = null;
+        if (urgencyStatus) {
+            const urgencyOutcome = (bowelUrgencyData as BowelUrgencyDataType)[urgencyKey as keyof BowelUrgencyDataType];
+            noBowelUrgency = urgencyOutcome?.Baseline?.[urgencyStatus as keyof typeof urgencyOutcome.Baseline]?.["No_problem_%"] ?? null;
+        }
+
+        // No Bowel Problem
+        let noBowelProblem: number | null = null;
+        if (bowelBotherStatus) {
+            const bowelBotherOutcome = (bowelBotherData as BowelBotherDataType)[treatmentName as keyof BowelBotherDataType];
+            noBowelProblem = bowelBotherOutcome?.["Baseline bowel bother"]?.[bowelBotherStatus as keyof typeof bowelBotherOutcome["Baseline bowel bother"]]?.["No problem"] ?? null;
+        }
+
+        return [
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: label, styles: { fillColor: fillColor as any, fontStyle: 'bold', halign: 'center', valign: 'middle' } },
+            formatVal(noLeaking),
+            formatVal(noPadUsed),
+            formatVal(noUrinaryProblem),
+            formatVal(erectionsSufficient),
+            formatVal(noErectileProblem),
+            formatVal(noBowelUrgency),
+            formatVal(noBowelProblem),
+        ];
+    });
+
+    // --- Table Headers (matching web page - no "Current status" row) ---
+    // bg-blue-600 = #2563eb = [37, 99, 235]
+    // bg-gray-100 = #f3f4f6 = [243, 244, 246]
+    const headers = [
         [
-            { content: 'ACTIVE\nSURVEILLANCE', styles: { fillColor: [180, 230, 180], fontStyle: 'bold', halign: 'center', valign: 'middle' } },
-            getVal(outcomes.urinaryLeakage?.['Active Surveillance']?.['Rarely or never']),
-            getVal(outcomes.urinaryPad?.['Active Surveillance']?.['No pads']),
-            getVal(outcomes.urinary?.['Active Surveillance']?.['No problem']),
-            getVal(outcomes.erectileFunction?.['Active Surveillance']?.['Firm for intercourse']),
-            getVal(outcomes.erectile?.['Active Surveillance']?.['No problem']),
-            getVal(outcomes.bowelUrgency?.['Active Surveillance']?.['No problem']),
-            getVal(outcomes.bowel?.['Active Surveillance']?.['No problem'])
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: '', styles: { fillColor: [37, 99, 235] as any, textColor: [255, 255, 255] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'Functional Outcomes at 1 year after treatment', colSpan: 7, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [37, 99, 235] as any, textColor: [255, 255, 255] } },
         ],
         [
-            { content: 'FOCAL\nTHERAPY', styles: { fillColor: [220, 230, 255], fontStyle: 'bold', halign: 'center', valign: 'middle' } },
-            getVal(outcomes.urinaryLeakage?.['Focal Therapy']?.['Rarely or never']),
-            getVal(outcomes.urinaryPad?.['Focal Therapy']?.['No pads']),
-            getVal(outcomes.urinary?.['Focal Therapy']?.['No problem']),
-            getVal(outcomes.erectileFunction?.['Focal Therapy']?.['Firm for intercourse']),
-            getVal(outcomes.erectile?.['Focal Therapy']?.['No problem']),
-            getVal(outcomes.bowelUrgency?.['Focal Therapy']?.['No problem']),
-            getVal(outcomes.bowel?.['Focal Therapy']?.['No problem'])
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: '', styles: { fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'URINARY', colSpan: 3, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'SEXUAL', colSpan: 2, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'BOWEL', colSpan: 2, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } }
         ],
         [
-            { content: 'SURGERY', styles: { fillColor: [220, 245, 245], fontStyle: 'bold', halign: 'center', valign: 'middle' } },
-            getVal(outcomes.urinaryLeakage?.['Surgery']?.['Rarely or never']),
-            getVal(outcomes.urinaryPad?.['Surgery']?.['No pads']),
-            getVal(outcomes.urinary?.['Surgery']?.['No problem']),
-            getVal(outcomes.erectileFunction?.['Surgery']?.['Firm for intercourse']),
-            getVal(outcomes.erectile?.['Surgery']?.['No problem']),
-            getVal(outcomes.bowelUrgency?.['Surgery']?.['No problem']),
-            getVal(outcomes.bowel?.['Surgery']?.['No problem'])
-        ],
-        [
-            { content: 'RADIOTHERAPY', styles: { fillColor: [140, 170, 230], fontStyle: 'bold', halign: 'center', valign: 'middle' } },
-            getVal(outcomes.urinaryLeakage?.['Radiotherapy']?.['Rarely or never']),
-            getVal(outcomes.urinaryPad?.['Radiotherapy']?.['No pads']),
-            getVal(outcomes.urinary?.['Radiotherapy']?.['No problem']),
-            getVal(outcomes.erectileFunction?.['Radiotherapy']?.['Firm for intercourse']),
-            getVal(outcomes.erectile?.['Radiotherapy']?.['No problem']),
-            getVal(outcomes.bowelUrgency?.['Radiotherapy']?.['No problem']),
-            getVal(outcomes.bowel?.['Radiotherapy']?.['No problem'])
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'TREATMENT', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No\nLeaking', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No\nPad used', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No problem\nwith urinary\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'Erections\nsufficient for\nintercourse', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No problem\nwith erectile\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No bowel\nurgency', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { content: 'No problem\nwith bowel\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
         ]
     ];
 
     // Generate the table
     autoTable(doc, {
-        startY: 30,
+        startY: currentY,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         head: headers as any[],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         body: tableData as any[],
-        theme: 'plain', // Check if grid is better or manual styling
+        theme: 'grid',
         styles: {
-            fontSize: 9,
-            cellPadding: 3,
+            fontSize: 8,
+            cellPadding: 2,
             halign: 'center',
             valign: 'middle',
-            lineWidth: 0.1, // Add borders
-            lineColor: [255, 255, 255] // White borders like the image
+            lineWidth: 0.3,
+            lineColor: [200, 200, 200],
         },
-        // We set styles inline in data, but global defaults here help
         columnStyles: {
-            0: { cellWidth: 35 }, // Treatment column
-            // Others auto
+            0: { cellWidth: 30 },
         },
-        margin: { left: 14, right: 14 }
+        margin: { left: margin, right: margin }
     });
 
-    // Add footnote
+    // --- Definitions section ---
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let currentY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.text('* Percentages represent likelihood of achieving the stated outcome at 1 year post-treatment', 14, currentY);
-
-    // Add definitions section
-    currentY += 10;
+    let defY = (doc as any).lastAutoTable.finalY + 10;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('Definitions:', 14, currentY);
+    doc.text('Definitions:', margin, defY);
 
-    currentY += 6;
-    doc.setFontSize(9);
+    defY += 6;
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    
+
     const lineHeight = 5;
-    const margin = 14;
-    const bulletIndent = 20; // Indent for text after dash
+    const bulletIndent = 18;
     const maxWidth = doc.internal.pageSize.getWidth() - bulletIndent - margin;
 
     const definitions = [
         'No leakage: % of men who rarely or never leak',
         'No Pad used: % of men who do not wear any pad for urinary leakage',
-        'No problem with urinary function: % of men who do not consider their current urinary function to be a problem.',
-        'Erections sufficient for intercourse: % of men whose erections are sufficient for intercourse (whether or not they are using any tablets or other medical devices to help).',
-        'No problem with erectile function: % of men who do not consider their current degree of erectile function to be a problem.',
-        'No problem with bowel urgency: % of men who do not consider their current degree of bowel urgency to be a problem.',
-        'No problem with bowel function: % of men who do not consider their bowel function to be a problem.',
+        'No problem with urinary function: % of men who do not consider their current urinary function to be a problem',
+        'Erections sufficient for intercourse: % of men whose erections are sufficient for intercourse (whether or not they are using any tablets or other medical devices to help)',
+        'No problem with erectile function: % of men who do not consider their current degree of erectile function to be a problem',
+        'No problem with bowel urgency: % of men who do not consider their current degree of bowel urgency to be a problem',
+        'No problem with bowel function: % of men who do not consider their bowel function to be a problem',
     ];
 
     definitions.forEach((definition) => {
-        // Draw the dash bullet
-        doc.text('-', margin, currentY);
-        
-        // Draw the definition text with wrapping
+        doc.text('•', margin, defY);
         const lines = doc.splitTextToSize(definition, maxWidth);
-        doc.text(lines, bulletIndent, currentY);
-        currentY += lineHeight * lines.length;
+        doc.text(lines, bulletIndent, defY);
+        defY += lineHeight * lines.length;
     });
 
-    currentY += 4; // Extra spacing before final note
-
-    // Add EPIC-26 note
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
+    defY += 4;
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
     const epicNoteText = 'These definitions correspond to the lowest score (1 out of 5) of their corresponding EPIC-26 questions.';
     const epicNoteLines = doc.splitTextToSize(epicNoteText, doc.internal.pageSize.getWidth() - (margin * 2));
-    doc.text(epicNoteLines, margin, currentY);
+    doc.text(epicNoteLines, margin, defY);
 };

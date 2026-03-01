@@ -8,7 +8,9 @@ import { addVceResultsPage } from './pages/vceResults';
 import { addTreatmentOptionsPages } from './pages/treatmentOptions';
 import { addResultsPage } from './pages/results';
 import { addSummaryPage } from './pages/summary';
+import { addSurvivalRetreatmentSummaryPage } from './pages/survivalRetreatmentSummary';
 import { addSurvivalPage } from './pages/survival';
+import { addRiskRetreatmentPage } from './pages/riskRetreatment';
 import { addUrinaryLeakagePage } from './pages/urinaryLeakage';
 import { addUrinaryPadPage } from './pages/urinaryPad';
 import { addUrinaryBotherPage } from './pages/urinaryBother';
@@ -75,7 +77,7 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
         vceAnswers,
     };
 
-    const totalSteps = includeVce ? 13 : 12;
+    const totalSteps = includeVce ? 15 : 14;
     let currentStep = 0;
 
     const updateProgress = () => {
@@ -106,13 +108,17 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
     addSurvivalPage(pageProps);
     updateProgress();
 
+    // Page 5b: Risk & Retreatment
+    addRiskRetreatmentPage(pageProps);
+    updateProgress();
+
     // Functional Outcomes - all now use direct canvas rendering:
     // Page 6: Urinary Leakage
     addUrinaryLeakagePage(pageProps);
     updateProgress();
 
-    // Page 7: Urinary Pad
-    addUrinaryPadPage(pageProps);
+    // Page 7: Urinary Pad (async for image loading)
+    await addUrinaryPadPage(pageProps);
     updateProgress();
 
     // Page 8: Urinary Bother
@@ -135,7 +141,11 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
     addBowelBotherPage(pageProps);
     updateProgress();
 
-    // Page 13: Summary table (Functional Outcomes summary)
+    // Page 13: Survival and Additional Treatment Summary
+    addSurvivalRetreatmentSummaryPage(pageProps);
+    updateProgress();
+
+    // Page 14: Summary table (Functional Outcomes summary)
     addSummaryPage(pageProps);
     updateProgress();
 

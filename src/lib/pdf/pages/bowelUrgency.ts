@@ -1,6 +1,7 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
 import { renderMultipleChartsToDataUrl } from '../canvas';
+import { drawPaperRoll } from '../canvas';
 import problemWithUrgencyData from "@/assets/problem_with_bowel_urgency.json";
 
 export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageProps) => {
@@ -36,9 +37,9 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
 
     // Helper function to get color for baseline status
     const getBaselineColor = (status: string): { r: number, g: number, b: number } => {
-        if (status === "No_problem") return { r: 27, g: 94, b: 32 }; // #1B5E20
-        if (status === "Very_small_problem") return { r: 251, g: 192, b: 45 }; // #FBC02D
-        return { r: 211, g: 47, b: 47 }; // #D32F2F
+        if (status === "No_problem") return { r: 27, g: 94, b: 32 }; // #1b5e20
+        if (status === "Very_small_problem") return { r: 255, g: 193, b: 7 }; // #ffc107
+        return { r: 220, g: 53, b: 69 }; // #dc3545
     };
 
     const baselineUrgencyStatus = (() => {
@@ -51,22 +52,32 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
 
     // Draw current status box
     const statusBoxY = 42;
-    const statusColor = getBaselineColor(baselineUrgencyStatus);
     
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('Your current bowel urgency status:', margin, statusBoxY);
     
-    // Draw colored circle
-    const circleX = margin + 3;
-    const circleY = statusBoxY + 7;
-    doc.setFillColor(statusColor.r, statusColor.g, statusColor.b);
-    doc.circle(circleX, circleY, 2.5, 'F');
+    // Draw paper roll icon for status
+    const iconSize = 10;
+    const iconY = statusBoxY + 3;
+    const statusColor = getBaselineColor(baselineUrgencyStatus);
+    
+    // Create a small canvas and draw the paper roll, then add as image to PDF
+    const miniCanvas = document.createElement('canvas');
+    const canvasSize = 40;
+    miniCanvas.width = canvasSize;
+    miniCanvas.height = canvasSize;
+    const miniCtx = miniCanvas.getContext('2d');
+    if (miniCtx) {
+        drawPaperRoll(miniCtx, { x: 0, y: 0, size: canvasSize, color: `rgb(${statusColor.r},${statusColor.g},${statusColor.b})` });
+        const miniDataUrl = miniCanvas.toDataURL('image/png');
+        doc.addImage(miniDataUrl, 'PNG', margin + 1, iconY, iconSize, iconSize);
+    }
     
     // Draw status text
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(getBaselineDisplayName(baselineUrgencyStatus), circleX + 5, circleY + 1);
+    doc.text(getBaselineDisplayName(baselineUrgencyStatus), margin + iconSize + 4, iconY + 4);
 
     const urgencyTreatments = ["Active Surveillance", "Focal Therapy", "Surgery", "Radiotherapy"];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,12 +103,11 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
         return {
             name: treatment,
             data: [
+                { name: "No problem", value: noProblem, color: "#1b5e20", iconType: 'paperroll' as const },
 
-                { name: "No problem", value: noProblem, color: "#1B5E20" },
+                { name: "Very small or small problem", value: smallProblem, color: "#ffc107", iconType: 'paperroll' as const },
 
-                { name: "Very small or small problem", value: smallProblem, color: "#FBC02D" },
-
-                { name: "Moderate or big problem", value: bigProblem, color: "#D32F2F" },
+                { name: "Moderate or big problem", value: bigProblem, color: "#dc3545", iconType: 'paperroll' as const },
             ],
         };
     });

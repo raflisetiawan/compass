@@ -1,6 +1,7 @@
 import autoTable from 'jspdf-autotable';
 import type { PdfPageProps } from '../types';
 import { renderIconArrayToDataUrl } from '../canvas';
+import { drawStickMan } from '../canvas';
 import { getAgeGroup, getPSARange, getGradeGroup } from '@/services/prediction';
 import survivalData from "@/assets/survival_calculation.json";
 import type { SurvivalData } from "@/types";
@@ -68,9 +69,9 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
 
     if (survivalOutcome) {
         const iconArrayData = [
-            { name: "Alive", value: Math.round(Number(survivalOutcome["Alive (%)"])), color: "#1B5E20" },
-            { name: "Death (from prostate cancer)", value: Math.round(Number(survivalOutcome["PCa Death (%)"])), color: "#D32F2F" },
-            { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E" },
+            { name: "Alive", value: Math.round(Number(survivalOutcome["Alive (%)"])), color: "#6B8E23", iconType: 'stickman' as const },
+            { name: "Death (from prostate cancer)", value: Math.round(Number(survivalOutcome["PCa Death (%)"])), color: "#D32F2F", iconType: 'stickman' as const },
+            { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E", iconType: 'stickman' as const },
         ];
 
         // Use direct canvas rendering - no html2canvas needed
@@ -103,22 +104,30 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
 
         // Draw legend items with colored circles
         iconArrayData.forEach((item) => {
-            // Draw colored circle
-            const circleRadius = 4;
-            // Parse hex color to RGB
+            // Draw stick man icon instead of circle
+            const iconSize = 10;
             const hexColor = item.color.replace('#', '');
             const r = parseInt(hexColor.substring(0, 2), 16);
             const g = parseInt(hexColor.substring(2, 4), 16);
             const b = parseInt(hexColor.substring(4, 6), 16);
             
-            doc.setFillColor(r, g, b);
-            doc.circle(legendX + circleRadius, legendY, circleRadius, 'F');
+            // Create a small canvas and draw the stick man, then add as image
+            const miniCanvas = document.createElement('canvas');
+            const canvasSize = 40;
+            miniCanvas.width = canvasSize;
+            miniCanvas.height = canvasSize;
+            const miniCtx = miniCanvas.getContext('2d');
+            if (miniCtx) {
+                drawStickMan(miniCtx, { x: 0, y: 0, size: canvasSize, color: `rgb(${r},${g},${b})` });
+                const miniDataUrl = miniCanvas.toDataURL('image/png');
+                doc.addImage(miniDataUrl, 'PNG', legendX, legendY - iconSize / 2, iconSize, iconSize);
+            }
             
             // Draw label with percentage
             doc.setTextColor(0, 0, 0);
             const percentage = Number(survivalOutcome![item.name === "Alive" ? "Alive (%)" : 
                 item.name === "Death (from prostate cancer)" ? "PCa Death (%)" : "Other Death (%)"]).toFixed(1);
-            doc.text(`${item.name}: ${percentage}%`, legendX + circleRadius * 2 + 4, legendY + 1, { maxWidth: legendWidth - 15 });
+            doc.text(`${item.name}: ${percentage}%`, legendX + iconSize + 4, legendY + 1, { maxWidth: legendWidth - 15 });
             
             legendY += 14;
         });
