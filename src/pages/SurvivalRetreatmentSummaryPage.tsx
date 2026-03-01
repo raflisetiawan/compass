@@ -20,24 +20,23 @@ const SurvivalRetreatmentSummaryPageContent = () => {
   const survivalOutcome = useMemo(() => {
     const age = parseInt(String(answers.age || "65"), 10);
     const psa = parseFloat(String(answers.psa || "8"));
-    let tStage = String(answers.cancer_stage || "T2").replace("T", "");
+    const tStage = String(answers.cancer_stage || "T2").replace("T", "");
 
-    if (tStage === "4") tStage = "3b";
-    if (tStage === "Unknown") tStage = "2";
-    if (tStage === "1 or 2" || tStage.toLowerCase().includes("1 or t2")) {
-      tStage = "2";
+    // T4 and Unknown are not in the dataset — return null
+    if (tStage === "4" || tStage === "Unknown") {
+      return null;
     }
+    const effectiveTStage = (tStage === "1 or 2" || tStage.toLowerCase().includes("1 or t2")) ? "2" : tStage;
 
     const gleasonScore = String(answers.gleason_score || "3+4");
-    let ageGroup = getAgeGroup(age);
-    if (ageGroup === "65-" || ageGroup === "70-") ageGroup = "60-";
+    const ageGroup = getAgeGroup(age);
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
 
     let result = (survivalData.Survival as SurvivalData[]).find(
       (item) =>
         item["Age Group"] === ageGroup &&
-        String(item["T Stage"]) === tStage &&
+        String(item["T Stage"]) === effectiveTStage &&
         item["Grade Group"] === gradeGroup &&
         item["PSA"] === psaRange
     );
@@ -50,7 +49,7 @@ const SurvivalRetreatmentSummaryPageContent = () => {
         const fallbackResult = (survivalData.Survival as SurvivalData[]).find(
           (item) =>
             item["Age Group"] === ageGroup &&
-            String(item["T Stage"]) === tStage &&
+            String(item["T Stage"]) === effectiveTStage &&
             item["Grade Group"] === 2 &&
             item["PSA"] === psaRange
         );

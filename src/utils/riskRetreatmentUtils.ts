@@ -2,6 +2,22 @@ import riskRetreatmentData from "@/assets/risk_retreatment_equations.json";
 
 // Constants
 const INSUFFICIENT_DATA_MESSAGE = "There are insufficient data to provide an estimate of the need for additional treatment.";
+const FOCAL_NOT_RECOMMENDED_GLEASON = "Focal therapy is not routinely recommended for prostate cancer of Gleason grade 4+4 or above";
+const FOCAL_NOT_RECOMMENDED_STAGE = "Focal therapy is not routinely recommended for prostate cancer of stage T3b and above";
+
+/**
+ * Resolves a string value from the JSON to the appropriate error message
+ */
+const resolveErrorMessage = (value: string): string => {
+  switch (value) {
+    case "not_recommended_gleason":
+      return FOCAL_NOT_RECOMMENDED_GLEASON;
+    case "not_recommended_stage":
+      return FOCAL_NOT_RECOMMENDED_STAGE;
+    default:
+      return INSUFFICIENT_DATA_MESSAGE;
+  }
+};
 
 // Type definitions
 interface WaffleDataItem {
@@ -64,7 +80,11 @@ export const mapCancerStage = (stage: string): string => {
  */
 export const mapMriVisibility = (mri: string): string => {
   const mapping = riskRetreatmentData.mappings.mri_visibility as Record<string, string>;
-  return mapping[mri] || "not_visible";
+  if (mapping[mri]) return mapping[mri];
+  // Handle variant option texts
+  const lower = mri.toLowerCase();
+  if (lower.includes("4-5") || lower.includes("4 or 5")) return "visible";
+  return "not_visible";
 };
 
 /**
@@ -183,12 +203,12 @@ const calculateFocalTherapy = (
   try {
     const stageData = data[stageBucket];
     if (typeof stageData === "string") {
-      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
+      return { data: [], error: resolveErrorMessage(stageData) };
     }
     
     const gleasonData = (stageData as Record<string, unknown>)?.[gleasonScore];
     if (typeof gleasonData === "string") {
-      return { data: [], error: INSUFFICIENT_DATA_MESSAGE };
+      return { data: [], error: resolveErrorMessage(gleasonData) };
     }
     
     const psaData = (gleasonData as Record<string, FocalTherapyData>)?.[psaBucket];
@@ -265,6 +285,7 @@ export interface PatientAnswers {
   gleason_score?: string;
   gleason?: string;
   max_core_length?: string | number;
+  max_cancer_core_length?: string | number;
   maximal_cancer_core_length?: string | number;
 }
 
@@ -278,7 +299,7 @@ export const calculateAllStrategies = (answers: PatientAnswers) => {
   const psa = parseFloat(String(answers.psa || 10));
   const prostateVolume = parseFloat(String(answers.prostate_size || answers.prostate_volume || 30));
   const gleasonScore = mapGleasonScore(answers.gleason_score || answers.gleason || "3+3");
-  const maxCoreLength = parseFloat(String(answers.max_core_length || answers.maximal_cancer_core_length || 5));
+  const maxCoreLength = parseFloat(String(answers.max_cancer_core_length || answers.max_core_length || answers.maximal_cancer_core_length || 5));
   
   // Calculate lookup keys
   const stageBucket = cancerStage;

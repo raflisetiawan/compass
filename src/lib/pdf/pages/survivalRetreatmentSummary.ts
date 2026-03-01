@@ -63,21 +63,20 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
     // ─── Survival Calculation ───
     const age = parseInt(String(answers.age || '65'), 10);
     const psa = parseFloat(String(answers.psa || '8'));
-    let tStage = String(answers.cancer_stage || 'T2').replace('T', '');
-    if (tStage === '4') tStage = '3b';
-    if (tStage === 'Unknown') tStage = '2';
-    if (tStage === '1 or 2' || tStage.toLowerCase().includes('1 or t2')) tStage = '2';
+    const tStage = String(answers.cancer_stage || 'T2').replace('T', '');
+    // T4 and Unknown are not in the dataset
+    const isUnsupportedTStage = tStage === '4' || tStage === 'Unknown';
+    const effectiveTStage = isUnsupportedTStage ? tStage : ((tStage === '1 or 2' || tStage.toLowerCase().includes('1 or t2')) ? '2' : tStage);
     const gleasonScore = String(answers.gleason_score || '3+4');
 
-    let ageGroup = getAgeGroup(age);
-    if (ageGroup === '65-' || ageGroup === '70-') ageGroup = '60-';
+    const ageGroup = getAgeGroup(age);
     const psaRange = getPSARange(psa);
     const gradeGroup = getGradeGroup(gleasonScore);
 
-    let survivalOutcome = (survivalData.Survival as SurvivalData[]).find(
+    let survivalOutcome = isUnsupportedTStage ? undefined : (survivalData.Survival as SurvivalData[]).find(
         (item) =>
             item['Age Group'] === ageGroup &&
-            String(item['T Stage']) === tStage &&
+            String(item['T Stage']) === effectiveTStage &&
             item['Grade Group'] === gradeGroup &&
             item['PSA'] === psaRange
     );
@@ -85,12 +84,12 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
     const hasValidData = (data: SurvivalData | undefined) =>
         data && data['Alive (%)'] !== '' && data['Alive (%)'] != null;
 
-    if (!hasValidData(survivalOutcome)) {
+    if (!hasValidData(survivalOutcome) && !isUnsupportedTStage) {
         if (gradeGroup === 1) {
             const fallback = (survivalData.Survival as SurvivalData[]).find(
                 (item) =>
                     item['Age Group'] === ageGroup &&
-                    String(item['T Stage']) === tStage &&
+                    String(item['T Stage']) === effectiveTStage &&
                     item['Grade Group'] === 2 &&
                     item['PSA'] === psaRange
             );

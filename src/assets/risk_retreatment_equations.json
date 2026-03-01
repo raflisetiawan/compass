@@ -18,6 +18,7 @@
     },
     "mri_visibility": {
       "No (PI-RADS/Likert 1-3)": "not_visible",
+      "No or equivocal (PI-RADS/Likert 1-3)": "not_visible",
       "Yes (PI-RADS/Likert 4-5)": "visible"
     },
     "psa_ranges": {
@@ -92,7 +93,7 @@
             "10-20": { "repeat": 10, "radical": 17, "both": 4 },
             ">20": { "repeat": 10, "radical": 17, "both": 4 }
           },
-          "4+4_or_higher": "insufficient_data"
+          "4+4_or_higher": "not_recommended_gleason"
         },
         "T3a": {
           "3+3": {
@@ -110,9 +111,14 @@
             "10-20": { "repeat": 10, "radical": 17, "both": 4 },
             ">20": { "repeat": 10, "radical": 17, "both": 4 }
           },
-          "4+4_or_higher": "insufficient_data"
+          "4+4_or_higher": "not_recommended_gleason"
         },
-        "T3b": "insufficient_data"
+        "T3b": {
+          "3+3": "not_recommended_stage",
+          "3+4": "not_recommended_stage",
+          "4+3": "not_recommended_stage",
+          "4+4_or_higher": "not_recommended_gleason"
+        }
       }
     },
     "radiotherapy": {
