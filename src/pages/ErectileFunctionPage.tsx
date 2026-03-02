@@ -21,10 +21,8 @@ type ErectileFunctionOutcome = {
   "Firm for intercourse - with assist": number;
   "Firm for masturbation - no assist": number;
   "Firm for masturbation - with assist": number;
-  "Not firm - no assist": number;
-  "Not firm - with assist": number;
-  "None at all - no assist": number;
-  "None at all - with assist": number;
+  "Not firm or none - no assist": number;
+  "Not firm or none - with assist": number;
 };
 
 type TreatmentData = {
@@ -34,10 +32,8 @@ type TreatmentData = {
       "Firm for intercourse - with assist": ErectileFunctionOutcome;
       "Firm for masturbation - no assist": ErectileFunctionOutcome;
       "Firm for masturbation - with assist": ErectileFunctionOutcome;
-      "Not firm - no assist": ErectileFunctionOutcome;
-      "Not firm - with assist": ErectileFunctionOutcome;
-      "None at all - no assist": ErectileFunctionOutcome;
-      "None at all - with assist": ErectileFunctionOutcome;
+      "Not firm or none - no assist": ErectileFunctionOutcome;
+      "Not firm or none - with assist": ErectileFunctionOutcome;
     };
   };
 };
@@ -61,7 +57,7 @@ const getBaselineDisplayName = (baselineStatus: string): string => {
   if (baselineStatus.includes("Firm for masturbation")) {
     return `firm enough for masturbation only${suffix}`;
   }
-  if (baselineStatus.includes("Not firm") || baselineStatus.includes("None at all")) {
+  if (baselineStatus.includes("Not firm or none") || baselineStatus.includes("Not firm") || baselineStatus.includes("None at all")) {
     return `not firm enough for any sexual activity or none at all${suffix}`;
   }
   return baselineStatus.toLowerCase();
@@ -85,11 +81,8 @@ const ErectileFunctionPageContent = () => {
     if (quality === "Firm enough for masturbation and foreplay only") {
       return useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
     }
-    if (quality === "Not firm enough for any sexual activity") {
-      return useMedication ? "Not firm - with assist" : "Not firm - no assist";
-    }
-    if (quality === "None at all") {
-      return useMedication ? "None at all - with assist" : "None at all - no assist";
+    if (quality === "Not firm enough for any sexual activity" || quality === "None at all") {
+      return useMedication ? "Not firm or none - with assist" : "Not firm or none - no assist";
     }
     return "Firm for intercourse - no assist"; // Default
   }, [answers.erection_quality, answers.sex_medication]);
@@ -108,13 +101,11 @@ const ErectileFunctionPageContent = () => {
       if (N === 0) {
         categories = [
             { name: "Firm for intercourse - no assist", displayName: "Firm enough for intercourse", value: 0, color: '#1b5e20', showPill: false },
-            { name: "Firm for intercourse - with assist", displayName: "Firm enough for intercourse (with assist)", value: 0, color: '#1b5e20', showPill: true },
+            { name: "Firm for intercourse - with assist", displayName: "Firm enough for intercourse (using medication/device)", value: 0, color: '#1b5e20', showPill: true },
             { name: "Firm for masturbation - no assist", displayName: "Firm enough for masturbation only", value: 0, color: '#ffc107', showPill: false },
-            { name: "Firm for masturbation - with assist", displayName: "Firm enough for masturbation only (with assist)", value: 0, color: '#ffc107', showPill: true },
-            { name: "Not firm - no assist", displayName: "Not firm enough for any sexual activity", value: 0, color: '#dc3545', showPill: false },
-            { name: "Not firm - with assist", displayName: "Not firm enough for any sexual activity (with assist)", value: 0, color: '#dc3545', showPill: true },
-            { name: "None at all - no assist", displayName: "None at all", value: 0, color: '#dc3545', showPill: false },
-            { name: "None at all - with assist", displayName: "None at all (with assist)", value: 0, color: '#dc3545', showPill: true }
+            { name: "Firm for masturbation - with assist", displayName: "Firm enough for masturbation only (using medication/device)", value: 0, color: '#ffc107', showPill: true },
+            { name: "Not firm or none - no assist", displayName: "Not firm enough for any sexual activity or none at all", value: 0, color: '#dc3545', showPill: false },
+            { name: "Not firm or none - with assist", displayName: "Not firm enough for any sexual activity or none at all (using medication/device)", value: 0, color: '#dc3545', showPill: true }
         ];
       } else {
         categories = [
@@ -127,7 +118,7 @@ const ErectileFunctionPageContent = () => {
           },
           {
             name: "Firm for intercourse - with assist",
-            displayName: "Firm enough for intercourse (with assist)",
+            displayName: "Firm enough for intercourse (using medication/device)",
             value: treatmentData["Firm for intercourse - with assist"],
             color: "#1b5e20",
             showPill: true
@@ -141,36 +132,22 @@ const ErectileFunctionPageContent = () => {
           },
           {
             name: "Firm for masturbation - with assist",
-            displayName: "Firm enough for masturbation only (with assist)",
+            displayName: "Firm enough for masturbation only (using medication/device)",
             value: treatmentData["Firm for masturbation - with assist"],
             color: "#ffc107",
             showPill: true
           },
           {
-            name: "Not firm - no assist",
-            displayName: "Not firm enough for any sexual activity",
-            value: treatmentData["Not firm - no assist"],
+            name: "Not firm or none - no assist",
+            displayName: "Not firm enough for any sexual activity or none at all",
+            value: treatmentData["Not firm or none - no assist"],
             color: "#dc3545",
             showPill: false
           },
           {
-            name: "Not firm - with assist",
-            displayName: "Not firm enough for any sexual activity (with assist)",
-            value: treatmentData["Not firm - with assist"],
-            color: "#dc3545",
-            showPill: true
-          },
-          {
-            name: "None at all - no assist",
-            displayName: "None at all",
-            value: treatmentData["None at all - no assist"],
-            color: "#dc3545",
-            showPill: false
-          },
-          {
-            name: "None at all - with assist",
-            displayName: "None at all (with assist)",
-            value: treatmentData["None at all - with assist"],
+            name: "Not firm or none - with assist",
+            displayName: "Not firm enough for any sexual activity or none at all (using medication/device)",
+            value: treatmentData["Not firm or none - with assist"],
             color: "#dc3545",
             showPill: true
           }

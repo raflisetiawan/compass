@@ -205,11 +205,8 @@ const calculateErectileFunction = (answers: Answers): { [treatment: string]: { [
         if (strQuality.includes("masturbation")) {
             return useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
         }
-        if (strQuality.includes("Not firm")) {
-            return useMedication ? "Not firm - with assist" : "Not firm - no assist";
-        }
-        if (strQuality.includes("None")) {
-            return useMedication ? "None at all - with assist" : "None at all - no assist";
+        if (strQuality.includes("Not firm") || strQuality.includes("None")) {
+            return useMedication ? "Not firm or none - with assist" : "Not firm or none - no assist";
         }
         return "Firm for intercourse - no assist"; // Fallback
     })();
@@ -221,7 +218,7 @@ const calculateErectileFunction = (answers: Answers): { [treatment: string]: { [
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = (erectileFunctionData as any)[treatment]?.["Baseline quality of erection"]?.[baselineStatus];
         if (data) {
-            // Aggregate to 3 categories for summary: Intercourse, Masturbation, None/Not Firm
+            // Aggregate to 3 categories for summary: Intercourse, Masturbation, Not firm/None
             const firmIntercourse = 
                 (data["Firm for intercourse - no assist"] || 0) + 
                 (data["Firm for intercourse - with assist"] || 0);
@@ -231,10 +228,8 @@ const calculateErectileFunction = (answers: Answers): { [treatment: string]: { [
                 (data["Firm for masturbation - with assist"] || 0);
 
             const notFirm = 
-                (data["Not firm - no assist"] || 0) + 
-                (data["Not firm - with assist"] || 0) + 
-                (data["None at all - no assist"] || 0) + 
-                (data["None at all - with assist"] || 0);
+                (data["Not firm or none - no assist"] || 0) + 
+                (data["Not firm or none - with assist"] || 0);
 
             result[treatment] = {
                 "Firm for intercourse": Math.round(firmIntercourse),

@@ -40,9 +40,10 @@ const ProblemWithUrgencyPageContent = () => {
 
   const baselineStatus = useMemo(() => {
     const urgency = answers.bowel_urgency || "No problem";
-    if (urgency === "No problem") return "No_problem";
-    if (urgency === "Very small" || urgency === "Small") return "Very_small_problem";
-    if (urgency === "Moderate" || urgency === "Big problem") return "Moderate_big_problem";
+    const u = String(urgency);
+    if (u.includes("No problem") || u.includes("Not a problem")) return "No_problem";
+    if (u.includes("Very") || u.includes("Small") || u.includes("small")) return "Very_small_problem";
+    if (u.includes("Moderate") || u.includes("Big") || u.includes("big")) return "Moderate_big_problem";
     return "No_problem";
   }, [answers.bowel_urgency]);
 

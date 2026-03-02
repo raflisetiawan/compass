@@ -36,11 +36,8 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
         if (quality === "Firm enough for masturbation and foreplay only") {
             return useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
         }
-        if (quality === "Not firm enough for any sexual activity") {
-            return useMedication ? "Not firm - with assist" : "Not firm - no assist";
-        }
-        if (quality === "None at all") {
-            return useMedication ? "None at all - with assist" : "None at all - no assist";
+        if (quality === "Not firm enough for any sexual activity" || quality === "None at all") {
+            return useMedication ? "Not firm or none - with assist" : "Not firm or none - no assist";
         }
         
         // Default fallback
@@ -115,15 +112,10 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
                 ? "Firm enough for masturbation only (with medication/device)"
                 : "Firm enough for masturbation only";
         }
-        if (baselineErectileStatus.includes("Not firm")) {
+        if (baselineErectileStatus.includes("Not firm or none") || baselineErectileStatus.includes("Not firm") || baselineErectileStatus.includes("None at all")) {
             return baselineErectileStatus.includes("with assist")
-                ? "Not firm enough for any sexual activity (with medication/device)"
-                : "Not firm enough for any sexual activity";
-        }
-        if (baselineErectileStatus.includes("None at all")) {
-            return baselineErectileStatus.includes("with assist")
-                ? "None at all (with medication/device)"
-                : "None at all";
+                ? "Not firm enough for any sexual activity or none at all (with medication/device)"
+                : "Not firm enough for any sexual activity or none at all";
         }
         return baselineErectileStatus;
     })();
@@ -159,7 +151,7 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
             },
             {
                 name: "Firm for intercourse - with assist",
-                displayName: "Firm enough for intercourse (with assist)",
+                displayName: "Firm enough for intercourse (with medication/device)",
                 value: treatmentData["Firm for intercourse - with assist"],
                 color: "#1b5e20",
                 iconType: 'pill' as const
@@ -173,36 +165,22 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
             },
             {
                 name: "Firm for masturbation - with assist",
-                displayName: "Firm enough for masturbation only (with assist)",
+                displayName: "Firm enough for masturbation only (with medication/device)",
                 value: treatmentData["Firm for masturbation - with assist"],
                 color: "#ffc107",
                 iconType: 'pill' as const
             },
             {
-                name: "Not firm - no assist",
-                displayName: "Not firm enough for any sexual activity",
-                value: treatmentData["Not firm - no assist"],
+                name: "Not firm or none - no assist",
+                displayName: "Not firm enough for any sexual activity or none at all",
+                value: treatmentData["Not firm or none - no assist"],
                 color: "#dc3545",
                 iconType: 'circle' as const
             },
             {
-                name: "Not firm - with assist",
-                displayName: "Not firm enough for any sexual activity (with assist)",
-                value: treatmentData["Not firm - with assist"],
-                color: "#dc3545",
-                iconType: 'pill' as const
-            },
-            {
-                name: "None at all - no assist",
-                displayName: "None at all",
-                value: treatmentData["None at all - no assist"],
-                color: "#dc3545",
-                iconType: 'circle' as const
-            },
-            {
-                name: "None at all - with assist",
-                displayName: "None at all (with assist)",
-                value: treatmentData["None at all - with assist"],
+                name: "Not firm or none - with assist",
+                displayName: "Not firm enough for any sexual activity or none at all (with medication/device)",
+                value: treatmentData["Not firm or none - with assist"],
                 color: "#dc3545",
                 iconType: 'pill' as const
             }
@@ -265,7 +243,7 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     const efRowMaxHeight = imgHeight;
     const efTableY = yPos + efRowMaxHeight + 10;
 
-    // Build table with all 8 columns matching web
+    // Build table with 6 columns matching web
     const efTableBody = efTreatmentOutcomes.map(t => {
         return [
             t.name,
@@ -273,10 +251,8 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
             `${t.data[1]?.value || 0}%`,  // Firm for intercourse - with assist
             `${t.data[2]?.value || 0}%`,  // Firm for masturbation - no assist
             `${t.data[3]?.value || 0}%`,  // Firm for masturbation - with assist
-            `${t.data[4]?.value || 0}%`,  // Not firm - no assist
-            `${t.data[5]?.value || 0}%`,  // Not firm - with assist
-            `${t.data[6]?.value || 0}%`,  // None at all - no assist
-            `${t.data[7]?.value || 0}%`,  // None at all - with assist
+            `${t.data[4]?.value || 0}%`,  // Not firm or none - no assist
+            `${t.data[5]?.value || 0}%`,  // Not firm or none - with assist
         ];
     });
 
@@ -288,10 +264,8 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
             'Firm intercourse (with assist)',
             'Firm masturbation (no assist)',
             'Firm masturbation (with assist)',
-            'Not firm (no assist)',
-            'Not firm (with assist)',
-            'None (no assist)',
-            'None (with assist)'
+            'Not firm / None (no assist)',
+            'Not firm / None (with assist)'
         ]],
         body: efTableBody,
         theme: 'grid',
@@ -311,15 +285,10 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
                 ? "firm enough for masturbation and foreplay only (with medication/device)"
                 : "firm enough for masturbation and foreplay only";
         }
-        if (status.includes("Not firm")) {
+        if (status.includes("Not firm or none") || status.includes("Not firm") || status.includes("None at all")) {
             return status.includes("with assist")
-                ? "not firm enough for any sexual activity (with medication/device)"
-                : "not firm enough for any sexual activity";
-        }
-        if (status.includes("None at all")) {
-            return status.includes("with assist")
-                ? "none at all (with medication/device)"
-                : "none at all";
+                ? "not firm enough for any sexual activity or none at all (with medication/device)"
+                : "not firm enough for any sexual activity or none at all";
         }
         return status.toLowerCase();
     };
