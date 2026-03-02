@@ -17,7 +17,7 @@ export const FunctionalOutcomesSummary = ({
       if (item.slug === "survival-after-prostate-cancer-treatment") {
         let description: string;
         if (survivalOutcome && survivalOutcome["Alive (%)"]) {
-          const alivePercent = Number(survivalOutcome["Alive (%)"]).toFixed(1);
+          const alivePercent = Number(survivalOutcome["Alive (%)"]).toFixed(2);
           description = `${alivePercent}% are alive at 5 years after diagnosis`;
         } else {
           description = "Data not available for the selected parameters.";

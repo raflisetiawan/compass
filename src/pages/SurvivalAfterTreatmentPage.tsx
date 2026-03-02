@@ -144,7 +144,7 @@ const SurvivalAfterTreatmentPageContent = () => {
               <div key={item.name} className="flex items-center gap-2">
                 <StickManIcon color={item.color} size={20} />
                 <span className="text-sm text-gray-700">
-                  {item.name}: {item.value.toFixed(1)}%
+                  {item.name}: {item.value.toFixed(2)}%
                 </span>
               </div>
             ))}
@@ -163,13 +163,13 @@ const SurvivalAfterTreatmentPageContent = () => {
                 <p>Based on the information you have entered:</p>
                 <ul className="list-disc list-inside pl-4">
                   <li>
-                    {Math.round(iconArrayData[0].value)} out of 100 men who are diagnosed with prostate cancer in the UK will be alive at 5 years.
+                    {iconArrayData[0].value.toFixed(2)} out of 100 men who are diagnosed with prostate cancer in the UK will be alive at 5 years.
                   </li>
                   <li>
-                    {Math.round(iconArrayData[1].value)} out of 100 men will have died from prostate cancer.
+                    {iconArrayData[1].value.toFixed(2)} out of 100 men will have died from prostate cancer.
                   </li>
                   <li>
-                    {Math.round(iconArrayData[2].value)} out of 100 men will have died from causes that are not related to prostate cancer.
+                    {iconArrayData[2].value.toFixed(2)} out of 100 men will have died from causes that are not related to prostate cancer.
                   </li>
                 </ul>
               </div>

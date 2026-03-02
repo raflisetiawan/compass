@@ -21,7 +21,7 @@ const SurvivalDataTable = ({ data }: SurvivalDataTableProps) => {
   const formatPercent = (value: string | number | undefined) => {
     if (value === undefined || value === "") return "";
     const num = Number(value);
-    return isNaN(num) ? "" : `(${num.toFixed(1)}%)`;
+    return isNaN(num) ? "" : `(${num.toFixed(2)}%)`;
   };
 
   const tableData = [

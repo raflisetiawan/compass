@@ -48,7 +48,7 @@ const OncologicalOutcomesTable = ({ data }: OncologicalOutcomesTableProps) => {
                 </div>
               </td>
               <td className="py-2 px-4 border border-gray-400 text-center font-normal text-sm">
-                {item.value.toFixed(1)}%
+                {item.value.toFixed(2)}%
               </td>
             </tr>
           ))}

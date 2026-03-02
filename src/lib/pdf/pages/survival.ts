@@ -59,9 +59,9 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
 
     if (survivalOutcome) {
         const iconArrayData = [
-            { name: "Alive", value: Math.round(Number(survivalOutcome["Alive (%)"])), color: "#6B8E23", iconType: 'stickman' as const },
-            { name: "Death (from prostate cancer)", value: Math.round(Number(survivalOutcome["PCa Death (%)"])), color: "#D32F2F", iconType: 'stickman' as const },
-            { name: "Death (from other causes)", value: Math.round(Number(survivalOutcome["Other Death (%)"])), color: "#9E9E9E", iconType: 'stickman' as const },
+            { name: "Alive", value: Number(Number(survivalOutcome["Alive (%)"]).toFixed(2)), color: "#6B8E23", iconType: 'stickman' as const },
+            { name: "Death (from prostate cancer)", value: Number(Number(survivalOutcome["PCa Death (%)"]).toFixed(2)), color: "#D32F2F", iconType: 'stickman' as const },
+            { name: "Death (from other causes)", value: Number(Number(survivalOutcome["Other Death (%)"]).toFixed(2)), color: "#9E9E9E", iconType: 'stickman' as const },
         ];
 
         // Use direct canvas rendering - no html2canvas needed
@@ -116,7 +116,7 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
             // Draw label with percentage
             doc.setTextColor(0, 0, 0);
             const percentage = Number(survivalOutcome![item.name === "Alive" ? "Alive (%)" : 
-                item.name === "Death (from prostate cancer)" ? "PCa Death (%)" : "Other Death (%)"]).toFixed(1);
+                item.name === "Death (from prostate cancer)" ? "PCa Death (%)" : "Other Death (%)"]).toFixed(2);
             doc.text(`${item.name}: ${percentage}%`, legendX + iconSize + 4, legendY + 1, { maxWidth: legendWidth - 15 });
             
             legendY += 14;
@@ -129,9 +129,9 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
             startY: tableY,
             head: [['', 'Percentage']],
             body: [
-                ['Alive', `${Number(survivalOutcome['Alive (%)']).toFixed(1)}%`],
-                ['Death (from prostate cancer)', `${Number(survivalOutcome['PCa Death (%)']).toFixed(1)}%`],
-                ['Death (from other causes)', `${Number(survivalOutcome['Other Death (%)']).toFixed(1)}%`],
+                ['Alive', `${Number(survivalOutcome['Alive (%)']).toFixed(2)}%`],
+                ['Death (from prostate cancer)', `${Number(survivalOutcome['PCa Death (%)']).toFixed(2)}%`],
+                ['Death (from other causes)', `${Number(survivalOutcome['Other Death (%)']).toFixed(2)}%`],
             ],
             theme: 'grid',
         });
