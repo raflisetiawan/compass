@@ -105,12 +105,11 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
         } else if (quality === "Firm enough for masturbation and foreplay only") {
             erectileStatus = useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
             erectileLabel = "Firm for masturbation only";
-        } else if (quality === "Not firm enough for any sexual activity") {
-            erectileStatus = useMedication ? "Not firm - with assist" : "Not firm - no assist";
-            erectileLabel = "Not firm enough";
         } else {
-            erectileStatus = useMedication ? "None at all - with assist" : "None at all - no assist";
-            erectileLabel = "No erections";
+            // Both "Not firm enough for any sexual activity" and "None at all" map to
+            // the same JSON key family "Not firm or none - ..."
+            erectileStatus = useMedication ? "Not firm or none - with assist" : "Not firm or none - no assist";
+            erectileLabel = quality === "Not firm enough for any sexual activity" ? "Not firm enough" : "No erections";
         }
     }
 
@@ -219,56 +218,69 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tableData: any[][] = treatments.map(({ key: treatmentName, urgencyKey, label, fillColor }) => {
-        // No Leaking
+        // Urinary leakage — show % who maintain the patient's own current leakage status
         let noLeaking: number | null = null;
         if (leakageStatus) {
             const leakageResult = (urinaryLeakageData as LeakageData)[treatmentName as keyof LeakageData];
-            noLeaking = leakageResult?.["Baseline urine leakage"]?.[leakageStatus as keyof typeof leakageResult["Baseline urine leakage"]]?.["Rarely or never"] ?? null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            noLeaking = (leakageResult?.["Baseline urine leakage"] as any)?.[leakageStatus]?.[leakageStatus] ?? null;
         }
 
-        // No Pad Used
+        // Pad usage — show % who maintain the patient's own current pad status
         let noPadUsed: number | null = null;
         if (padStatus) {
             const padOutcome = (urinaryPadData as PadData)[treatmentName as keyof PadData];
-            noPadUsed = padOutcome?.["Pad status at baseline"]?.[padStatus as keyof typeof padOutcome["Pad status at baseline"]]?.["Not using pad"] ?? null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            noPadUsed = (padOutcome?.["Pad status at baseline"] as any)?.[padStatus]?.[padStatus] ?? null;
         }
 
-        // No Urinary Problem
+        // Urinary bother — show % who maintain the patient's own current bother status
         let noUrinaryProblem: number | null = null;
         if (urinaryBotherStatus) {
             const urinaryBotherOutcome = (urinaryBotherData as UrinaryBotherData)[treatmentName as keyof UrinaryBotherData];
-            noUrinaryProblem = urinaryBotherOutcome?.["Baseline urinary bother"]?.[urinaryBotherStatus as keyof typeof urinaryBotherOutcome["Baseline urinary bother"]]?.["No problem"] ?? null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            noUrinaryProblem = (urinaryBotherOutcome?.["Baseline urinary bother"] as any)?.[urinaryBotherStatus]?.[urinaryBotherStatus] ?? null;
         }
 
-        // Erections Sufficient (sum of with assist + no assist)
+        // Erections — show % who maintain the patient's own erection quality tier
         let erectionsSufficient: number | null = null;
         if (erectileStatus) {
             const erectileOutcome = (erectileFunctionData as ErectileFunctionDataType)[treatmentName as keyof ErectileFunctionDataType];
-            const baselineErection = erectileOutcome?.["Baseline quality of erection"]?.[erectileStatus as keyof typeof erectileOutcome["Baseline quality of erection"]];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const baselineErection = (erectileOutcome?.["Baseline quality of erection"] as any)?.[erectileStatus];
             if (baselineErection) {
-                erectionsSufficient = (baselineErection["Firm for intercourse - no assist"] ?? 0) + (baselineErection["Firm for intercourse - with assist"] ?? 0);
+                if (erectileStatus.startsWith("Firm for intercourse")) {
+                    erectionsSufficient = (baselineErection["Firm for intercourse - no assist"] ?? 0) + (baselineErection["Firm for intercourse - with assist"] ?? 0);
+                } else if (erectileStatus.startsWith("Firm for masturbation")) {
+                    erectionsSufficient = (baselineErection["Firm for masturbation - no assist"] ?? 0) + (baselineErection["Firm for masturbation - with assist"] ?? 0);
+                } else {
+                    erectionsSufficient = (baselineErection["Not firm or none - no assist"] ?? 0) + (baselineErection["Not firm or none - with assist"] ?? 0);
+                }
             }
         }
 
-        // No Erectile Problem
+        // Erectile bother — show % who maintain the patient's own current bother status
         let noErectileProblem: number | null = null;
         if (erectileBotherStatus) {
             const erectileBotherOutcome = (erectileBotherData as ErectileBotherData)[treatmentName as keyof ErectileBotherData];
-            noErectileProblem = erectileBotherOutcome?.["Baseline sexual bother"]?.[erectileBotherStatus as keyof typeof erectileBotherOutcome["Baseline sexual bother"]]?.["No problem"] ?? null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            noErectileProblem = (erectileBotherOutcome?.["Baseline sexual bother"] as any)?.[erectileBotherStatus]?.[erectileBotherStatus] ?? null;
         }
 
-        // No Bowel Urgency
+        // Bowel urgency — show % who maintain the patient's own current urgency status
         let noBowelUrgency: number | null = null;
         if (urgencyStatus) {
             const urgencyOutcome = (bowelUrgencyData as BowelUrgencyDataType)[urgencyKey as keyof BowelUrgencyDataType];
-            noBowelUrgency = urgencyOutcome?.Baseline?.[urgencyStatus as keyof typeof urgencyOutcome.Baseline]?.["No_problem_%"] ?? null;
+            const urgencyPctKey = (urgencyStatus + "_%") as "No_problem_%" | "Very_small_problem_%" | "Moderate_big_problem_%";
+            noBowelUrgency = urgencyOutcome?.Baseline?.[urgencyStatus as keyof typeof urgencyOutcome.Baseline]?.[urgencyPctKey] ?? null;
         }
 
-        // No Bowel Problem
+        // Bowel bother — show % who maintain the patient's own current bowel bother status
         let noBowelProblem: number | null = null;
         if (bowelBotherStatus) {
             const bowelBotherOutcome = (bowelBotherData as BowelBotherDataType)[treatmentName as keyof BowelBotherDataType];
-            noBowelProblem = bowelBotherOutcome?.["Baseline bowel bother"]?.[bowelBotherStatus as keyof typeof bowelBotherOutcome["Baseline bowel bother"]]?.["No problem"] ?? null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            noBowelProblem = (bowelBotherOutcome?.["Baseline bowel bother"] as any)?.[bowelBotherStatus]?.[bowelBotherStatus] ?? null;
         }
 
         return [
@@ -308,19 +320,19 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             { content: 'TREATMENT', styles: { halign: 'center', valign: 'middle', fontStyle: 'bold', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No\nLeaking', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: leakageLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No\nPad used', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: padLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No problem\nwith urinary\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: urinaryBotherLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'Erections\nsufficient for\nintercourse', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: erectileLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No problem\nwith erectile\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: erectileBotherLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No bowel\nurgency', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: urgencyLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { content: 'No problem\nwith bowel\nfunction', styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
+            { content: bowelBotherLabel, styles: { halign: 'center', valign: 'middle', fontStyle: 'normal', fillColor: [243, 244, 246] as any, textColor: [0, 0, 0] } },
         ]
     ];
 

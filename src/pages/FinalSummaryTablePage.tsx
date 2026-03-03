@@ -109,12 +109,11 @@ const FinalSummaryTablePageContent = () => {
       } else if (quality === "Firm enough for masturbation and foreplay only") {
         erectileStatus = useMedication ? "Firm for masturbation - with assist" : "Firm for masturbation - no assist";
         erectileLabel = "Firm for masturbation only";
-      } else if (quality === "Not firm enough for any sexual activity") {
-        erectileStatus = useMedication ? "Not firm - with assist" : "Not firm - no assist";
-        erectileLabel = "Not firm enough";
       } else {
-        erectileStatus = useMedication ? "None at all - with assist" : "None at all - no assist";
-        erectileLabel = "No erections";
+        // Both "Not firm enough for any sexual activity" and "None at all" map to the
+        // same JSON key family "Not firm or none - ..."
+        erectileStatus = useMedication ? "Not firm or none - with assist" : "Not firm or none - no assist";
+        erectileLabel = quality === "Not firm enough for any sexual activity" ? "Not firm enough" : "No erections";
       }
     }
 
@@ -204,56 +203,70 @@ const FinalSummaryTablePageContent = () => {
     const { leakageStatus, padStatus, urinaryBotherStatus, erectileStatus, erectileBotherStatus, urgencyStatus, bowelBotherStatus } = baselineStatuses;
 
     return treatments.map(({ key: treatmentName, urgencyKey, color }) => {
-      // No Leaking (Rarely or never) - only calculate if answered
+      // Urinary leakage — show % who maintain the patient's own current leakage status
       let noLeaking: number | null = null;
       if (leakageStatus) {
         const leakageResult = (urinaryLeakageData as LeakageData)[treatmentName as keyof LeakageData];
-        noLeaking = leakageResult?.["Baseline urine leakage"]?.[leakageStatus as keyof typeof leakageResult["Baseline urine leakage"]]?.["Rarely or never"] ?? null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        noLeaking = (leakageResult?.["Baseline urine leakage"] as any)?.[leakageStatus]?.[leakageStatus] ?? null;
       }
 
-      // No Pad Used - only calculate if answered
+      // Pad usage — show % who maintain the patient's own current pad status
       let noPadUsed: number | null = null;
       if (padStatus) {
         const padOutcome = (urinaryPadData as PadData)[treatmentName as keyof PadData];
-        noPadUsed = padOutcome?.["Pad status at baseline"]?.[padStatus as keyof typeof padOutcome["Pad status at baseline"]]?.["Not using pad"] ?? null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        noPadUsed = (padOutcome?.["Pad status at baseline"] as any)?.[padStatus]?.[padStatus] ?? null;
       }
 
-      // No Urinary Problem - only calculate if answered
+      // Urinary bother — show % who maintain the patient's own current bother status
       let noUrinaryProblem: number | null = null;
       if (urinaryBotherStatus) {
         const urinaryBotherOutcome = (urinaryBotherData as UrinaryBotherData)[treatmentName as keyof UrinaryBotherData];
-        noUrinaryProblem = urinaryBotherOutcome?.["Baseline urinary bother"]?.[urinaryBotherStatus as keyof typeof urinaryBotherOutcome["Baseline urinary bother"]]?.["No problem"] ?? null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        noUrinaryProblem = (urinaryBotherOutcome?.["Baseline urinary bother"] as any)?.[urinaryBotherStatus]?.[urinaryBotherStatus] ?? null;
       }
 
-      // Erections Sufficient - only calculate if answered
+      // Erections — show % who maintain the patient's own erection quality tier
       let erectionsSufficient: number | null = null;
       if (erectileStatus) {
         const erectileOutcome = (erectileFunctionData as ErectileFunctionDataType)[treatmentName as keyof ErectileFunctionDataType];
-        const baselineErection = erectileOutcome?.["Baseline quality of erection"]?.[erectileStatus as keyof typeof erectileOutcome["Baseline quality of erection"]];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const baselineErection = (erectileOutcome?.["Baseline quality of erection"] as any)?.[erectileStatus];
         if (baselineErection) {
-          erectionsSufficient = (baselineErection["Firm for intercourse - no assist"] ?? 0) + (baselineErection["Firm for intercourse - with assist"] ?? 0);
+          // Determine which tier the patient is in and sum both assist variants for that tier
+          if (erectileStatus.startsWith("Firm for intercourse")) {
+            erectionsSufficient = (baselineErection["Firm for intercourse - no assist"] ?? 0) + (baselineErection["Firm for intercourse - with assist"] ?? 0);
+          } else if (erectileStatus.startsWith("Firm for masturbation")) {
+            erectionsSufficient = (baselineErection["Firm for masturbation - no assist"] ?? 0) + (baselineErection["Firm for masturbation - with assist"] ?? 0);
+          } else {
+            erectionsSufficient = (baselineErection["Not firm or none - no assist"] ?? 0) + (baselineErection["Not firm or none - with assist"] ?? 0);
+          }
         }
       }
 
-      // No Erectile Problem - only calculate if answered
+      // Erectile bother — show % who maintain the patient's own current bother status
       let noErectileProblem: number | null = null;
       if (erectileBotherStatus) {
         const erectileBotherOutcome = (erectileBotherData as ErectileBotherData)[treatmentName as keyof ErectileBotherData];
-        noErectileProblem = erectileBotherOutcome?.["Baseline sexual bother"]?.[erectileBotherStatus as keyof typeof erectileBotherOutcome["Baseline sexual bother"]]?.["No problem"] ?? null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        noErectileProblem = (erectileBotherOutcome?.["Baseline sexual bother"] as any)?.[erectileBotherStatus]?.[erectileBotherStatus] ?? null;
       }
 
-      // No Bowel Urgency - only calculate if answered
+      // Bowel urgency — show % who maintain the patient's own current urgency status
       let noBowelUrgency: number | null = null;
       if (urgencyStatus) {
         const urgencyOutcome = (bowelUrgencyData as BowelUrgencyDataType)[urgencyKey as keyof BowelUrgencyDataType];
-        noBowelUrgency = urgencyOutcome?.Baseline?.[urgencyStatus as keyof typeof urgencyOutcome.Baseline]?.["No_problem_%"] ?? null;
+        const urgencyPctKey = (urgencyStatus + "_%") as "No_problem_%" | "Very_small_problem_%" | "Moderate_big_problem_%";
+        noBowelUrgency = urgencyOutcome?.Baseline?.[urgencyStatus as keyof typeof urgencyOutcome.Baseline]?.[urgencyPctKey] ?? null;
       }
 
-      // No Bowel Problem - only calculate if answered
+      // Bowel bother — show % who maintain the patient's own current bowel bother status
       let noBowelProblem: number | null = null;
       if (bowelBotherStatus) {
         const bowelBotherOutcome = (bowelBotherData as BowelBotherDataType)[treatmentName as keyof BowelBotherDataType];
-        noBowelProblem = bowelBotherOutcome?.["Baseline bowel bother"]?.[bowelBotherStatus as keyof typeof bowelBotherOutcome["Baseline bowel bother"]]?.["No problem"] ?? null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        noBowelProblem = (bowelBotherOutcome?.["Baseline bowel bother"] as any)?.[bowelBotherStatus]?.[bowelBotherStatus] ?? null;
       }
 
       return {
@@ -335,29 +348,29 @@ const FinalSummaryTablePageContent = () => {
               </th>
             </tr>
 
-            {/* Column Headers */}
+            {/* Column Headers — dynamic labels from patient answers */}
             <tr className="bg-gray-100 text-xs">
               <th className="border border-gray-300 p-2 font-bold">TREATMENT</th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No<br />Leaking
+                {baselineStatuses.leakageLabel || "Urinary leakage"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No<br />Pad used
+                {baselineStatuses.padLabel || "Pad usage"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No problem<br />with urinary<br />function
+                {baselineStatuses.urinaryBotherLabel || "Urinary bother"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                Erections<br />sufficient for<br />intercourse
+                {baselineStatuses.erectileLabel || "Erectile function"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No problem<br />with erectile<br />function
+                {baselineStatuses.erectileBotherLabel || "Sexual bother"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No bowel<br />urgency
+                {baselineStatuses.urgencyLabel || "Bowel urgency"}
               </th>
               <th className="border border-gray-300 p-2 text-center font-medium">
-                No problem<br />with bowel<br />function
+                {baselineStatuses.bowelBotherLabel || "Bowel bother"}
               </th>
             </tr>
           </thead>
@@ -426,15 +439,15 @@ const FinalSummaryTablePageContent = () => {
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-blue-600">{formatValue(row.noLeaking)}</div>
-                    <div className="text-xs text-gray-500">No Leaking</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.leakageLabel || "Leakage"}</div>
                   </div>
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-blue-600">{formatValue(row.noPadUsed)}</div>
-                    <div className="text-xs text-gray-500">No Pad</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.padLabel || "Pad usage"}</div>
                   </div>
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-blue-600">{formatValue(row.noUrinaryProblem)}</div>
-                    <div className="text-xs text-gray-500">No Problem</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.urinaryBotherLabel || "Urinary bother"}</div>
                   </div>
                 </div>
               </div>
@@ -445,11 +458,11 @@ const FinalSummaryTablePageContent = () => {
                 <div className="grid grid-cols-2 gap-2 text-center">
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-purple-600">{formatValue(row.erectionsSufficient)}</div>
-                    <div className="text-xs text-gray-500">Erections Sufficient</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.erectileLabel || "Erectile function"}</div>
                   </div>
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-purple-600">{formatValue(row.noErectileProblem)}</div>
-                    <div className="text-xs text-gray-500">No Problem</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.erectileBotherLabel || "Sexual bother"}</div>
                   </div>
                 </div>
               </div>
@@ -460,11 +473,11 @@ const FinalSummaryTablePageContent = () => {
                 <div className="grid grid-cols-2 gap-2 text-center">
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-green-600">{formatValue(row.noBowelUrgency)}</div>
-                    <div className="text-xs text-gray-500">No Urgency</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.urgencyLabel || "Bowel urgency"}</div>
                   </div>
                   <div className="bg-gray-50 rounded p-2">
                     <div className="text-lg font-bold text-green-600">{formatValue(row.noBowelProblem)}</div>
-                    <div className="text-xs text-gray-500">No Problem</div>
+                    <div className="text-xs text-gray-500">{baselineStatuses.bowelBotherLabel || "Bowel bother"}</div>
                   </div>
                 </div>
               </div>
