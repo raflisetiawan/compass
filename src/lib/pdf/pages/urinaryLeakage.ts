@@ -8,23 +8,22 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     doc.addPage();
     doc.setFontSize(16);
     doc.text('Leaking urine at 1 year', 14, 22);
-    doc.setFontSize(10);
-    doc.text('The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Check if urinary leakage question was answered
     if (!answers.urine_leak) {
-        // Display "Data not available" message
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(128, 128, 128);
-        doc.text('Data not available', margin, 50);
-        doc.setFontSize(10);
-        doc.text('The urinary leakage question was not answered in the questionnaire.', margin, 60);
-        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        const skippedMsg = 'No information has been entered for these parameters and as a result no personalised prediction is available. If you would like to have a personalised prediction, you can answer the questionnaire again.';
+        const skippedLines = doc.splitTextToSize(skippedMsg, doc.internal.pageSize.getWidth() - margin * 2);
+        doc.text(skippedLines, margin, 35);
         doc.setTextColor(0, 0, 0);
         doc.setFont('helvetica', 'normal');
         return;
     }
+
+    doc.setFontSize(10);
+    doc.text('The following graphs represent 100 men with the same leaking status as you. The icon plot shows how their leaking status changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
@@ -141,20 +140,37 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
         head: [['Treatment', 'Rarely or never leaking', 'Leaking once a week or more', 'Leaking once a day or more']],
         body: tableBody,
         theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 3 },
+        headStyles: { fontSize: 10 },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let summaryY = (doc as any).lastAutoTable.finalY + 10;
     doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
     doc.text('Summary', margin, summaryY);
     summaryY += 6;
     doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    const summaryIntro = `Out of 100 men like you who are currently ${getBaselineDisplayName(baselineLeakageStatus).toLowerCase()}, the outcomes at 1 year after treatment are:`;
+    const splitIntro = doc.splitTextToSize(summaryIntro, pdfWidth - margin * 2);
+    doc.text(splitIntro, margin, summaryY);
+    summaryY += (splitIntro.length * 5) + 5;
 
     treatmentOutcomes.forEach(treatment => {
-        const summaryText = `For men who choose ${treatment.name}: ${treatment.data.map(d => `${d.value}% will be ${d.name.toLowerCase()}`).join(', ')}.`;
-        const splitText = doc.splitTextToSize(summaryText, doc.internal.pageSize.getWidth() - margin * 2);
-        doc.text(splitText, margin, summaryY);
-        summaryY += (splitText.length * 5) + 5;
+        doc.setFont('helvetica', 'bold');
+        doc.text(`For men who choose ${treatment.name}:`, margin, summaryY);
+        summaryY += 5;
+        doc.setFont('helvetica', 'normal');
+
+        treatment.data.forEach(d => {
+            const bulletText = `• ${d.value} out of 100 will be ${d.name.toLowerCase()}.`;
+            const splitBullet = doc.splitTextToSize(bulletText, pdfWidth - margin * 2 - 5);
+            doc.text(splitBullet, margin + 5, summaryY);
+            summaryY += (splitBullet.length * 5);
+        });
+        summaryY += 3;
     });
 };
 

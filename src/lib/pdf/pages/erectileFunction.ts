@@ -8,23 +8,22 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     doc.addPage();
     doc.setFontSize(16);
     doc.text('Erectile function at 1 year', 14, 22);
-    doc.setFontSize(10);
-    doc.text('The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Check if erectile function question was answered
     if (!answers.erection_quality) {
-        // Display "Data not available" message
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(128, 128, 128);
-        doc.text('Data not available', margin, 50);
-        doc.setFontSize(10);
-        doc.text('The erectile function question was not answered in the questionnaire.', margin, 60);
-        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        const skippedMsg = 'No information has been entered for these parameters and as a result no personalised prediction is available. If you would like to have a personalised prediction, you can answer the questionnaire again.';
+        const skippedLines = doc.splitTextToSize(skippedMsg, doc.internal.pageSize.getWidth() - margin * 2);
+        doc.text(skippedLines, margin, 35);
         doc.setTextColor(0, 0, 0);
         doc.setFont('helvetica', 'normal');
         return;
     }
+
+    doc.setFontSize(10);
+    doc.text('The following graphs represent 100 men with the same erectile function as you. The icon plot shows how erectile function changes at 1 year from their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     const baselineErectileStatus = (() => {
         const quality = answers.erection_quality;
@@ -269,8 +268,8 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
         ]],
         body: efTableBody,
         theme: 'grid',
-        styles: { fontSize: 7 },
-        headStyles: { fontSize: 6 },
+        styles: { fontSize: 9, cellPadding: 3 },
+        headStyles: { fontSize: 9 },
     });
 
     // Helper function to get user-friendly baseline name
@@ -293,30 +292,48 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
         return status.toLowerCase();
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let efSummaryY = (doc as any).lastAutoTable.finalY + 10;
+    // Summary on a new page (erectile function has 6 categories per treatment, too long for same page)
+    doc.addPage();
+    let efSummaryY = 22;
     doc.setFontSize(12);
-    doc.text('Summary', margin, efSummaryY);
-    efSummaryY += 6;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Summary - Erectile function at 1 year', margin, efSummaryY);
+    efSummaryY += 8;
     doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
 
-    const efSummaryIntro = `Based on the information you have entered, for men who currently have erections that are ${getBaselineDisplayName(baselineErectileStatus)}, the outcomes at 1 year after treatment are:`;
+    const efSummaryIntro = `Out of 100 men like you who currently have erections that are ${getBaselineDisplayName(baselineErectileStatus)}, the outcomes at 1 year after treatment are:`;
     const splitEfIntro = doc.splitTextToSize(efSummaryIntro, pdfWidth - margin * 2);
     doc.text(splitEfIntro, margin, efSummaryY);
-    efSummaryY += (splitEfIntro.length * 5) + 5;
+    efSummaryY += (splitEfIntro.length * 5) + 3;
 
-    efTreatmentOutcomes.forEach(treatment => {
-        doc.setFont('helvetica', 'bold');
-        doc.text(`For men who choose ${treatment.name}:`, margin, efSummaryY);
-        efSummaryY += 5;
-        doc.setFont('helvetica', 'normal');
+    // 2-column layout for treatment summaries
+    const summaryColWidth = (pdfWidth - margin * 2 - 10) / 2;
+    const leftX = margin;
+    const rightX = margin + summaryColWidth + 10;
 
-        treatment.data.forEach(d => {
-            const bulletText = `• ${d.value}% will have erections that are ${d.name.toLowerCase()}.`;
-            const splitBullet = doc.splitTextToSize(bulletText, pdfWidth - margin * 2 - 5);
-            doc.text(splitBullet, margin + 5, efSummaryY);
-            efSummaryY += (splitBullet.length * 5);
+    const leftTreatments = efTreatmentOutcomes.slice(0, 2);
+    const rightTreatments = efTreatmentOutcomes.slice(2);
+
+    const renderColumn = (treatments: typeof efTreatmentOutcomes, startX: number, startY: number) => {
+        let y = startY;
+        treatments.forEach(treatment => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text(`For men who choose ${treatment.name}:`, startX, y);
+            y += 4;
+            doc.setFont('helvetica', 'normal');
+
+            treatment.data.forEach(d => {
+                const bulletText = `• ${d.value} out of 100 will have erections that are ${d.name.toLowerCase()}.`;
+                const splitBullet = doc.splitTextToSize(bulletText, summaryColWidth - 5);
+                doc.text(splitBullet, startX + 3, y);
+                y += splitBullet.length * 4;
+            });
+            y += 2;
         });
-        efSummaryY += 3;
-    });
+    };
+
+    renderColumn(leftTreatments, leftX, efSummaryY);
+    renderColumn(rightTreatments, rightX, efSummaryY);
 };

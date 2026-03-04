@@ -12,23 +12,22 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfP
     doc.addPage();
     doc.setFontSize(16);
     doc.text('Use of urinary pads at 1 year', 14, 22);
-    doc.setFontSize(10);
-    doc.text('The following graphs represent 100 men with the same pad usage as you. The icon plot shows how their pad usage changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Check if urinary pad usage question was answered
     if (!answers.pad_usage) {
-        // Display "Data not available" message
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(128, 128, 128);
-        doc.text('Data not available', margin, 50);
-        doc.setFontSize(10);
-        doc.text('The urinary pad usage question was not answered in the questionnaire.', margin, 60);
-        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        const skippedMsg = 'No information has been entered for these parameters and as a result no personalised prediction is available. If you would like to have a personalised prediction, you can answer the questionnaire again.';
+        const skippedLines = doc.splitTextToSize(skippedMsg, doc.internal.pageSize.getWidth() - margin * 2);
+        doc.text(skippedLines, margin, 35);
         doc.setTextColor(0, 0, 0);
         doc.setFont('helvetica', 'normal');
         return;
     }
+
+    doc.setFontSize(10);
+    doc.text('The following graphs represent 100 men with the same pad usage as you. The icon plot shows how their pad usage changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Load SVG icon images for rendering
     const [underwearImg, padImg, darkPadImg] = await loadImages([underwearIcon, padIcon, darkPadIcon]);
@@ -140,32 +139,51 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfP
         head: [['Treatment', 'No use of pad; rarely or never leaking urine', '1 pad used per day; any degree of leaking urine', '>=2 pad used per day; any degree of leaking urine']],
         body: padTableBody,
         theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 3 },
+        headStyles: { fontSize: 10 },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let padSummaryY = (doc as any).lastAutoTable.finalY + 10;
     doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
     doc.text('Summary', margin, padSummaryY);
     padSummaryY += 6;
     doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
 
-    const padSummaryIntro = `Based on the information you have entered, for men who are currently ${baselinePadStatus.toLowerCase()}, the outcomes at 1 year after treatment are:`;
+    const padSummaryIntro = `Out of 100 men like you who are currently ${baselinePadStatus.toLowerCase()}, the outcomes at 1 year after treatment are:`;
     const splitPadIntro = doc.splitTextToSize(padSummaryIntro, pdfWidth - margin * 2);
     doc.text(splitPadIntro, margin, padSummaryY);
-    padSummaryY += (splitPadIntro.length * 5) + 5;
+    padSummaryY += (splitPadIntro.length * 5) + 3;
 
-    padTreatmentOutcomes.forEach(treatment => {
-        doc.setFont('helvetica', 'bold');
-        doc.text(`For men who choose ${treatment.name}:`, margin, padSummaryY);
-        padSummaryY += 5;
-        doc.setFont('helvetica', 'normal');
+    // 2-column layout for treatment summaries
+    const summaryColWidth = (pdfWidth - margin * 2 - 10) / 2;
+    const leftX = margin;
+    const rightX = margin + summaryColWidth + 10;
 
-        treatment.data.forEach(d => {
-            const bulletText = `• ${d.value}%: ${d.name}`;
-            const splitBullet = doc.splitTextToSize(bulletText, pdfWidth - margin * 2 - 5);
-            doc.text(splitBullet, margin + 5, padSummaryY);
-            padSummaryY += (splitBullet.length * 5);
+    const leftTreatments = padTreatmentOutcomes.slice(0, 2);
+    const rightTreatments = padTreatmentOutcomes.slice(2);
+
+    const renderColumn = (treatments: typeof padTreatmentOutcomes, startX: number, startY: number) => {
+        let y = startY;
+        treatments.forEach(treatment => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text(`For men who choose ${treatment.name}:`, startX, y);
+            y += 4;
+            doc.setFont('helvetica', 'normal');
+
+            treatment.data.forEach(d => {
+                const bulletText = `• ${d.value} out of 100: ${d.name}`;
+                const splitBullet = doc.splitTextToSize(bulletText, summaryColWidth - 5);
+                doc.text(splitBullet, startX + 3, y);
+                y += splitBullet.length * 4;
+            });
+            y += 2;
         });
-        padSummaryY += 3; // Add some space between treatments
-    });
+    };
+
+    renderColumn(leftTreatments, leftX, padSummaryY);
+    renderColumn(rightTreatments, rightX, padSummaryY);
 };

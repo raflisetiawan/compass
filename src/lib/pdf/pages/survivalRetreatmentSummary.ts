@@ -136,7 +136,7 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
             startY: currentY,
             head: [
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                [{ content: 'Oncological Outcomes', colSpan: 2, styles: { halign: 'center', fillColor: [74, 111, 165] as any, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 11 } }],
+                [{ content: 'Oncological Outcomes', colSpan: 2, styles: { halign: 'center', fillColor: [74, 111, 165] as any, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 12 } }],
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 [{ content: 'Time point: 5 years', styles: { fillColor: [212, 197, 226] as any, textColor: [0, 0, 0], fontStyle: 'normal' } },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -147,7 +147,7 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
                 { content: `${item.value.toFixed(1)}%`, styles: { halign: 'center' } },
             ]),
             theme: 'grid',
-            styles: { fontSize: 9 },
+            styles: { fontSize: 11, cellPadding: 3 },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             bodyStyles: { fillColor: [248, 229, 241] as any },
             margin: { left: margin, right: margin },
@@ -165,11 +165,9 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
         currentY += 10;
     }
 
-    // ─── Divider ───
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.line(margin, currentY, pdfWidth - margin, currentY);
-    currentY += 8;
+    // ─── New page for retreatment section ───
+    doc.addPage();
+    currentY = 22;
 
     // ═══════════════════════════════════════════════
     // ─── Section 2: Need for additional treatment ───
@@ -256,8 +254,8 @@ export const addSurvivalRetreatmentSummaryPage = ({ doc, answers, margin }: PdfP
             head: [tableHead],
             body: tableBody,
             theme: 'grid',
-            styles: { fontSize: 7, cellPadding: 2 },
-            headStyles: { fontSize: 7, fillColor: [243, 244, 246], textColor: [0, 0, 0] },
+            styles: { fontSize: 10, cellPadding: 3 },
+            headStyles: { fontSize: 10, fillColor: [243, 244, 246], textColor: [0, 0, 0] },
             columnStyles: {
                 0: { cellWidth: 55 },
             },

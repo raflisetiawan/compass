@@ -134,6 +134,8 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
                 ['Death (from other causes)', `${Number(survivalOutcome['Other Death (%)']).toFixed(2)}%`],
             ],
             theme: 'grid',
+            styles: { fontSize: 11, cellPadding: 3 },
+            headStyles: { fontSize: 11 },
         });
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

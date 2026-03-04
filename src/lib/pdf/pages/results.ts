@@ -39,6 +39,7 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
         head: [['Clinical Parameters', '']],
         body: clinicalParamsBody,
         theme: 'plain',
+        styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontStyle: 'bold', fontSize: 12 },
         columnStyles: { 0: { fontStyle: 'bold' }, 1: { halign: 'right' } },
     });
@@ -64,6 +65,7 @@ export const addResultsPage = ({ doc, answers }: PdfPageProps) => {
         head: [['Baseline genito-urinary-bowel function', '']],
         body: baselineFunctionsBody,
         theme: 'plain',
+        styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontStyle: 'bold', fontSize: 12 },
         columnStyles: { 0: { fontStyle: 'bold' }, 1: { halign: 'right' } },
     });

@@ -156,9 +156,12 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
         updateProgress();
     }
 
-    // Add User ID and Timestamp to all pages
+    // Add Patient ID and Timestamp to all pages
+    // patientId is set when a clinician manages a patient session;
+    // fall back to the logged-in patient's own accessCode.
     const totalPages = doc.getNumberOfPages();
     const user = useUserStore.getState().user;
+    const resolvedPatientId = patientId || user?.accessCode;
     const date = new Date().toLocaleString();
     
     doc.setFontSize(10);
@@ -166,10 +169,10 @@ export const generatePdf = async (onProgress?: (progress: number) => void, optio
 
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
-        const userIdText = `User ID: ${user?.accessCode || 'N/A'}`;
+        const patientIdText = `Patient ID: ${resolvedPatientId || 'N/A'}`;
         const dateText = `Exported: ${date}`;
         
-        doc.text(userIdText, 14, 10);
+        doc.text(patientIdText, 14, 10);
         
         // Align date to the right
         const pageWidth = doc.internal.pageSize.getWidth();

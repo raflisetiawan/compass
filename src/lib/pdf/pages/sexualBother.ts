@@ -7,24 +7,23 @@ export const addSexualBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
     // Page 7: Bother with erectile function at 1 year
     doc.addPage();
     doc.setFontSize(16);
-    doc.text('Bother with erectile function at 1 year', 14, 22);
-    doc.setFontSize(10);
-    doc.text('The following graphs represent 100 men with the same degree of bother with their erectile function as you. The icon plot shows how the degree of their sexual bother changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
+    doc.text('Sexual bother at 1 year', 14, 22);
 
     // Check if sexual bother question was answered
     if (!answers.erection_bother) {
-        // Display "Data not available" message
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(128, 128, 128);
-        doc.text('Data not available', margin, 50);
-        doc.setFontSize(10);
-        doc.text('The erectile bother question was not answered in the questionnaire.', margin, 60);
-        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        const skippedMsg = 'No information has been entered for these parameters and as a result no personalised prediction is available. If you would like to have a personalised prediction, you can answer the questionnaire again.';
+        const skippedLines = doc.splitTextToSize(skippedMsg, doc.internal.pageSize.getWidth() - margin * 2);
+        doc.text(skippedLines, margin, 35);
         doc.setTextColor(0, 0, 0);
         doc.setFont('helvetica', 'normal');
         return;
     }
+
+    doc.setFontSize(10);
+    doc.text('The following graphs represent 100 men with the same degree of bother with their erectile function as you. The icon plot shows how the degree of their sexual bother changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
@@ -131,6 +130,8 @@ export const addSexualBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
         head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
         body: sbTableBody,
         theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 3 },
+        headStyles: { fontSize: 10 },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

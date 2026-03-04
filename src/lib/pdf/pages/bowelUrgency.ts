@@ -9,23 +9,22 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
     doc.addPage();
     doc.setFontSize(16);
     doc.text('Problem with bowel urgency at 1 year', 14, 22);
-    doc.setFontSize(10);
-    doc.text('The following graphs represent 100 men with the same problem with bowel urgency as you. The icon plot show how their degree of problem with bowel urgency changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Check if bowel urgency question was answered
     if (!answers.bowel_urgency) {
-        // Display "Data not available" message
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(128, 128, 128);
-        doc.text('Data not available', margin, 50);
-        doc.setFontSize(10);
-        doc.text('The bowel urgency question was not answered in the questionnaire.', margin, 60);
-        doc.text('Please complete the questionnaire to see personalized predictions.', margin, 68);
+        const skippedMsg = 'No information has been entered for these parameters and as a result no personalised prediction is available. If you would like to have a personalised prediction, you can answer the questionnaire again.';
+        const skippedLines = doc.splitTextToSize(skippedMsg, doc.internal.pageSize.getWidth() - margin * 2);
+        doc.text(skippedLines, margin, 35);
         doc.setTextColor(0, 0, 0);
         doc.setFont('helvetica', 'normal');
         return;
     }
+
+    doc.setFontSize(10);
+    doc.text('The following graphs represent 100 men with the same problem with bowel urgency as you. The icon plot show how their degree of problem with bowel urgency changes at 1 year from starting their prostate cancer treatment.', 14, 30, { maxWidth: 180 });
 
     // Helper function to get display name for baseline status
     const getBaselineDisplayName = (status: string): string => {
@@ -151,6 +150,8 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
         head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
         body: urgencyTableBody,
         theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 3 },
+        headStyles: { fontSize: 10 },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -11,34 +11,6 @@ export const addRiskRetreatmentPage = ({ doc, answers, margin, pdfWidth }: PdfPa
     doc.setFontSize(10);
     doc.text('The following graphs show the predicted treatment outcomes based on your clinical parameters. Each icon plot represents 100 patients with similar characteristics, showing the probability distribution of requiring additional treatment or retreatment.', 14, 30, { maxWidth: 180 });
 
-    // Clinical parameters box
-    const boxY = 42;
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Your Clinical Parameters:', margin, boxY);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-
-    let paramY = boxY + 6;
-    const paramData = [
-        { label: 'T Stage', value: answers.cancer_stage || answers.t_stage || 'Not specified' },
-        { label: 'Gleason Score', value: answers.gleason_score || answers.gleason || 'Not specified' },
-        { label: 'PSA', value: answers.psa ? `${answers.psa} ng/mL` : 'Not specified' },
-        { label: 'MRI Visibility', value: answers.mri_pirad_score || answers.mri_visibility || 'Not specified' },
-        { label: 'Max Cancer Core Length', value: answers.max_cancer_core_length ? `${answers.max_cancer_core_length} mm` : 'Not specified' },
-        {
-            label: 'PSA Density',
-            value: answers.psa && answers.prostate_volume
-                ? (parseFloat(String(answers.psa)) / parseFloat(String(answers.prostate_volume))).toFixed(2)
-                : 'Not specified'
-        },
-    ];
-
-    paramData.forEach(p => {
-        doc.text(`${p.label}: ${p.value}`, margin, paramY);
-        paramY += 5;
-    });
-
     // Calculate outcomes
     const strategyResults = calculateAllStrategies(answers);
     const treatmentOutcomes = [
@@ -49,7 +21,7 @@ export const addRiskRetreatmentPage = ({ doc, answers, margin, pdfWidth }: PdfPa
     ];
 
     // Legend
-    let legendY = paramY + 4;
+    let legendY = 46;
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('What Icon Means:', margin, legendY);
@@ -159,44 +131,62 @@ export const addRiskRetreatmentPage = ({ doc, answers, margin, pdfWidth }: PdfPa
             head: [tableHead],
             body: tableBody,
             theme: 'grid',
-            styles: { fontSize: 7 },
-            headStyles: { fontSize: 7 },
+            styles: { fontSize: 9, cellPadding: 3 },
+            headStyles: { fontSize: 9 },
         });
 
         // Summary
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let summaryY = (doc as any).lastAutoTable.finalY + 10;
+        let summaryY = (doc as any).lastAutoTable.finalY + 8;
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
         doc.text('Summary', margin, summaryY);
-        summaryY += 6;
-        doc.setFontSize(10);
+        summaryY += 5;
+        doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
 
         const summaryIntro = 'Based on your clinical parameters, here is the predicted probability of requiring additional treatment for each treatment option:';
         const splitIntro = doc.splitTextToSize(summaryIntro, pdfWidth - margin * 2);
         doc.text(splitIntro, margin, summaryY);
-        summaryY += (splitIntro.length * 5) + 3;
+        summaryY += (splitIntro.length * 4) + 3;
 
-        treatmentOutcomes.forEach(treatment => {
-            doc.setFont('helvetica', 'bold');
-            doc.text(`${treatment.name}:`, margin, summaryY);
-            summaryY += 5;
-            doc.setFont('helvetica', 'normal');
+        // 2-column layout for treatment summaries
+        const summaryColWidth = (pdfWidth - margin * 2 - 10) / 2; // 10 = gutter between columns
+        const leftX = margin;
+        const rightX = margin + summaryColWidth + 10;
 
-            if (treatment.error) {
-                doc.text(treatment.error, margin + 5, summaryY);
-                summaryY += 5;
-            } else {
-                treatment.data.forEach(d => {
-                    const bulletText = `• ${d.value}% - ${d.name}`;
-                    const splitBullet = doc.splitTextToSize(bulletText, pdfWidth - margin * 2 - 5);
-                    doc.text(splitBullet, margin + 5, summaryY);
-                    summaryY += (splitBullet.length * 5);
-                });
-            }
-            summaryY += 3;
-        });
+        // Split treatments into left and right columns
+        const leftTreatments = treatmentOutcomes.slice(0, 2);
+        const rightTreatments = treatmentOutcomes.slice(2);
+
+        const renderTreatmentColumn = (treatments: typeof treatmentOutcomes, startX: number, startY: number): number => {
+            let y = startY;
+            treatments.forEach(treatment => {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                doc.text(`${treatment.name}:`, startX, y);
+                y += 4;
+                doc.setFont('helvetica', 'normal');
+
+                if (treatment.error) {
+                    const errorLines = doc.splitTextToSize(treatment.error, summaryColWidth - 5);
+                    doc.text(errorLines, startX + 3, y);
+                    y += errorLines.length * 4;
+                } else {
+                    treatment.data.forEach(d => {
+                        const bulletText = `• ${d.value}% - ${d.name}`;
+                        const splitBullet = doc.splitTextToSize(bulletText, summaryColWidth - 5);
+                        doc.text(splitBullet, startX + 3, y);
+                        y += splitBullet.length * 4;
+                    });
+                }
+                y += 2;
+            });
+            return y;
+        };
+
+        renderTreatmentColumn(leftTreatments, leftX, summaryY);
+        renderTreatmentColumn(rightTreatments, rightX, summaryY);
     } else {
         // All treatments have errors
         doc.setFontSize(12);

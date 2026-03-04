@@ -345,8 +345,8 @@ export const addSummaryPage = ({ doc, answers }: PdfPageProps) => {
         body: tableData as any[],
         theme: 'grid',
         styles: {
-            fontSize: 8,
-            cellPadding: 2,
+            fontSize: 10,
+            cellPadding: 3,
             halign: 'center',
             valign: 'middle',
             lineWidth: 0.3,
