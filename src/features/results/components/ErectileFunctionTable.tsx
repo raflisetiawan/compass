@@ -47,7 +47,9 @@ import {
                 <TableCell className="font-medium break-words whitespace-normal">
                   <div className="flex items-center gap-2">
                     {header.color && (
-                      <LegendIcon color={header.color} name={header.displayName || header.name} showPill={header.showPill} size={16} />
+                      <div className="shrink-0">
+                        <LegendIcon color={header.color} name={header.displayName || header.name} showPill={header.showPill} size={16} />
+                      </div>
                     )}
                     <span>{header.displayName || header.name}</span>
                   </div>
