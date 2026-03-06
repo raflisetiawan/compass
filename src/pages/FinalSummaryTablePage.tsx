@@ -84,12 +84,12 @@ const FinalSummaryTablePageContent = () => {
       if (String(urinaryBother).includes("Moderate") || String(urinaryBother).includes("big") || String(urinaryBother).includes("Big")) {
         urinaryBotherStatus = "Moderate/big problem";
         urinaryBotherLabel = "Moderate/big problem";
-      } else if (String(urinaryBother).includes("Small") || String(urinaryBother).includes("small")) {
-        urinaryBotherStatus = "Very/small problem";
-        urinaryBotherLabel = "Small problem";
       } else if (String(urinaryBother).includes("Very")) {
         urinaryBotherStatus = "Very/small problem";
         urinaryBotherLabel = "Very small problem";
+      } else if (String(urinaryBother).includes("Small") || String(urinaryBother).includes("small")) {
+        urinaryBotherStatus = "Very/small problem";
+        urinaryBotherLabel = "Small problem";
       } else {
         urinaryBotherStatus = "No problem";
         urinaryBotherLabel = "No problem";
@@ -125,12 +125,12 @@ const FinalSummaryTablePageContent = () => {
       if (String(erectileBother).includes("Moderate") || String(erectileBother).includes("big") || String(erectileBother).includes("Big")) {
         erectileBotherStatus = "Moderate/big problem";
         erectileBotherLabel = "Moderate/big problem";
-      } else if (String(erectileBother).includes("Small") || String(erectileBother).includes("small")) {
-        erectileBotherStatus = "Very/small problem";
-        erectileBotherLabel = "Small problem";
       } else if (String(erectileBother).includes("Very")) {
         erectileBotherStatus = "Very/small problem";
         erectileBotherLabel = "Very small problem";
+      } else if (String(erectileBother).includes("Small") || String(erectileBother).includes("small")) {
+        erectileBotherStatus = "Very/small problem";
+        erectileBotherLabel = "Small problem";
       } else {
         erectileBotherStatus = "No problem";
         erectileBotherLabel = "No problem";
@@ -168,12 +168,12 @@ const FinalSummaryTablePageContent = () => {
       if (String(bowelBother).includes("Moderate") || String(bowelBother).includes("big") || String(bowelBother).includes("Big")) {
         bowelBotherStatus = "Moderate/big problem";
         bowelBotherLabel = "Moderate/big problem";
-      } else if (String(bowelBother).includes("Small") || String(bowelBother).includes("small")) {
-        bowelBotherStatus = "Very/small problem";
-        bowelBotherLabel = "Small problem";
       } else if (String(bowelBother).includes("Very")) {
         bowelBotherStatus = "Very/small problem";
         bowelBotherLabel = "Very small problem";
+      } else if (String(bowelBother).includes("Small") || String(bowelBother).includes("small")) {
+        bowelBotherStatus = "Very/small problem";
+        bowelBotherLabel = "Small problem";
       } else {
         bowelBotherStatus = "No problem";
         bowelBotherLabel = "No problem";
@@ -289,37 +289,41 @@ const FinalSummaryTablePageContent = () => {
 
   return (
     <>
-      {/* Clinical Parameters Box */}
+      {/* Clinical Parameters Box — uses raw answers for consistency with sidebar */}
       <div className="border-2 border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-bold mb-3 text-lg">Your Current Function:</h3>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
           <div>
-            <span className="text-gray-600">Urinary leakage:</span>{" "}
-            <span className="font-medium">{baselineStatuses.leakageLabel}</span>
+            <span className="text-gray-600">Leakage:</span>{" "}
+            <span className="font-medium">{answers.urine_leak || "Not answered"}</span>
           </div>
           <div>
             <span className="text-gray-600">Erectile function:</span>{" "}
-            <span className="font-medium">{baselineStatuses.erectileLabel}</span>
+            <span className="font-medium">{answers.erection_quality || "Not answered"}</span>
           </div>
           <div>
-            <span className="text-gray-600">Pad usage:</span>{" "}
-            <span className="font-medium">{baselineStatuses.padLabel}</span>
+            <span className="text-gray-600">Urinary pad use:</span>{" "}
+            <span className="font-medium">{answers.pad_usage || "Not answered"}</span>
           </div>
           <div>
-            <span className="text-gray-600">Sexual bother:</span>{" "}
-            <span className="font-medium">{baselineStatuses.erectileBotherLabel}</span>
+            <span className="text-gray-600">Sexual medication or devices:</span>{" "}
+            <span className="font-medium">{answers.sex_medication || "Not answered"}</span>
           </div>
           <div>
-            <span className="text-gray-600">Urinary bother:</span>{" "}
-            <span className="font-medium">{baselineStatuses.urinaryBotherLabel}</span>
+            <span className="text-gray-600">Bother with urinary function:</span>{" "}
+            <span className="font-medium">{answers.urine_problem || "Not answered"}</span>
           </div>
           <div>
-            <span className="text-gray-600">Bowel urgency:</span>{" "}
-            <span className="font-medium">{baselineStatuses.urgencyLabel}</span>
+            <span className="text-gray-600">Bother with erectile function:</span>{" "}
+            <span className="font-medium">{answers.erection_bother || "Not answered"}</span>
           </div>
           <div>
-            <span className="text-gray-600">Bowel bother:</span>{" "}
-            <span className="font-medium">{baselineStatuses.bowelBotherLabel}</span>
+            <span className="text-gray-600">Problem with bowel urgency:</span>{" "}
+            <span className="font-medium">{answers.bowel_urgency || "Not answered"}</span>
+          </div>
+          <div>
+            <span className="text-gray-600">Bother with bowel function:</span>{" "}
+            <span className="font-medium">{answers.bowel_bother || "Not answered"}</span>
           </div>
         </div>
       </div>
