@@ -1,4 +1,6 @@
 export const getAgeGroup = (age: number): string => {
+  if (age >= 80) return "80-";
+  if (age >= 75) return "75-";
   if (age >= 70) return "70-";
   if (age >= 65) return "65-";
   if (age >= 60) return "60-";
