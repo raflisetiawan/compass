@@ -151,11 +151,11 @@ const NAV_STRUCTURE: NavEntry[] = [
           label: "Impact on sexual function",
           items: [
             {
-              label: "Firmness of erections",
+              label: "Erectile Function",
               path: "/functional-outcome/sufficient-erections-for-intercourse",
             },
             {
-              label: "Problems with sexual function",
+              label: "Bother with erectile function",
               path: "/functional-outcome/sexual-bother",
             },
           ],
