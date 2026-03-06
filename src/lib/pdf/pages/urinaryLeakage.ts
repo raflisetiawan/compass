@@ -126,22 +126,24 @@ export const addUrinaryLeakagePage = ({ doc, answers, margin, pdfWidth }: PdfPag
     const rowMaxHeight = imgHeight;
     const tableY = yPos + rowMaxHeight + 10;
 
-    const tableBody = treatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const outcomeNames = ['Rarely or never leaking', 'Leaking once a week or more', 'Leaking once a day or more'];
+    const tableHead = ['Outcome', ...treatmentOutcomes.map(t => t.name)];
+    const tableBody = outcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            outcomeName,
+            ...treatmentOutcomes.map(t => `${t.data[idx].value}%`),
         ];
     });
 
     autoTable(doc, {
         startY: tableY,
-        head: [['Treatment', 'Rarely or never leaking', 'Leaking once a week or more', 'Leaking once a day or more']],
+        head: [tableHead],
         body: tableBody,
         theme: 'grid',
         styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontSize: 10 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -136,22 +136,24 @@ export const addBowelUrgencyPage = ({ doc, answers, margin, pdfWidth }: PdfPageP
     const urgencyRowMaxHeight = imgHeight;
     const urgencyTableY = yPos + urgencyRowMaxHeight + 10;
 
-    const urgencyTableBody = urgencyTreatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const outcomeNames = ['No problem', 'Very small or small problem', 'Moderate or big problem'];
+    const urgencyTableHead = ['Outcome', ...urgencyTreatmentOutcomes.map(t => t.name)];
+    const urgencyTableBody = outcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            outcomeName,
+            ...urgencyTreatmentOutcomes.map(t => `${t.data[idx].value}%`),
         ];
     });
 
     autoTable(doc, {
         startY: urgencyTableY,
-        head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
+        head: [urgencyTableHead],
         body: urgencyTableBody,
         theme: 'grid',
         styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontSize: 10 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

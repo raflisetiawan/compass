@@ -125,22 +125,24 @@ export const addUrinaryPadPage = async ({ doc, answers, margin, pdfWidth }: PdfP
     const padRowMaxHeight = imgHeight;
     const padTableY = yPos + padRowMaxHeight + 10;
 
-    const padTableBody = padTreatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const outcomeNames = ['No use of pad; rarely or never leaking urine', '1 pad used per day; any degree of leaking urine', '>=2 pad used per day; any degree of leaking urine'];
+    const padTableHead = ['Outcome', ...padTreatmentOutcomes.map(t => t.name)];
+    const padTableBody = outcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            outcomeName,
+            ...padTreatmentOutcomes.map(t => `${t.data[idx].value}%`),
         ];
     });
 
     autoTable(doc, {
         startY: padTableY,
-        head: [['Treatment', 'No use of pad; rarely or never leaking urine', '1 pad used per day; any degree of leaking urine', '>=2 pad used per day; any degree of leaking urine']],
+        head: [padTableHead],
         body: padTableBody,
         theme: 'grid',
         styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontSize: 10 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

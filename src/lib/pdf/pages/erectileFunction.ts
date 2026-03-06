@@ -242,34 +242,31 @@ export const addErectileFunctionPage = ({ doc, answers, margin, pdfWidth }: PdfP
     const efRowMaxHeight = imgHeight;
     const efTableY = yPos + efRowMaxHeight + 10;
 
-    // Build table with 6 columns matching web
-    const efTableBody = efTreatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const efOutcomeNames = [
+        'Firm intercourse (no assist)',
+        'Firm intercourse (with assist)',
+        'Firm masturbation (no assist)',
+        'Firm masturbation (with assist)',
+        'Not firm / None (no assist)',
+        'Not firm / None (with assist)',
+    ];
+    const efTableHead = ['Outcome', ...efTreatmentOutcomes.map(t => t.name)];
+    const efTableBody = efOutcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0]?.value || 0}%`,  // Firm for intercourse - no assist
-            `${t.data[1]?.value || 0}%`,  // Firm for intercourse - with assist
-            `${t.data[2]?.value || 0}%`,  // Firm for masturbation - no assist
-            `${t.data[3]?.value || 0}%`,  // Firm for masturbation - with assist
-            `${t.data[4]?.value || 0}%`,  // Not firm or none - no assist
-            `${t.data[5]?.value || 0}%`,  // Not firm or none - with assist
+            outcomeName,
+            ...efTreatmentOutcomes.map(t => `${t.data[idx]?.value || 0}%`),
         ];
     });
 
     autoTable(doc, {
         startY: efTableY,
-        head: [[
-            'Treatment',
-            'Firm intercourse (no assist)',
-            'Firm intercourse (with assist)',
-            'Firm masturbation (no assist)',
-            'Firm masturbation (with assist)',
-            'Not firm / None (no assist)',
-            'Not firm / None (with assist)'
-        ]],
+        head: [efTableHead],
         body: efTableBody,
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 3 },
         headStyles: { fontSize: 9 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // Helper function to get user-friendly baseline name

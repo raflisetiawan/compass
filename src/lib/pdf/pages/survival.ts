@@ -127,15 +127,25 @@ export const addSurvivalPage = ({ doc, answers }: PdfPageProps) => {
 
         autoTable(doc, {
             startY: tableY,
-            head: [['', 'Percentage']],
+            head: [
+                [{ content: 'Oncological Outcomes', colSpan: 2, styles: { halign: 'center', fillColor: [74, 111, 165], textColor: [255, 255, 255], fontSize: 13, fontStyle: 'bold' } }],
+                [
+                    { content: 'Time point: 5 years', styles: { fillColor: [212, 197, 226], textColor: [0, 0, 0], fontStyle: 'normal', fontSize: 10 } },
+                    { content: '% men', styles: { fillColor: [164, 217, 108], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 10, halign: 'center' } },
+                ],
+            ],
             body: [
                 ['Alive', `${Number(survivalOutcome['Alive (%)']).toFixed(2)}%`],
                 ['Death (from prostate cancer)', `${Number(survivalOutcome['PCa Death (%)']).toFixed(2)}%`],
                 ['Death (from other causes)', `${Number(survivalOutcome['Other Death (%)']).toFixed(2)}%`],
             ],
             theme: 'grid',
-            styles: { fontSize: 11, cellPadding: 3 },
-            headStyles: { fontSize: 11 },
+            styles: { fontSize: 10, cellPadding: 3 },
+            bodyStyles: { fillColor: [248, 229, 241], textColor: [0, 0, 0] },
+            columnStyles: {
+                0: { fontStyle: 'bold' },
+                1: { halign: 'center' },
+            },
         });
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

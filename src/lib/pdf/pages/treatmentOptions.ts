@@ -145,7 +145,7 @@ export const addTreatmentOptionsPages = ({ doc }: PdfPageProps) => {
         body: definitionData.map(t => [t.name, t.definition, t.details, t.goal, t.suitability]),
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 9 },
+        headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 9 },
         columnStyles: {
             0: { fontStyle: 'bold' },
         },
@@ -172,7 +172,7 @@ export const addTreatmentOptionsPages = ({ doc }: PdfPageProps) => {
         body: deliveryData.map(t => [t.name, t.location, t.delivery, t.sessions, t.anaesthesia]),
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 9 },
+        headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 9 },
         columnStyles: {
             0: { fontStyle: 'bold' },
         },
@@ -199,7 +199,7 @@ export const addTreatmentOptionsPages = ({ doc }: PdfPageProps) => {
         body: postTreatmentData.map(t => [t.name, t.management, t.activities, t.complications]),
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 9 },
+        headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 9 },
         columnStyles: {
             0: { fontStyle: 'bold' },
         },
@@ -226,7 +226,7 @@ export const addTreatmentOptionsPages = ({ doc }: PdfPageProps) => {
         body: followUpData.map(t => [t.name, t.schedule, t.investigations, t.furtherTreatment]),
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 9 },
+        headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 9 },
         columnStyles: {
             0: { fontStyle: 'bold' },
         },

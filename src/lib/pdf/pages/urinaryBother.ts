@@ -116,22 +116,24 @@ export const addUrinaryBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPage
     const botherRowMaxHeight = imgHeight;
     const botherTableY = yPos + botherRowMaxHeight + 10;
 
-    const botherTableBody = botherTreatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const outcomeNames = ['No problem', 'Very small or small problem', 'Moderate or big problem'];
+    const botherTableHead = ['Outcome', ...botherTreatmentOutcomes.map(t => t.name)];
+    const botherTableBody = outcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            outcomeName,
+            ...botherTreatmentOutcomes.map(t => `${t.data[idx].value}%`),
         ];
     });
 
     autoTable(doc, {
         startY: botherTableY,
-        head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
+        head: [botherTableHead],
         body: botherTableBody,
         theme: 'grid',
         styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontSize: 10 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

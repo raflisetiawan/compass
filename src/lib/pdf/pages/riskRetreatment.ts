@@ -104,23 +104,20 @@ export const addRiskRetreatmentPage = ({ doc, answers, margin, pdfWidth }: PdfPa
             doc.addImage(chartResult.dataUrl, 'JPEG', xPos, yPos, colWidth, imgHeight);
         });
 
-        // Table
+        // Table - matching webpage layout: treatments as columns, outcomes as rows
         const tableY = yPos + imgHeight + 10;
 
         // Get all unique outcome names from all treatments
         const outcomeNames = Array.from(
-            new Set(treatmentOutcomes.flatMap(t => t.error ? [] : t.data.map(d => d.name)))
+            new Set(validTreatments.flatMap(t => t.data.map(d => d.name)))
         );
 
-        const tableHead = ['Treatment', ...outcomeNames];
-        const tableBody = treatmentOutcomes.map(t => {
-            if (t.error) {
-                return [t.name, t.error, ...Array(outcomeNames.length - 1).fill('')];
-            }
+        const tableHead = ['Outcome', ...validTreatments.map(t => t.name)];
+        const tableBody = outcomeNames.map(outcomeName => {
             return [
-                t.name,
-                ...outcomeNames.map(name => {
-                    const item = t.data.find(d => d.name === name);
+                outcomeName,
+                ...validTreatments.map(treatment => {
+                    const item = treatment.data.find(d => d.name === outcomeName);
                     return item ? `${item.value}%` : '-';
                 })
             ];
@@ -133,6 +130,9 @@ export const addRiskRetreatmentPage = ({ doc, answers, margin, pdfWidth }: PdfPa
             theme: 'grid',
             styles: { fontSize: 9, cellPadding: 3 },
             headStyles: { fontSize: 9 },
+            columnStyles: {
+                0: { cellWidth: 'auto' },
+            },
         });
 
         // Summary

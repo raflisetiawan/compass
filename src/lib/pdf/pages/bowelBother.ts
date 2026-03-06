@@ -116,22 +116,24 @@ export const addBowelBotherPage = ({ doc, answers, margin, pdfWidth }: PdfPagePr
     const bbRowMaxHeight = imgHeight;
     const bbTableY = yPos + bbRowMaxHeight + 10;
 
-    const bbTableBody = bbTreatmentOutcomes.map(t => {
+    // Table - matching webpage layout: treatments as columns, outcomes as rows
+    const outcomeNames = ['No problem', 'Very small or small problem', 'Moderate or big problem'];
+    const bbTableHead = ['Outcome', ...bbTreatmentOutcomes.map(t => t.name)];
+    const bbTableBody = outcomeNames.map((outcomeName, idx) => {
         return [
-            t.name,
-            `${t.data[0].value}%`,
-            `${t.data[1].value}%`,
-            `${t.data[2].value}%`,
+            outcomeName,
+            ...bbTreatmentOutcomes.map(t => `${t.data[idx].value}%`),
         ];
     });
 
     autoTable(doc, {
         startY: bbTableY,
-        head: [['Treatment', 'No problem', 'Very small or small problem', 'Moderate or big problem']],
+        head: [bbTableHead],
         body: bbTableBody,
         theme: 'grid',
         styles: { fontSize: 11, cellPadding: 3 },
         headStyles: { fontSize: 10 },
+        columnStyles: { 0: { cellWidth: 'auto' } },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
