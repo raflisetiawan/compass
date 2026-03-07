@@ -1,11 +1,22 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUserStore } from '../stores/userStore';
 import { Loader2 } from 'lucide-react';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoading } = useUserStore();
+  const { user, isLoading, checkSessionExpiry } = useUserStore();
+
+  useEffect(() => {
+    // Check session expiry on mount and every minute
+    const intervalId = setInterval(() => {
+      if (user) {
+        checkSessionExpiry();
+      }
+    }, 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [user, checkSessionExpiry]);
 
   if (isLoading) {
     return (

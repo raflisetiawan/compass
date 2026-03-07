@@ -13,13 +13,25 @@ type State = {
 type Actions = {
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;
+  checkSessionExpiry: () => boolean;
 };
 
-const useUserStore = create<State & Actions>((set) => {
+const useUserStore = create<State & Actions>((set, get) => {
   onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
     if (firebaseUser) {
       const accessCode = localStorage.getItem('compassAccessCode');
-      if (accessCode) {
+      const sessionStartTime = localStorage.getItem('sessionStartTime');
+      
+      let isSessionValid = true;
+      if (sessionStartTime) {
+        const startTime = parseInt(sessionStartTime, 10);
+        const hoursPassed = (Date.now() - startTime) / (1000 * 60 * 60);
+        if (hoursPassed >= 24) {
+          isSessionValid = false;
+        }
+      }
+
+      if (accessCode && isSessionValid) {
         const userDoc = await getUserDocByAccessCode(accessCode);
         if (userDoc) {
           const user: User = {
@@ -33,7 +45,17 @@ const useUserStore = create<State & Actions>((set) => {
           set({ user: null, isLoading: false });
         }
       } else {
-        // No access code found, cannot restore session
+        // No access code found or session expired, cannot restore session
+        if (!isSessionValid) {
+          try {
+            await signOut(auth);
+          } catch (error) {
+            console.error('Error signing out from Firebase due to session expiry', error);
+          }
+          localStorage.removeItem('userToken');
+          localStorage.removeItem('sessionStartTime');
+          localStorage.removeItem('compassAccessCode');
+        }
         set({ user: null, isLoading: false });
       }
     } else {
@@ -58,6 +80,19 @@ const useUserStore = create<State & Actions>((set) => {
       set({ user: null });
       useQuestionnaireStore.getState().reset();
     },
+    checkSessionExpiry: () => {
+      const sessionStartTime = localStorage.getItem('sessionStartTime');
+      if (sessionStartTime) {
+        const startTime = parseInt(sessionStartTime, 10);
+        const hoursPassed = (Date.now() - startTime) / (1000 * 60 * 60);
+        if (hoursPassed >= 24) {
+          get().logout();
+          return false; // Session expired
+        }
+        return true; // Session valid
+      }
+      return false; // No session started
+    }
   };
 });
 
