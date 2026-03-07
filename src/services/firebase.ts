@@ -4,7 +4,6 @@ import { initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
 import {
   getFirestore,
   doc,
-  setDoc,
   getDoc,
   updateDoc,
   Timestamp,
@@ -181,7 +180,7 @@ export const createNewQuestionnaireSession = async (
 export const updateQuestionnaireSession = async (
   accessCode: string,
   sessionId: string,
-  sessionData: Partial<Omit<QuestionnaireSession, 'id'>>
+  sessionData: Partial<Omit<QuestionnaireSession, 'id'>> & Record<string, unknown>
 ) => {
   if (!accessCode || !sessionId) return;
 
@@ -193,7 +192,7 @@ export const updateQuestionnaireSession = async (
       'sessions',
       sessionId
     );
-    await setDoc(sessionDocRef, sessionData, { merge: true });
+    await updateDoc(sessionDocRef, sessionData);
   } catch (error) {
     console.error("Error updating questionnaire session: ", error);
   }

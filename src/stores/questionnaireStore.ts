@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, deleteField } from "firebase/firestore";
 import questionnaireData from "@/assets/questionnaire.json";
 import {
   loadLatestQuestionnaireSession,
@@ -83,7 +83,7 @@ const shouldStartNewSession = (latestSession: QuestionnaireSession | null): bool
 
 // --- Debounced Save Function ---
 const debouncedUpdateSession = debounce(
-  (accessCode: string, sessionId: string, session: Partial<QuestionnaireSession>) => {
+  (accessCode: string, sessionId: string, session: Partial<QuestionnaireSession> & Record<string, unknown>) => {
     if (!accessCode || !sessionId) return;
     updateQuestionnaireSession(accessCode, sessionId, session);
   },
@@ -128,9 +128,11 @@ export const useQuestionnaireStore = create<State & Actions>((set, get) => ({
     set({ answers: newAnswers, errors: newErrors });
     const accessCode = getActiveAccessCode();
     if (accessCode && sessionId) {
-      const { answers, currentSectionIndex, currentQuestionIndex } = get();
+      const { currentSectionIndex, currentQuestionIndex } = get();
+      // Use deleteField() sentinel so Firestore actually removes the key
+      // (merge: true ignores missing keys, so we must be explicit)
       debouncedUpdateSession(accessCode, sessionId, {
-        answers,
+        [`answers.${questionId}`]: deleteField(),
         currentSectionIndex,
         currentQuestionIndex,
         updatedAt: Timestamp.now(),
