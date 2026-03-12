@@ -34,8 +34,9 @@ import VCEResultsPage from "./pages/VCEResultsPage";
 function App() {
   const location = useLocation();
 
-  // Set page title based on route
+  // Scroll to top and set page title on route change
   useEffect(() => {
+    window.scrollTo(0, 0);
     let title = "COMPASS";
     const pathParts = location.pathname.split("/").filter(Boolean);
 
